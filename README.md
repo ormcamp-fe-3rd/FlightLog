@@ -23,9 +23,10 @@ FlightLog는 드론 운용의 효율성을 높이고 안전한 운영을 지원�
 | 유형               |                                                                                                                                                                                                                                                                                                                                                                |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Frontend           | ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white) ![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white)                                                                                                                                         |
-| Backend            | ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white)                                                                                                                                                                                                                                                         |
+| Backend            | ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white) ![NextAuth.js](https://img.shields.io/badge/NextAuth.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)                                                                                                                                        |
 | Styling            | ![DaisyUI](https://img.shields.io/badge/DaisyUI-5A0EF8?style=flat-square&logo=daisyui&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)                                                                                                                                   |
 | Data Visualization | ![React Leaflet](https://img.shields.io/badge/React_Leaflet-199900?style=flat-square&logo=leaflet&logoColor=white) ![Highcharts](https://img.shields.io/badge/Highcharts-058DC7?style=flat-square&logo=highcharts&logoColor=white) ![React Three Fiber](https://img.shields.io/badge/React_Three_Fiber-000000?style=flat-square&logo=three.js&logoColor=white) |
+| Development Tools  | ![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white)                                                                                                                                                                                                                                                            |
 
 <br>
 
@@ -47,11 +48,11 @@ FlightLog는 드론 운용의 효율성을 높이고 안전한 운영을 지원�
 1. 저장소 클론
 
 ```
-git clone https://github.com/[username]/FlightLog.git
+git clone https://github.com/ormcamp-fe-3rd/FlightLog.git
 ```
 
 2. 환경변수 설정:
-   프로젝트 루트 디렉토리에 `.env` 파일을 생성하고 다음 내용을 추가합니다:
+   프로젝트 `util` 디렉토리에 `.env` 파일을 생성하고 다음 내용을 추가합니다:
 
 ```2. 환경변수 설정
 MONGODB_URI=mongodb+srv://[username]:[password]@[cluster].mongodb.net/[database]
