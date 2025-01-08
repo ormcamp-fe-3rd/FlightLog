@@ -7,7 +7,7 @@ export default function Footer() {
     <footer>
       <div className="w-full text-white">
         <div className={footerClass}>
-          <ul className="flex w-full max-w-[565px] gap-16 px-10">
+          <ul className="flex w-full max-w-[565px] justify-between px-10">
             <li className="font-semibold">회사소개</li>
             <li className="font-semibold">이용약관</li>
             <li className="font-semibold">개인정보처리방침</li>
