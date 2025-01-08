@@ -1,6 +1,6 @@
 export default function StatusPanel() {
   return (
-    <div className="flex max-h-full scroll-m-0 flex-col gap-6 overflow-y-scroll py-6 pl-10">
+    <div className="flex max-h-full w-[280px] flex-col gap-6 overflow-y-scroll rounded-[30px] bg-black py-6 pl-10 text-white opacity-80">
       <div className="flex flex-col gap-2">
         <div className="flex gap-4">
           <img src="/images/map/icon-GPS.svg"></img>
