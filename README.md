@@ -39,7 +39,9 @@ FlightLog는 드론 운용의 효율성을 높이고 안전한 운영을 지원�
 | 김지균 | Frontend            | [GitHub](https://github.com/kimjigyun)  |
 | 조지연 | Frontend            | [GitHub](https://github.com/oratio100)  |
 
-### [기획 보드판](https://www.figma.com/design/hBVjg0JN384rhtNpvHqQWX/vision-drone's-team-library?node-id=3311-2&p=f&t=iiFwUjZL1Ccb0yd4-0)
+### [Figma 기획 보드판](https://www.figma.com/design/hBVjg0JN384rhtNpvHqQWX/vision-drone's-team-library?node-id=3311-2&p=f&t=iiFwUjZL1Ccb0yd4-0)
+
+### [팀 규칙, 네이밍 컨벤션](https://github.com/ormcamp-fe-3rd/FlightLog/wiki/Drone-Vision-%ED%8C%80-%EC%9E%91%EC%97%85-%EA%B7%9C%EC%B9%99)
 
 <br>
 
