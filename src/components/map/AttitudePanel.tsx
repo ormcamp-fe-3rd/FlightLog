@@ -1,7 +1,7 @@
 export default function AttitudePanel() {
   return (
     <>
-      <div>운행 정보 패널</div>
+      <div>드론 자세 패널</div>
     </>
   );
 }
