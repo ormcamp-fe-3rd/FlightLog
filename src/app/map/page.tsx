@@ -3,6 +3,7 @@ import StatusPanel from "@/components/map/StatusPanel";
 import AttitudePanel from "@/components/map/AttitudePanel";
 import FlightProgressBar from "@/components/map/FlightProgressBar";
 import MapView from "@/components/map/MapView";
+import ControlPanel from "@/components/map/ControlPanel";
 
 export default function MapPage() {
   return (
@@ -18,8 +19,9 @@ export default function MapPage() {
         <div className="absolute bottom-8 right-8 z-10 size-[280px] rounded-[30px] bg-white opacity-90">
           <AttitudePanel />
         </div>
-        <div className="absolute bottom-7 left-1/2 z-10 w-1/3 -translate-x-1/2">
+        <div className="absolute bottom-7 left-1/2 z-10 flex w-1/3 -translate-x-1/2 flex-col items-center">
           <FlightProgressBar />
+          <ControlPanel />
         </div>
       </div>
     </div>
