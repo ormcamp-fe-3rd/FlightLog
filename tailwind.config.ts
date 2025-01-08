@@ -11,7 +11,16 @@ export default {
       fontFamily: {
         sans: ["var(--font-pretendard)"],
       },
+      fontSize: {
+        'xl'  : '1.125rem', // 18px
+        '2xl' : '1.875rem', // 30px
+      },
+      screens: {
+        lg: { max: '1024px'},
+        md: { max: '744px'},
+        sm: { max: '375px'}
+      }
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
 } satisfies Config;
