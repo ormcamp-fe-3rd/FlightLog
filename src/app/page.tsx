@@ -16,7 +16,10 @@ export default function Home() {
               플랫폼입니다. 비행 데이터를 시간 단위로 분석하고 관리하세요. 언제
               어디서나 드론의 상태와 비행 기록을 한눈에 확인할 수 있습니다.
             </p>
-            <Link href="/map" className="btn btn-primary btn-wide">
+            <Link
+              href="/map"
+              className="btn btn-primary btn-wide transition-all hover:scale-[1.02]"
+            >
               시작하기
             </Link>
           </div>
@@ -137,7 +140,7 @@ export default function Home() {
           </div>
           <div className="flex-1 md:order-last">
             <Link href="/log">
-              <div className="aspect-video overflow-hidden rounded-lg shadow-md shadow-xl transition-all hover:scale-[1.02]">
+              <div className="aspect-video overflow-hidden rounded-lg shadow-md transition-all hover:scale-[1.02]">
                 <img
                   src="https://www.figma.com/community/resource/ae4f91ba-cd87-44bd-88a0-7d5bd4343bfa/thumbnail"
                   className="h-full w-full object-cover"
