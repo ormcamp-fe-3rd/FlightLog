@@ -3,28 +3,50 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="mx-auto max-w-7xl break-keep px-4 py-12">
-      <section className="mb-20">
+      <section className="mb-7">
         <div className="flex flex-row items-center gap-8 md:flex-col">
           <div className="flex-1 md:text-center">
-            <h1 className="mb-4 text-6xl font-bold">
-              One login.
+            <h1 className="mb-4 text-5xl font-bold leading-tight">
+              드론 비행의
               <br />
-              Full visibility.
+              모든 것을 한눈에
             </h1>
-            <p className="text-xl text-gray-600">
-              DroneDeploy는 모든 현실 캡처 소스의 데이터를 통합하고 분석하는
-              유일한 플랫폼입니다. 전체 자산 수명 주기에 걸친 통합 사진 문서화의
-              이점을 누리세요. 어디서든 - 전 세계 어디에서나 여러 현장과 위치를
-              모니터링하세요.
+            <p className="mb-4 max-w-lg text-xl text-gray-600">
+              FightLog는 비행 로봇의 운행 데이터를 통합하고 분석하는
+              플랫폼입니다. 비행 데이터를 시간 단위로 분석하고 관리하세요. 언제
+              어디서나 드론의 상태와 비행 기록을 한눈에 확인할 수 있습니다.
             </p>
+            <Link href="/map" className="btn btn-primary btn-wide">
+              시작하기
+            </Link>
           </div>
           <div className="flex-1 md:order-last">
             <div className="aspect-video overflow-hidden rounded-lg shadow-xl">
               <img
                 src="/images/home/flight-log-main-image.jpg"
                 className="h-full w-full object-cover"
+                alt="첨단 비행 로봇 서비스를 시각화한 가상의 이미지"
               />
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mb-24">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-1">
+          <div className="aspect-video overflow-hidden rounded-lg shadow-xl">
+            <img
+              src="/images/home/Agri-drone.jpg"
+              alt="농사에 활용하는 드론 이미지"
+              className="h-full w-full object-cover"
+            />
+          </div>
+          <div className="aspect-video overflow-hidden rounded-lg shadow-xl">
+            <img
+              src="/images/home/construction-drone.jpg"
+              alt="건축 현장의 드론 활용 이미지"
+              className="h-full w-full object-cover"
+            />
           </div>
         </div>
       </section>
@@ -32,20 +54,23 @@ export default function Home() {
       <section className="mb-20 text-center">
         <h1 className="mb-4 text-5xl font-bold">비행 데이터 분석 플랫폼</h1>
         <p className="mb-5 text-xl">
-          드론의 비행 데이터를 시각화하여 효율적인 분석을 제공합니다.
+          비행 중 수집된 모든 텔레메트리 데이터를 상세하게 분석하고
+          시각화합니다.
         </p>
-        <div className="flex justify-center">
-          <Link href="/map" className="btn">
-            시작하기
-          </Link>
-        </div>
+        <div className="flex justify-center"></div>
       </section>
 
       <section className="mb-20">
         <div className="flex flex-row gap-8 md:flex-col md:gap-4">
           <div className="card flex-1 md:w-full">
             <Link href="/log">
-              <div className="mb-4 flex aspect-video cursor-pointer rounded-lg bg-gray-300 shadow-md transition-all hover:scale-[1.02]"></div>
+              <div className="mb-4 flex aspect-video cursor-pointer rounded-lg bg-gray-300 shadow-md transition-all hover:scale-[1.02]">
+                <img
+                  className="h-full w-full object-cover"
+                  src="https://blog.oyuncakhobi.com/wp-content/uploads/2023/10/mission_planner_screen_flight_plan.jpg"
+                  alt="드론 경로 데이터 시각화 이미지"
+                ></img>
+              </div>
             </Link>
             <div>
               <h3 className="card-title">실시간 데이터 시각화</h3>
@@ -62,7 +87,7 @@ export default function Home() {
                 <img
                   className="h-full w-full object-cover"
                   src="https://cdn.prod.website-files.com/64e895a2f8733943c6d0ddef/65ae39f0e69f1b67eb2b8c8c_Map%20UI%20Element%20-%20uinkits.png"
-                  alt="드론 이미지"
+                  alt="flight log의 맵 서비스 ui 이미지"
                 ></img>
               </div>
             </Link>
@@ -81,7 +106,7 @@ export default function Home() {
                 <img
                   className="h-full w-full object-cover"
                   src="https://dronecentral.in/wp-content/uploads/2024/09/air-2s-img-4.webp"
-                  alt="드론 이미지"
+                  alt="웹사이트에 3d 입체로 구현한 드론 이미지"
                 ></img>
               </div>
             </Link>
@@ -96,29 +121,90 @@ export default function Home() {
         </div>
       </section>
 
-      {/* <section className="mb-20">
-        <div className="flex h-48 flex-row gap-8 md:flex-col md:gap-4">
-          <div className="h-full w-full flex-1 overflow-hidden rounded-lg bg-gray-300 shadow-md">
-            <img
-              className="h-full w-full object-cover"
-              src="https://www.highcharts.com/demo/images/samples/highcharts/demo/accessible-line/thumbnail.svg"
-            />
-          </div>
-          <div className="flex-1">
-            <h2 className="mb-4 text-3xl font-bold">상세 데이터 분석</h2>
-            <p className="mb-4">
-              비행 중 수집된 모든 텔레메트리 데이터를 상세하게 분석하고
-              시각화합니다.
+      <section className="mb-20">
+        <div className="flex flex-row items-center gap-8 md:flex-col">
+          <div className="flex-1 md:text-center">
+            <h1 className="mb-4 text-5xl font-bold leading-tight">
+              필요한 자료만
+              <br />
+              골라볼 수 있도록
+            </h1>
+            <p className="max-w-lg text-xl text-gray-600">
+              FightLog는 비행 로봇의 운행 데이터를 통합하고 분석하는
+              플랫폼입니다. 비행 데이터를 시간 단위로 분석하고 관리하세요. 언제
+              어디서나 드론의 상태와 비행 기록을 한눈에 확인할 수 있습니다.
             </p>
-            <ul>
-              <li>위성 연결 상태</li>
-              <li>배터리 상태 모니터링</li>
-              <li>비행 고도 및 속도</li>
-              <li>실시간 위치 정보</li>
-            </ul>
+          </div>
+          <div className="flex-1 md:order-last">
+            <Link href="/log">
+              <div className="aspect-video overflow-hidden rounded-lg shadow-md shadow-xl transition-all hover:scale-[1.02]">
+                <img
+                  src="https://www.figma.com/community/resource/ae4f91ba-cd87-44bd-88a0-7d5bd4343bfa/thumbnail"
+                  className="h-full w-full object-cover"
+                  alt="데이터 ui 이미지"
+                />
+              </div>
+            </Link>
           </div>
         </div>
-      </section> */}
+      </section>
+
+      <div className="mt-12 flex flex-col items-end border-t border-gray-200 pt-8 md:flex-col md:items-center md:gap-4">
+        <div className="flex w-72 items-start space-x-3">
+          <Link
+            href="https://github.com/ormcamp-fe-3rd/FlightLog"
+            target="blank"
+            className="text-gray-400 hover:opacity-75"
+          >
+            <span className="sr-only">Instagram</span>
+            <img
+              src="/images/home/insta-logo.svg"
+              alt="Instagram"
+              className="h-6 w-6"
+            />
+          </Link>
+          <Link
+            href="https://github.com/ormcamp-fe-3rd/FlightLog"
+            target="blank"
+            className="text-gray-400 hover:opacity-75"
+          >
+            <span className="sr-only">Facebook</span>
+            <img
+              src="/images/home/facebook-logo.svg"
+              alt="Facebook"
+              className="h-6 w-6"
+            />
+          </Link>
+
+          <Link
+            href="https://github.com/ormcamp-fe-3rd/FlightLog"
+            target="blank"
+            className="text-gray-400 hover:opacity-75"
+          >
+            <span className="sr-only">X (Twitter)</span>
+            <img
+              src="/images/home/x-logo.svg"
+              alt="X (Twitter)"
+              className="h-6 w-6"
+            />
+          </Link>
+          <Link
+            href="https://github.com/ormcamp-fe-3rd/FlightLog"
+            target="blank"
+            className="text-gray-400 hover:opacity-75"
+          >
+            <span className="sr-only">Github</span>
+            <img
+              src="/images/home/github-logo.svg"
+              alt="Github"
+              className="h-6 w-6"
+            />
+          </Link>
+        </div>
+        <p className="mt-2 w-72 text-left text-sm text-gray-500 md:mt-0 md:text-center">
+          &copy; DronVision & FlightLog. All rights reserved.
+        </p>
+      </div>
     </div>
   );
 }
