@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: 'sans';
+    font-weight: 800;
+    src: url('../assets/fonts/pretendard-variable.woff2');
+}
+
+@font-face {
+    font-family: 'sans';
+    font-weight: 700;
+    src: url('../assets/fonts/pretendard-variable.woff2');
+}
+
+@font-face {
+    font-family: 'sans';
+    font-weight: 400;
+    src: url('../assets/fonts/pretendard-variable.woff2');
+}
