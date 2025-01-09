@@ -18,7 +18,7 @@ export default function ControlPanel({
         >
           <img
             src="/images/map/icon-control-info.svg"
-            alt="flight-info"
+            alt="Flight info"
             className="size-7"
           />
           <div>Flight info</div>
@@ -29,7 +29,7 @@ export default function ControlPanel({
         >
           <img
             src="/images/map/icon-control-attitude.svg"
-            alt="flight-attitude"
+            alt="Flight Attitude"
             className="size-7"
           />
           <div>Attitude</div>
@@ -40,7 +40,7 @@ export default function ControlPanel({
         >
           <img
             src="/images/map/icon-control-zoom.svg"
-            alt="flight-zoom"
+            alt="Zoom"
             className="size-7 p-1"
           />
           <div>Zoom</div>
