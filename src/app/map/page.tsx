@@ -6,12 +6,35 @@ import AttitudePanel from "@/components/map/AttitudePanel";
 import FlightProgressBar from "@/components/map/FlightProgressBar";
 import MapView from "@/components/map/MapView";
 import ControlPanel from "@/components/map/ControlPanel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useSidebarStore from "@/store/useSidebar";
 
 export default function MapPage() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { isSidebarOpen, close, open } = useSidebarStore();
   const [isStatusOpen, setIsStatusOpen] = useState(true);
   const [isAttitudeOpen, setIsAttitudeOpen] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const isDesktop = window.innerWidth > 744;
+      if (!isDesktop) {
+        close();
+        setIsStatusOpen(false);
+        setIsAttitudeOpen(false);
+      } else {
+        open();
+        setIsStatusOpen(true);
+        setIsAttitudeOpen(true);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [close, open]);
 
   const toggleStatusPanel = () => {
     setIsStatusOpen(!isStatusOpen);
@@ -46,7 +69,7 @@ export default function MapPage() {
             <AttitudePanel />
           </div>
         </div>
-        <div className="absolute bottom-7 left-1/2 z-10 w-1/2 -translate-x-1/2 lg:w-80">
+        <div className="absolute bottom-7 left-1/2 z-10 w-1/2 min-w-80 -translate-x-1/2">
           <FlightProgressBar />
           <div className="hidden justify-center md:flex">
             <ControlPanel
