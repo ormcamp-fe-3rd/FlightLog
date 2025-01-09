@@ -1,31 +1,50 @@
-export default function ControlPanel() {
+interface ControlPanelProps {
+  onFlightInfoClick: () => void;
+  onAttitudeClick: () => void;
+  onZoomClick: () => void;
+}
+
+export default function ControlPanel({
+  onFlightInfoClick,
+  onAttitudeClick,
+  onZoomClick,
+}: ControlPanelProps) {
   return (
     <div>
       <div className="flex h-16 w-72 items-center justify-around rounded-[30px] bg-white">
-        <div className="flex w-20 flex-col items-center">
+        <button
+          className="flex w-20 flex-col items-center"
+          onClick={onFlightInfoClick}
+        >
           <img
             src="/images/map/icon-control-info.svg"
             alt="flight-info"
             className="size-7"
           />
           <div>Flight info</div>
-        </div>
-        <div className="flex w-20 flex-col items-center">
+        </button>
+        <button
+          className="flex w-20 flex-col items-center"
+          onClick={onAttitudeClick}
+        >
           <img
             src="/images/map/icon-control-attitude.svg"
             alt="flight-attitude"
             className="size-7"
           />
           <div>Attitude</div>
-        </div>
-        <div className="flex w-20 flex-col items-center">
+        </button>
+        <button
+          className="flex w-20 flex-col items-center"
+          onClick={onZoomClick}
+        >
           <img
             src="/images/map/icon-control-zoom.svg"
             alt="flight-zoom"
             className="size-7 p-1"
           />
           <div>Zoom</div>
-        </div>
+        </button>
       </div>
     </div>
   );
