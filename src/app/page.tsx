@@ -16,8 +16,8 @@ export default function Home() {
       </section>
 
       <section className="mb-20">
-        <div className="flex gap-8">
-          <div className="card flex-1">
+        <div className="flex flex-row gap-8 md:flex-col md:gap-4">
+          <div className="card flex-1 md:w-full">
             <Link href="/log">
               <div className="mb-4 flex h-32 cursor-pointer rounded-lg bg-gray-300"></div>
             </Link>
@@ -59,7 +59,8 @@ export default function Home() {
       </section>
 
       <section className="mb-20">
-        <div className="flex gap-1">
+        <div className="flex flex-row gap-8 md:flex-col md:gap-4">
+          <div className="h-auto w-full flex-1 rounded-lg bg-gray-300 p-6"></div>
           <div className="flex-1">
             <h2 className="mb-4 text-3xl font-bold">상세 데이터 분석</h2>
             <p className="mb-4">
@@ -73,9 +74,6 @@ export default function Home() {
               <li>실시간 위치 정보</li>
             </ul>
           </div>
-          {/* <Link href="log"> */}
-          <div className="h-auto w-full flex-1 rounded-lg bg-gray-300 p-6"></div>
-          {/* </Link> */}
         </div>
       </section>
     </div>
