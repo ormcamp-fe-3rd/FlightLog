@@ -20,7 +20,7 @@ export default function DataService() {
           <Link href="/log">
             <div className="aspect-video overflow-hidden rounded-lg shadow-md transition-all hover:scale-[1.02]">
               <img
-                src="https://www.figma.com/community/resource/ae4f91ba-cd87-44bd-88a0-7d5bd4343bfa/thumbnail"
+                src="https://png.pngtree.com/png-clipart/20221219/original/pngtree-ui-dashboard-chart-diagram-graph-png-image_8777649.png"
                 className="h-full w-full object-cover"
                 alt="데이터 ui 이미지"
               />

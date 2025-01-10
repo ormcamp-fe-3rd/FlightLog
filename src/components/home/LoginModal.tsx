@@ -1,11 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import useLoginModalStore from "@/store/useLoginModal";
 
 function LoginModal() {
   const { toggle, isLoginModalOpen } = useLoginModalStore();
+
+  useEffect(() => {
+    if (isLoginModalOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [isLoginModalOpen]);
+
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 ${isLoginModalOpen ? null : "hidden"}`}
