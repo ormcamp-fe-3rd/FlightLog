@@ -1,6 +1,6 @@
 export default function StatusPanel() {
   return (
-    <div className="flex max-h-full scroll-m-0 flex-col gap-6 overflow-y-scroll py-6 pl-10">
+    <div className="flex max-h-full w-[280px] flex-col gap-6 overflow-y-scroll rounded-[30px] bg-black py-6 pl-10 text-white opacity-80">
       <div className="flex flex-col gap-2">
         <div className="flex gap-4">
           <img src="/images/map/icon-GPS.svg"></img>
@@ -19,7 +19,7 @@ export default function StatusPanel() {
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex gap-4">
-          <img src="/images/map/icon-Flight.svg"></img>
+          <img src="/images/map/icon-Flight.svg" alt="Flight info" />
           <div>비행 정보</div>
         </div>
         <div className="flex">
@@ -35,7 +35,7 @@ export default function StatusPanel() {
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex gap-4">
-          <img src="/images/map/icon-Altitude.svg"></img>
+          <img src="/images/map/icon-Altitude.svg" alt="Altitude" />
           <div>고도 정보</div>
         </div>
         <div className="flex">
@@ -51,7 +51,7 @@ export default function StatusPanel() {
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex gap-4">
-          <img src="/images/map/icon-Accuracy.svg"></img>
+          <img src="/images/map/icon-Accuracy.svg" alt="Accuracy" />
           <div>정확도</div>
         </div>
         <div className="flex">
