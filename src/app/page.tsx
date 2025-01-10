@@ -1,4 +1,3 @@
-import LoginModal from "@/components/home/LoginModal";
 import ServiceStart from "@/components/home/ServiceStart";
 import ImageGallery from "@/components/home/ImageGallery";
 import ServiceTitle from "@/components/home/ServiceTitle";
@@ -8,7 +7,6 @@ import DataService from "@/components/home/DataService";
 export default function Home() {
   return (
     <>
-      <LoginModal />
       <div className="mx-auto max-w-7xl break-keep px-4 py-12">
         <ServiceStart />
         <ImageGallery />

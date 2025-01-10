@@ -1,11 +1,29 @@
+"use client";
+
 import Link from "next/link";
 import React from "react";
+import useLoginModalStore from "@/store/useLoginModal";
 
 function LoginModal() {
+  const { toggle, isLoginModalOpen } = useLoginModalStore();
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50">
-      <div className="w-96 rounded-lg bg-white p-6 shadow-lg">
-        <h2 className="mb-4 text-2xl font-bold">Login</h2>
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 ${isLoginModalOpen ? null : "hidden"}`}
+      onClick={toggle}
+    >
+      <div
+        className="w-96 rounded-lg bg-white p-6 shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between">
+          <h2 className="mb-4 text-2xl font-bold text-black">Login</h2>
+          <button
+            className="btn btn-circle btn-ghost text-black"
+            onClick={toggle}
+          >
+            ✖️
+          </button>
+        </div>
         <form>
           <div className="mb-4">
             <label
@@ -37,12 +55,12 @@ function LoginModal() {
           </div>
           <button
             type="submit"
-            className="w-full rounded bg-black py-2 text-white transition duration-300 hover:bg-gray-500"
+            className="w-full rounded bg-black py-2 transition duration-300 hover:bg-gray-500"
           >
             Login
           </button>
         </form>
-        <p className="mt-4 text-center text-sm">
+        <p className="mt-4 text-center text-sm text-gray-700">
           Don't have an account?
           <Link
             href="/signup"
