@@ -151,63 +151,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <div className="mt-12 flex flex-col items-end border-t border-gray-200 pt-8 md:flex-col md:items-center md:gap-4">
-        <div className="flex w-72 items-start space-x-3">
-          <Link
-            href="https://github.com/ormcamp-fe-3rd/FlightLog"
-            target="blank"
-            className="text-gray-400 hover:opacity-75"
-          >
-            <span className="sr-only">Instagram</span>
-            <img
-              src="/images/home/insta-logo.svg"
-              alt="Instagram"
-              className="h-6 w-6"
-            />
-          </Link>
-          <Link
-            href="https://github.com/ormcamp-fe-3rd/FlightLog"
-            target="blank"
-            className="text-gray-400 hover:opacity-75"
-          >
-            <span className="sr-only">Facebook</span>
-            <img
-              src="/images/home/facebook-logo.svg"
-              alt="Facebook"
-              className="h-6 w-6"
-            />
-          </Link>
-
-          <Link
-            href="https://github.com/ormcamp-fe-3rd/FlightLog"
-            target="blank"
-            className="text-gray-400 hover:opacity-75"
-          >
-            <span className="sr-only">X (Twitter)</span>
-            <img
-              src="/images/home/x-logo.svg"
-              alt="X (Twitter)"
-              className="h-6 w-6"
-            />
-          </Link>
-          <Link
-            href="https://github.com/ormcamp-fe-3rd/FlightLog"
-            target="blank"
-            className="text-gray-400 hover:opacity-75"
-          >
-            <span className="sr-only">Github</span>
-            <img
-              src="/images/home/github-logo.svg"
-              alt="Github"
-              className="h-6 w-6"
-            />
-          </Link>
-        </div>
-        <p className="mt-2 w-72 text-left text-sm text-gray-500 md:mt-0 md:text-center">
-          &copy; DronVision & FlightLog. All rights reserved.
-        </p>
-      </div>
     </div>
   );
 }
