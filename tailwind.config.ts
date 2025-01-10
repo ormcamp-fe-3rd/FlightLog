@@ -13,7 +13,8 @@ export default {
       },
       fontSize: {
         xl: "1.125rem", // 18px
-        "2xl": "1.875rem", // 30px
+        "2xl": "1.625rem", // 26px
+        "3xl": "1.875rem", // 30px
       },
       screens: {
         lg: { max: "1024px" },
