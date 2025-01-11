@@ -1,13 +1,13 @@
 "use client";
 import useLoginModalStore from "@/store/useLoginModal";
-import LoginModal from "@/components/home/LoginModal";
+import AuthModal from "@/components/home/AuthModal";
 
 export default function LoginButton() {
   const { toggle } = useLoginModalStore();
   return (
     <>
       <button onClick={toggle}>Login</button>
-      <LoginModal />
+      <AuthModal />
     </>
   );
 }
