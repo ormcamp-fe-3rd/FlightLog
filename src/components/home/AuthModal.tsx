@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useLoginModalStore from "@/store/useLoginModal";
 import LoginContent from "@/components/home/LoginContent";
+import RegisterContent from "@/components/home/RegisterContent";
 
 export default function AuthModal() {
   const { toggle, isLoginModalOpen } = useLoginModalStore();
+  const [register, setRegister] = useState(false);
 
   useEffect(() => {
     if (isLoginModalOpen) {
@@ -27,11 +29,19 @@ export default function AuthModal() {
         className="w-96 rounded-lg bg-white p-6 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <LoginContent />
+        {register === true ? <RegisterContent /> : <LoginContent />}
         <p className="mt-4 text-center text-sm text-gray-700">
-          Don't have an account?
-          <button className="ml-2 font-bold text-black hover:underline">
-            Sign up
+          {register === true
+            ? `Already have an account?`
+            : `Don't have an account?`}
+
+          <button
+            onClick={() => {
+              setRegister(!register);
+            }}
+            className="ml-2 font-bold text-black hover:underline"
+          >
+            {register === true ? `Login` : `Sign Up`}
           </button>
         </p>
       </div>
