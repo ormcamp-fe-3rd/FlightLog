@@ -33,11 +33,15 @@
     "react-hook-form": "^7.54.2",
     "react-leaflet": "^4.2.1",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "three": "^0.159.0",
     "zod": "^3.24.1",
 =======
     "three": "^0.172.0",
 >>>>>>> 010de3e (Merge branch 'map-jg' into map-jy)
+=======
+    "three": "^0.172.0",
+>>>>>>> 5cdb34a (풀 커밋)
     "zustand": "^5.0.3"
   },
   "devDependencies": {
