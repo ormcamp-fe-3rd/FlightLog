@@ -69,7 +69,7 @@ export default function AttitudePanel() {
   }, []);
 
   return (
-    <div className="flex h-full w-full flex-col justify-between p-4">
+    <div className="flex size-[280px] flex-shrink-0 flex-col justify-between rounded-[30px] bg-white p-4 opacity-90">
       <div>
         <div>Roll: </div>
         <div>Pitch: </div>
