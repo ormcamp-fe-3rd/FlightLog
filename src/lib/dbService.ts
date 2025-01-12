@@ -1,9 +1,23 @@
 import { connectDB } from "@/lib/database";
 
-export async function fetchCollection(collectionName: string) {
+// 조건 설정 가능 ; query = { msgId: 30 }
+export async function fetchCollection(
+  collectionName: string,
+  query: Record<string, unknown> = {},
+) {
   const client = await connectDB;
   const db = client.db("data");
   const collection = db.collection(collectionName);
 
-  return collection.find({}).toArray();
+  Object.keys(query).forEach((key) => {
+    if (!isNaN(Number(query[key]))) {
+      query[key] = Number(query[key]);
+    }
+  });
+
+  if (query) {
+    return collection.find(query).toArray();
+  } else {
+    return collection.find({}).toArray();
+  }
 }
