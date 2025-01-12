@@ -5,14 +5,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { collection } = req.query;
+  const { collection, ...query } = req.query;
 
   if (req.method === "GET") {
-    if (typeof collection !== "string") {
-      return res.status(400).json({ error: "Invalid collection name" });
+    if (!collection || typeof collection !== "string") {
+      return res.status(400).json({ error: "Collection name error" });
     }
     try {
-      const data = await fetchCollection(collection);
+      const data = await fetchCollection(collection, query);
       res.status(200).json(data);
     } catch (error) {
       console.error("API Error:", error);
