@@ -8,7 +8,6 @@ if (typeof Highcharts === "object") {
   HighchartsExporting(Highcharts);
 }
 
-// Point 타입에 highlight 메서드 추가
 declare module "highcharts" {
   interface Point {
     highlight: (event: PointerEventObject) => void;
@@ -31,17 +30,6 @@ const SynchronisedCharts = () => {
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const oldReset = Highcharts.Pointer.prototype.reset;
-  const oldHighlight = Highcharts.Point.prototype.highlight;
-
-  Highcharts.Pointer.prototype.reset = () => {};
-
-  Highcharts.Point.prototype.highlight = function (event) {
-    this.onMouseOver();
-    this.series.chart.tooltip.refresh(this);
-    this.series.chart.xAxis[0].drawCrosshair(event, this);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -63,6 +51,19 @@ const SynchronisedCharts = () => {
     };
 
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const oldReset = Highcharts.Pointer.prototype.reset;
+    const oldHighlight = Highcharts.Point.prototype.highlight;
+
+    Highcharts.Pointer.prototype.reset = () => {};
+
+    Highcharts.Point.prototype.highlight = function (event) {
+      this.onMouseOver();
+      this.series.chart.tooltip.refresh(this);
+      this.series.chart.xAxis[0].drawCrosshair(event, this);
+    };
 
     return () => {
       Highcharts.Pointer.prototype.reset = oldReset;
