@@ -32,8 +32,8 @@ export default function AuthModal() {
         {register === true ? <RegisterContent /> : <LoginContent />}
         <p className="mt-4 text-center text-sm text-gray-700">
           {register === true
-            ? `Already have an account?`
-            : `Don't have an account?`}
+            ? `이미 계정이 있으신가요?`
+            : `아직 계정이 없으신가요?`}
 
           <button
             onClick={() => {
@@ -41,7 +41,7 @@ export default function AuthModal() {
             }}
             className="ml-2 font-bold text-black hover:underline"
           >
-            {register === true ? `Login` : `Sign Up`}
+            {register === true ? `로그인하기` : `회원 가입하기`}
           </button>
         </p>
       </div>
