@@ -11,6 +11,10 @@ interface DataState {
 
   telemetryData: Telemetries[];
   fetchTelemetryData: () => Promise<void>;
+
+  selectedOperationId: string[];
+  setSelectedOperation: (operations: Record<string, string>) => void;
+  toggleSelectedOperation: (operationId: string) => void;
 }
 
 const useData = create<DataState>((set) => ({
@@ -30,6 +34,23 @@ const useData = create<DataState>((set) => ({
   fetchTelemetryData: async () => {
     const result = await fetchData("telemetries");
     set({ telemetryData: result });
+  },
+
+  selectedOperationId: [],
+  setSelectedOperation: (operations) => {
+    const formattedData = Object.keys(operations);
+    return set({ selectedOperationId: formattedData });
+  },
+  toggleSelectedOperation: (operationId) => {
+    set((state) => {
+      const selectedOperationsSet = new Set(state.selectedOperationId);
+
+      selectedOperationsSet.has(operationId)
+        ? selectedOperationsSet.delete(operationId)
+        : selectedOperationsSet.add(operationId);
+
+      return { selectedOperationId: [...selectedOperationsSet] };
+    });
   },
 }));
 
