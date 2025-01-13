@@ -15,9 +15,5 @@ export async function fetchCollection(
     }
   });
 
-  if (query) {
-    return collection.find(query).toArray();
-  } else {
-    return collection.find({}).toArray();
-  }
+  return collection.find(query).toArray();
 }
