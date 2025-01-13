@@ -44,7 +44,7 @@ export default function RegisterContent() {
     register,
     handleSubmit,
     trigger,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -53,6 +53,7 @@ export default function RegisterContent() {
       password: "",
       passwordConfirm: "",
     },
+    mode: "onChange",
   });
 
   const onSubmit = (data: any) => {
@@ -141,8 +142,14 @@ export default function RegisterContent() {
           </p>
         )}
 
-        <button type="submit" className="btn btn-primary mt-8 w-full">
-          Register
+        <button
+          type="submit"
+          className={`btn mt-8 w-full ${
+            isValid ? "btn-primary" : "btn-disabled"
+          }`}
+          disabled={!isValid}
+        >
+          가입하기
         </button>
       </form>
     </div>
