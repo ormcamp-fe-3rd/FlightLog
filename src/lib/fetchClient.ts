@@ -1,9 +1,10 @@
 export async function fetchData(
-  url: string,
-  params: Record<string, string> = {},
+  collectionName: string,
+  query: Record<string, string> = {},
 ) {
-  const queryString = new URLSearchParams(params).toString();
-  const response = await fetch(`${url}?${queryString}`, {
+  const queryString = new URLSearchParams(query).toString();
+  const url = `/api/${collectionName}?${queryString}`;
+  const response = await fetch(url, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
