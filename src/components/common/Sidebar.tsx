@@ -1,49 +1,28 @@
 import { fetchData } from "@/lib/fetchClient";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Robot, Operation, Telemetries } from "@/types/api";
 import { formatTimestamp } from "@/utils/formatTimestamp";
+import useData from "@/store/useData";
 
 export default function Sidebar() {
-  const [operationData, setOperationData] = useState<Operation[]>([]);
-  const [robotData, setRobotData] = useState<Robot[]>([]);
-  const [telemetryData, setTelemetryData] = useState<Telemetries[]>([]);
+  const {
+    operationData,
+    fetchOperationData,
+    robotData,
+    fetchRobotData,
+    telemetryData,
+    fetchTelemetryData,
+  } = useData();
   const [operationTime, setOperationTime] = useState<Record<string, string>>(
     {},
   );
 
-  // 데이터 가져오기
   useEffect(() => {
-    const getRobotData = async () => {
-      try {
-        const result = await fetchData("robots");
-        setRobotData(result);
-      } catch (error) {
-        console.error("Error fetching robots data:", error);
-      }
-    };
-    const getOperationData = async () => {
-      try {
-        const result = await fetchData("operations");
-        setOperationData(result);
-      } catch (error) {
-        console.error("Error fetching operations data:", error);
-      }
-    };
-    const getTelemetryData = async () => {
-      try {
-        const result = await fetchData("telemetries");
-        setTelemetryData(result);
-      } catch (error) {
-        console.error("Error fetching telemetries data:", error);
-      }
-    };
-    getRobotData();
-    getOperationData();
-    getTelemetryData();
+    fetchOperationData();
+    fetchRobotData();
+    fetchTelemetryData();
   }, []);
 
-  // 운행 데이터 처리
   useEffect(() => {
     // telemetryData에 기록이 있는 operation만 필터링
     const validOperations = operationData.filter((operation) => {
@@ -56,7 +35,7 @@ export default function Sidebar() {
     const updatedTime = validOperations.reduce<{ [key: string]: string }>(
       (acc, value) => {
         const timestamp = formatTimestamp(getOperationTime(value["_id"]));
-        acc[value._id] = timestamp; // id를 키로 하고, 시간을 값으로 설정
+        acc[value._id] = timestamp;
         return acc;
       },
       {},
@@ -64,6 +43,7 @@ export default function Sidebar() {
     setOperationTime(updatedTime);
   }, [operationData, telemetryData]);
 
+  // 운행 시간 가져오기
   const getOperationTime = (operationId: string) => {
     const data = telemetryData.find((telemetry) => {
       return telemetry.operation === operationId;
