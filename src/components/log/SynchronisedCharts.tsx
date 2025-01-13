@@ -33,9 +33,7 @@ const SynchronisedCharts = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/activity.json",
-        );
+        const response = await fetch("/activity.json");
 
         if (!response.ok) {
           throw new Error("Network response was not ok.");
@@ -123,7 +121,6 @@ const SynchronisedCharts = () => {
         valueSuffix: ` ${dataset.unit}`,
       },
     };
-
     return (
       <HighchartsReact
         highcharts={Highcharts}
