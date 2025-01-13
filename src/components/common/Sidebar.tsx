@@ -12,6 +12,8 @@ export default function Sidebar() {
     fetchRobotData,
     telemetryData,
     fetchTelemetryData,
+    setSelectedOperation,
+    toggleSelectedOperation,
   } = useData();
   const [operationTime, setOperationTime] = useState<Record<string, string>>(
     {},
@@ -31,8 +33,8 @@ export default function Sidebar() {
       );
     });
 
-    // 필터링된 operation에 대해 timestamp를 설정
-    const updatedTime = validOperations.reduce<{ [key: string]: string }>(
+    // 필터링된 operation의 운행시간
+    const validTimeData = validOperations.reduce<{ [key: string]: string }>(
       (acc, value) => {
         const timestamp = formatTimestamp(getOperationTime(value["_id"]));
         acc[value._id] = timestamp;
@@ -40,7 +42,8 @@ export default function Sidebar() {
       },
       {},
     );
-    setOperationTime(updatedTime);
+    setOperationTime(validTimeData);
+    setSelectedOperation(validTimeData);
   }, [operationData, telemetryData]);
 
   // 운행 시간 가져오기
@@ -101,6 +104,9 @@ export default function Sidebar() {
                             type="checkbox"
                             defaultChecked
                             className="checkbox checkbox-sm"
+                            onClick={() =>
+                              toggleSelectedOperation(operation._id)
+                            }
                           />
                           <span>{operationTime[operation._id]}</span>
                         </label>
