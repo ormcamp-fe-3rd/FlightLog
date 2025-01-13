@@ -9,7 +9,12 @@ export default function RegisterContent() {
 
   const schema = z
     .object({
-      name: z.string().min(2, { message: "이름은 2글자 이상이어야 합니다." }),
+      name: z
+        .string()
+        .min(2, { message: "이름은 2글자 이상이어야 합니다." })
+        .refine((val) => /^[가-힣a-zA-Z\s]+$/.test(val), {
+          message: "이름에는 한글, 영문만 입력 가능합니다.",
+        }),
       email: z
         .string()
         .email({ message: "올바른 이메일을 입력해주세요." })
@@ -38,14 +43,13 @@ export default function RegisterContent() {
   const {
     register,
     handleSubmit,
+    trigger,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
       email: "",
-      tel: "",
-      role: "",
       password: "",
       passwordConfirm: "",
     },
@@ -71,7 +75,7 @@ export default function RegisterContent() {
         <input
           type="text"
           id="name"
-          placeholder="2글자 이상 입력해주세요"
+          placeholder="한글 혹은 영문으로 2글자 이상 입력해주세요"
           className={`input input-sm input-bordered mt-1 w-full ${errors.name ? "border-red-500 focus:border-red-500" : "focus:border-blue-500"} focus:outline-none`}
           required
           {...register("name")}
@@ -102,9 +106,19 @@ export default function RegisterContent() {
           type="password"
           id="password"
           placeholder="숫자, 특수문자를 포함한 5자 이상 입력해주세요."
-          className={`input input-sm input-bordered mt-1 w-full ${errors.password ? "border-red-500 focus:border-red-500" : "focus:border-blue-500"} focus:outline-none`}
+          className={`input input-sm input-bordered mt-1 w-full ${
+            errors.password
+              ? "border-red-500 focus:border-red-500"
+              : "focus:border-blue-500"
+          } focus:outline-none`}
           required
-          {...register("password")}
+          {...register("password", {
+            onChange: (e) => {
+              if (e.target.form.passwordConfirm.value !== "") {
+                trigger("passwordConfirm");
+              }
+            },
+          })}
         />
         {errors.password && (
           <p className="mt-1 text-xs text-error">{errors.password.message}</p>
