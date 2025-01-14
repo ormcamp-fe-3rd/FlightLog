@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import useLoginModalStore from "@/store/useLoginModal";
 import LoginContent from "@/components/home/LoginContent";
 import RegisterContent from "@/components/home/RegisterContent";
+import SocialLoginButton from "@/components/home/SocialLoginButton";
 
 export default function AuthModal() {
   const { toggle, isLoginModalOpen } = useLoginModalStore();
@@ -30,6 +31,9 @@ export default function AuthModal() {
         onClick={(e) => e.stopPropagation()}
       >
         {register === true ? <RegisterContent /> : <LoginContent />}
+
+        <SocialLoginButton />
+
         <p className="mt-4 text-center text-sm text-gray-700">
           {register === true
             ? `이미 계정이 있으신가요?`
