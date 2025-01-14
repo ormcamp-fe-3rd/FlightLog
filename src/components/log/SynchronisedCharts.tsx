@@ -109,6 +109,13 @@ const SynchronisedCharts = () => {
           text: dataset.unit,
         },
       },
+      plotOptions: {
+        series: {
+          animation: {
+            duration: 2500,
+          },
+        },
+      },
       series: [
         {
           name: dataset.name,
