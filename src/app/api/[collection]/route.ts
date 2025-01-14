@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { fetchCollection } from "@/lib/dbService";
+import isValidCollectionName from "@/lib/validators";
 
 export async function GET(
   req: Request,
@@ -9,7 +10,7 @@ export async function GET(
   const url = new URL(req.url);
   const query = Object.fromEntries(url.searchParams.entries());
 
-  if (!collection || typeof collection !== "string") {
+  if (!isValidCollectionName(collection)) {
     return NextResponse.json(
       { error: "Collection name error" },
       { status: 400 },
