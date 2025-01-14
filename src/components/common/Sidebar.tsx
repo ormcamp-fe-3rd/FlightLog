@@ -97,13 +97,13 @@ export default function Sidebar() {
       {!isLoading ? (
         <div className="flex flex-col gap-5">
           <h2 className="font-bold">Operations</h2>
-          {robotIds.map((value) => {
+          {robotIds.map((robotId) => {
             return (
-              <div key={value} className="flex flex-col gap-5">
-                <div>{robotNames[value]}</div>
+              <div key={robotId} className="flex flex-col gap-5">
+                <div>{robotNames[robotId]}</div>
                 {operationData.map((operation) => {
                   if (
-                    operation["robot"] === value &&
+                    operation["robot"] === robotId &&
                     operationTime[operation["_id"]]
                   ) {
                     return (
@@ -113,7 +113,7 @@ export default function Sidebar() {
                             type="checkbox"
                             defaultChecked
                             className="checkbox checkbox-sm"
-                            onClick={() =>
+                            onChange={() =>
                               toggleSelectedOperation(operation._id)
                             }
                           />
