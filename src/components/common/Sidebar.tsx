@@ -18,7 +18,7 @@ export default function Sidebar() {
   const [operationTime, setOperationTime] = useState<Record<string, string>>(
     {},
   );
-  const positionData = telemetryData[30] || [];
+  const positionData = telemetryData[33] || [];
 
   useEffect(() => {
     fetchOperationData();
