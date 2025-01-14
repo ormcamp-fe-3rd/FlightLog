@@ -21,7 +21,13 @@ interface Dataset {
   data: number[];
 }
 
-const SynchronisedCharts = () => {
+interface SynchronisedChartsProps {
+  numOfDatasets?: number;
+}
+
+const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
+  numOfDatasets = 2,
+}) => {
   interface ChartData {
     xData: number[];
     datasets: Dataset[];
@@ -157,11 +163,20 @@ const SynchronisedCharts = () => {
   };
 
   return (
-    <div onMouseMove={handleMouseMove} onTouchMove={handleMouseMove}>
+    <div
+      onMouseMove={handleMouseMove}
+      onTouchMove={handleMouseMove}
+      className="grid grid-cols-2"
+    >
       {loading ? (
         <p>Loading...</p>
       ) : (
-        chartData && chartData.datasets.map(renderChart)
+        chartData &&
+        chartData.datasets
+          .slice(0, numOfDatasets) // props를 사용하여 데이터셋 개수 조정
+          .map((dataset, index) => (
+            <div key={dataset.name}>{renderChart(dataset, index)}</div>
+          ))
       )}
     </div>
   );
