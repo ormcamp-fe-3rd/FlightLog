@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
@@ -9,10 +9,46 @@ interface MultipleAxesChartsProps {
   chartHeight?: number;
 }
 
+interface Dataset {
+  name: string;
+  type: string;
+  unit: string;
+  data: number[];
+}
+
 const WeatherChart: React.FC<MultipleAxesChartsProps> = ({
   chartHeight = 400,
   chartWidth = 800,
 }) => {
+  interface ChartData {
+    xData: number[];
+    datasets: Dataset[];
+  }
+
+  const [chartData, setChartData] = useState<ChartData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/activity.json");
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok.");
+        }
+
+        const json = await response.json();
+        setChartData(json);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const options = {
     chart: {
       zooming: {
