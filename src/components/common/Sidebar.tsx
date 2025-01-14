@@ -37,8 +37,10 @@ export default function Sidebar() {
     // 필터링된 operation의 운행시간
     const validTimeData = validOperations.reduce<{ [key: string]: string }>(
       (acc, value) => {
-        const timestamp = formatTimestamp(getOperationTime(value["_id"]));
-        acc[value._id] = timestamp;
+        const timestamp = getOperationTime(value["_id"]);
+        if (timestamp !== "No timestamp found") {
+          acc[value._id] = formatTimestamp(timestamp);
+        }
         return acc;
       },
       {},
