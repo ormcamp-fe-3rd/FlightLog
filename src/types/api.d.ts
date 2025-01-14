@@ -13,7 +13,7 @@ export interface Telemetries {
   operation: string;
   robot: string;
   msgId: string;
-  payload: object;
+  payload: Record<string, any>;
   timestamp: string;
   __v: number;
 }
