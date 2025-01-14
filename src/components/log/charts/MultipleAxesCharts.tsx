@@ -3,14 +3,23 @@ import React from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-const WeatherChart: React.FC = () => {
-  const colours = Highcharts.getOptions().colors;
+interface MultipleAxesChartsProps {
+  numOfDatasets?: number;
+  chartWidth?: number;
+  chartHeight?: number;
+}
 
+const WeatherChart: React.FC<MultipleAxesChartsProps> = ({
+  chartHeight = 400,
+  chartWidth = 800,
+}) => {
   const options = {
     chart: {
       zooming: {
         type: "xy",
       },
+      height: chartHeight,
+      width: chartWidth,
     },
     title: {
       text: "Average Monthly Weather Data for Tokyo",
