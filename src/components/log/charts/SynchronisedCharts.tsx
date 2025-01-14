@@ -23,10 +23,14 @@ interface Dataset {
 
 interface SynchronisedChartsProps {
   numOfDatasets?: number;
+  chartWidth?: number;
+  chartHeight?: number;
 }
 
 const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
   numOfDatasets = 2,
+  chartWidth = 400,
+  chartHeight = 200,
 }) => {
   interface ChartData {
     xData: number[];
@@ -92,6 +96,8 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
         zooming: {
           type: "x",
         },
+        width: chartWidth,
+        height: chartHeight,
       },
       title: {
         text: dataset.name,
