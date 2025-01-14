@@ -18,6 +18,7 @@ export default function Sidebar() {
   const [operationTime, setOperationTime] = useState<Record<string, string>>(
     {},
   );
+  const positionData = telemetryData[30] || [];
 
   useEffect(() => {
     fetchOperationData();
@@ -28,7 +29,7 @@ export default function Sidebar() {
   useEffect(() => {
     // telemetryData에 기록이 있는 operation만 필터링
     const validOperations = operationData.filter((operation) => {
-      return telemetryData.some(
+      return positionData.some(
         (telemetry) => telemetry.operation === operation._id,
       );
     });
@@ -48,7 +49,7 @@ export default function Sidebar() {
 
   // 운행 시간 가져오기
   const getOperationTime = (operationId: string) => {
-    const data = telemetryData.find((telemetry) => {
+    const data = positionData.find((telemetry) => {
       return telemetry.operation === operationId;
     });
     return data ? data.timestamp : "No timestamp found";
@@ -66,7 +67,7 @@ export default function Sidebar() {
   const isLoading = !(
     operationData.length > 0 &&
     robotNames &&
-    telemetryData.length > 0
+    positionData.length > 0
   );
 
   return (
