@@ -34,23 +34,23 @@ export default function Sidebar() {
       );
     });
 
-    // 필터링된 operation의 운행시간
-    const validTimeData = validOperations.reduce<{ [key: string]: string }>(
-      (acc, value) => {
-        const timestamp = getOperationTime(value["_id"]);
-        if (timestamp !== "No timestamp found") {
-          acc[value._id] = formatTimestamp(timestamp);
-        }
-        return acc;
-      },
-      {},
-    );
-    setOperationTime(validTimeData);
-    setSelectedOperation(validTimeData);
+    // 필터링된 operation의 라벨(운행 시작시간)
+    const validOperationLabel = validOperations.reduce<{
+      [key: string]: string;
+    }>((acc, value) => {
+      const timestamp = findOperationStartTime(value["_id"]);
+      if (timestamp !== "No timestamp found") {
+        acc[value._id] = formatTimestamp(timestamp);
+      }
+      return acc;
+    }, {});
+
+    setOperationTime(validOperationLabel);
+    setSelectedOperation(validOperationLabel);
   }, [operationData, telemetryData]);
 
-  // 운행 시간 가져오기
-  const getOperationTime = (operationId: string) => {
+  // 운행 시작시간 가져오기
+  const findOperationStartTime = (operationId: string) => {
     const data = positionData.find((telemetry) => {
       return telemetry.operation === operationId;
     });
