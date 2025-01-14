@@ -9,7 +9,7 @@ interface DataState {
   robotData: Robot[];
   fetchRobotData: () => Promise<void>;
 
-  telemetryData: Telemetries[];
+  telemetryData: { [key: string]: Telemetries[] };
   fetchTelemetryData: () => Promise<void>;
 
   selectedOperationId: string[];
@@ -30,10 +30,25 @@ const useData = create<DataState>((set) => ({
     set({ robotData: result });
   },
 
-  telemetryData: [],
+  telemetryData: {},
   fetchTelemetryData: async () => {
     const result = await fetchData("telemetries");
-    set({ telemetryData: result });
+
+    // msgId별로 데이터를 배열로 저장
+    const categorizedData = result.reduce(
+      (acc: { [key: string]: Telemetries[] }, data: Telemetries) => {
+        const { msgId } = data; // msgId 추출
+
+        if (!acc[msgId]) {
+          acc[msgId] = [];
+        }
+        acc[msgId].push(data);
+
+        return acc;
+      },
+      {},
+    );
+    set({ telemetryData: categorizedData });
   },
 
   selectedOperationId: [],
