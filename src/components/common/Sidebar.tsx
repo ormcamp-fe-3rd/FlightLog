@@ -54,7 +54,13 @@ export default function Sidebar() {
     const data = positionData.find((telemetry) => {
       return telemetry.operation === operationId;
     });
-    return data ? data.timestamp : "No timestamp found";
+
+    if (data && data.timestamp) {
+      return data.timestamp;
+    } else {
+      console.warn(`No timestamp found for operation ID: ${operationId}`);
+      return "No timestamp found";
+    }
   };
 
   const robotIds = [...new Set(operationData.map((value) => value["robot"]))];
