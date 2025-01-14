@@ -7,7 +7,8 @@ export default function LogPage() {
     <div className="flex">
       <Sidebar />
       <div className="block">
-        <SynchronisedCharts numOfDatasets={4} />
+        <MultipleAxesCharts />
+        <SynchronisedCharts numOfDatasets={2} />
       </div>
     </div>
   );
