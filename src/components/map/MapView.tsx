@@ -14,6 +14,7 @@ import React, { useEffect, useState } from "react";
 import { getColorFromId } from "@/utils/getColorFromId";
 import { formatTimeString } from "@/utils/formatTimestamp";
 
+<<<<<<< HEAD
 interface MapViewProps {
   selectedFlight: string;
   progress: number;
@@ -25,6 +26,13 @@ export default function MapView({
   progress,
   onMarkerClick,
 }: MapViewProps) {
+=======
+interface Props {
+  progress: number;
+}
+
+export default function MapView({ progress }: Props) {
+>>>>>>> 2742578 ([feat] 프로그래스바 조작에 맞춰 드론마커 위치 업데이트)
   const { telemetryData, selectedOperationId } = useData();
   const [operationLatlngs, setOperationLatlngs] = useState<
     Record<string, [number, number][]>
@@ -87,18 +95,24 @@ export default function MapView({
           if (operationLatlngs[id] && operationLatlngs[id].length > 0) {
             // Progress 비율에 따라 위치 계산
             const totalSteps = operationLatlngs[id].length;
+<<<<<<< HEAD
             const index =
               selectedFlight === "all" || selectedFlight === id
                 ? Math.floor((progress / 100) * (totalSteps - 1))
                 : 0;
             const currentPosition = operationLatlngs[id][index];
             const currentTime = getOperationTimes(id)[index];
+=======
+            const index = Math.floor((progress / 100) * (totalSteps - 1));
+            const currentPosition = operationLatlngs[id][index];
+>>>>>>> 2742578 ([feat] 프로그래스바 조작에 맞춰 드론마커 위치 업데이트)
             return (
               <React.Fragment key={id}>
                 <Polyline
                   positions={operationLatlngs[id]}
                   pathOptions={{ color: getColorFromId(id) }}
                 />
+<<<<<<< HEAD
                 <Marker
                   position={currentPosition}
                   icon={icon}
@@ -109,6 +123,14 @@ export default function MapView({
                       <p>시간: {formatTimeString(currentTime)}</p>
                       <p>위도: {currentPosition[0].toFixed(4)}</p>
                       <p>경도: {currentPosition[1].toFixed(4)}</p>
+=======
+                <Marker position={currentPosition} icon={icon}>
+                  <Popup>
+                    <div>
+                      <p>운행 ID: {id}</p>
+                      <p>위도: {currentPosition[0]}</p>
+                      <p>경도: {currentPosition[1]}</p>
+>>>>>>> 2742578 ([feat] 프로그래스바 조작에 맞춰 드론마커 위치 업데이트)
                     </div>
                   </Popup>
                 </Marker>
