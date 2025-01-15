@@ -1,6 +1,8 @@
 import { MongoClient } from "mongodb";
-const url = process.env.MONGODB_URL;
-const options = { useNewUrlParser: true };
+
+const url = process.env.MONGODB_URL || "";
+const options = {};
+
 let connectDB: Promise<MongoClient>;
 
 if (process.env.NODE_ENV === "development") {
