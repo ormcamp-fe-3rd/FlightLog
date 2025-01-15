@@ -42,7 +42,6 @@ export default function RegisterContent() {
 
   const {
     register,
-    handleSubmit,
     trigger,
     formState: { errors, isValid },
   } = useForm({
@@ -56,11 +55,6 @@ export default function RegisterContent() {
     mode: "onChange",
   });
 
-  const onSubmit = (data: any) => {
-    //추후에 회원가입 로직 추가하기
-    console.log(data);
-  };
-
   return (
     <div>
       <div className="flex justify-between">
@@ -69,7 +63,12 @@ export default function RegisterContent() {
           ✖️
         </button>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="text-black" noValidate>
+      <form
+        method="POST"
+        action="/api/auth/register"
+        className="text-black"
+        noValidate
+      >
         <label htmlFor="name" className="label label-text pb-0">
           이름
         </label>
