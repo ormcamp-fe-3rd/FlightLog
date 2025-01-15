@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, useGLTF, useTexture } from "@react-three/drei";
+import { CameraControls, useGLTF, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
 function Drone() {
@@ -38,7 +38,7 @@ function Drone() {
 
 export default function AttitudePanel() {
   return (
-    <div className="flex h-full w-full flex-col justify-between p-4">
+    <div className="flex h-full w-full flex-col justify-between rounded-[30px] bg-white p-4">
       <div>
         <div>Roll: </div>
         <div>Pitch: </div>
@@ -58,7 +58,7 @@ export default function AttitudePanel() {
           <ambientLight intensity={0.5} /> //조명
           <directionalLight intensity={1.5} position={[5, 10, 5]} /> //조명
           <Drone /> // 3D모델
-          <OrbitControls /> //마우스컨트롤
+          <CameraControls /> //마우스컨트롤
         </Canvas>
       </div>
       <div className="flex w-full justify-between">
