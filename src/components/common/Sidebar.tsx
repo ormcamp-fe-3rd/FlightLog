@@ -1,6 +1,83 @@
+import { fetchData } from "@/lib/fetchClient";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { formatTimestamp } from "@/utils/formatTimestamp";
+import useData from "@/store/useData";
 
 export default function Sidebar() {
+  const {
+    operationData,
+    fetchOperationData,
+    robotData,
+    fetchRobotData,
+    telemetryData,
+    fetchTelemetryData,
+    setSelectedOperation,
+    toggleSelectedOperation,
+  } = useData();
+  const [operationTime, setOperationTime] = useState<Record<string, string>>(
+    {},
+  );
+  const positionData = telemetryData[33] || [];
+
+  useEffect(() => {
+    fetchOperationData();
+    fetchRobotData();
+    fetchTelemetryData();
+  }, []);
+
+  useEffect(() => {
+    // telemetryData에 기록이 있는 operation만 필터링
+    const validOperations = operationData.filter((operation) => {
+      return positionData.some(
+        (telemetry) => telemetry.operation === operation._id,
+      );
+    });
+
+    // 필터링된 operation의 라벨(운행 시작시간)
+    const validOperationLabel = validOperations.reduce<{
+      [key: string]: string;
+    }>((acc, value) => {
+      const timestamp = findOperationStartTime(value["_id"]);
+      if (timestamp !== "No timestamp found") {
+        acc[value._id] = formatTimestamp(timestamp);
+      }
+      return acc;
+    }, {});
+
+    setOperationTime(validOperationLabel);
+    setSelectedOperation(validOperationLabel);
+  }, [operationData, telemetryData]);
+
+  // 운행 시작시간 가져오기
+  const findOperationStartTime = (operationId: string) => {
+    const data = positionData.find((telemetry) => {
+      return telemetry.operation === operationId;
+    });
+
+    if (data && data.timestamp) {
+      return data.timestamp;
+    } else {
+      console.warn(`No timestamp found for operation ID: ${operationId}`);
+      return "No timestamp found";
+    }
+  };
+
+  const robotIds = [...new Set(operationData.map((value) => value["robot"]))];
+  const robotNames = robotData.reduce(
+    (acc, robot) => {
+      acc[robot._id] = robot.name;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
+  const isLoading = !(
+    operationData.length > 0 &&
+    robotNames &&
+    positionData.length > 0
+  );
+
   return (
     <aside className="flex h-[calc(100vh-56px)] w-60 flex-col gap-5 border-r bg-white p-4 text-lg">
       <div className="flex flex-col gap-5">
@@ -17,55 +94,42 @@ export default function Sidebar() {
         </nav>
       </div>
       <hr className="border-[#D9D9D9]" />
-      <div className="flex flex-col gap-5">
-        <h2 className="font-bold">Operations</h2>
-        <div className="flex flex-col gap-4">
-          <div>Robot1</div>
-          <div className="flex flex-col pl-4">
-            <label className="flex cursor-pointer items-center gap-3">
-              <input
-                type="checkbox"
-                defaultChecked
-                className="checkbox checkbox-sm"
-              />
-              <span className="">operation1</span>
-            </label>
-          </div>
-          <div className="flex flex-col pl-4">
-            <label className="flex cursor-pointer items-center gap-3">
-              <input
-                type="checkbox"
-                defaultChecked
-                className="checkbox checkbox-sm"
-              />
-              <span className="">operation2</span>
-            </label>
-          </div>
+      {!isLoading ? (
+        <div className="flex flex-col gap-5">
+          <h2 className="font-bold">Operations</h2>
+          {robotIds.map((robotId) => {
+            return (
+              <div key={robotId} className="flex flex-col gap-5">
+                <div>{robotNames[robotId]}</div>
+                {operationData.map((operation) => {
+                  if (
+                    operation["robot"] === robotId &&
+                    operationTime[operation["_id"]]
+                  ) {
+                    return (
+                      <div key={operation._id} className="flex flex-col pl-4">
+                        <label className="flex cursor-pointer items-center gap-3">
+                          <input
+                            type="checkbox"
+                            defaultChecked
+                            className="checkbox checkbox-sm"
+                            onChange={() =>
+                              toggleSelectedOperation(operation._id)
+                            }
+                          />
+                          <span>{operationTime[operation._id]}</span>
+                        </label>
+                      </div>
+                    );
+                  }
+                })}
+              </div>
+            );
+          })}
         </div>
-        <div className="flex flex-col gap-4">
-          <div>Robot2</div>
-          <div className="flex flex-col pl-4">
-            <label className="flex cursor-pointer items-center gap-3">
-              <input
-                type="checkbox"
-                defaultChecked
-                className="checkbox checkbox-sm"
-              />
-              <span className="">operation1</span>
-            </label>
-          </div>
-          <div className="flex flex-col pl-4">
-            <label className="flex cursor-pointer items-center gap-3">
-              <input
-                type="checkbox"
-                defaultChecked
-                className="checkbox checkbox-sm"
-              />
-              <span className="">operation2</span>
-            </label>
-          </div>
-        </div>
-      </div>
+      ) : (
+        "Loading..."
+      )}
     </aside>
   );
 }
