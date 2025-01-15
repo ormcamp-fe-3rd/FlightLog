@@ -13,7 +13,11 @@ import useData from "@/store/useData";
 import React, { useEffect, useState } from "react";
 import { getColorFromId } from "@/utils/getColorFromId";
 
-export default function MapView() {
+interface Props {
+  progress: number;
+}
+
+export default function MapView({ progress }: Props) {
   const { telemetryData, selectedOperationId } = useData();
   const [operationLatlngs, setOperationLatlngs] = useState<
     Record<string, [number, number][]>
@@ -69,20 +73,22 @@ export default function MapView() {
         />
         {selectedOperationId.map((id) => {
           if (operationLatlngs[id] && operationLatlngs[id].length > 0) {
-            const latestPosition =
-              operationLatlngs[id][operationLatlngs[id].length - 1];
+            // Progress 비율에 따라 위치 계산
+            const totalSteps = operationLatlngs[id].length;
+            const index = Math.floor((progress / 100) * (totalSteps - 1));
+            const currentPosition = operationLatlngs[id][index];
             return (
               <React.Fragment key={id}>
                 <Polyline
                   positions={operationLatlngs[id]}
                   pathOptions={{ color: getColorFromId(id) }}
                 />
-                <Marker position={latestPosition} icon={icon}>
+                <Marker position={currentPosition} icon={icon}>
                   <Popup>
                     <div>
                       <p>운행 ID: {id}</p>
-                      <p>위도: {latestPosition[0]}</p>
-                      <p>경도: {latestPosition[1]}</p>
+                      <p>위도: {currentPosition[0]}</p>
+                      <p>경도: {currentPosition[1]}</p>
                     </div>
                   </Popup>
                 </Marker>
