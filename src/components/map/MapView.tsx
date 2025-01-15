@@ -19,7 +19,10 @@ export default function MapView() {
     Record<string, [number, number][]>
   >({});
 
-  const icon = L.icon({ iconUrl: "/images/map/marker-icon.png" });
+  const icon = L.icon({
+    iconUrl: "/images/map/marker-icon.png",
+    iconSize: [30, 30],
+  });
 
   // 운행별 위치 데이터 반환
   const getOperationlatlings = (operationId: string) => {
@@ -66,12 +69,23 @@ export default function MapView() {
         />
         {selectedOperationId.map((id) => {
           if (operationLatlngs[id] && operationLatlngs[id].length > 0) {
+            const latestPosition =
+              operationLatlngs[id][operationLatlngs[id].length - 1];
             return (
               <React.Fragment key={id}>
                 <Polyline
                   positions={operationLatlngs[id]}
                   pathOptions={{ color: getColorFromId(id) }}
-                ></Polyline>
+                />
+                <Marker position={latestPosition} icon={icon}>
+                  <Popup>
+                    <div>
+                      <p>운행 ID: {id}</p>
+                      <p>위도: {latestPosition[0]}</p>
+                      <p>경도: {latestPosition[1]}</p>
+                    </div>
+                  </Popup>
+                </Marker>
               </React.Fragment>
             );
           }
