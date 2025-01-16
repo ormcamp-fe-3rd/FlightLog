@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 
 declare global {
-  let _mongo: Promise<MongoClient> | undefined;
+  var _mongo: Promise<MongoClient> | undefined;
 }
 
 const url = process.env.MONGODB_URL;
