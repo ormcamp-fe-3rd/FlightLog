@@ -23,18 +23,6 @@ export default function FlightProgressBar({ progress, setProgress }: Props) {
         className="range"
         step="0.1"
       />
-      <div className="flex w-full justify-between px-2 text-xs">
-        {[0, 25, 50, 75, 100].map((mark) => (
-          <span
-            key={mark}
-            className={`marker ${
-              progress >= mark ? "text-black" : "text-gray-400"
-            }`}
-          >
-            |
-          </span>
-        ))}
-      </div>
     </>
   );
 }
