@@ -1,8 +1,10 @@
-import { fetchData } from "@/lib/fetchClient";
+"use client";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { formatTimestamp } from "@/utils/formatTimestamp";
 import useData from "@/store/useData";
+import { PAGES } from "@/constants";
 
 export default function Sidebar() {
   const {
@@ -83,14 +85,12 @@ export default function Sidebar() {
       <div className="flex flex-col gap-5">
         <h2 className="font-bold">Pages</h2>
         <nav className="flex flex-col gap-5 pl-4">
-          <Link href="/map" className="flex gap-4">
-            <img src="/images/common/icon-map.svg" alt="Map page" />
-            <span>Map</span>
-          </Link>
-          <Link href="/log" className="flex gap-4">
-            <img src="/images/common/icon-pie-chart.svg" alt="Log page" />
-            <span>LogPage</span>
-          </Link>
+          {PAGES.map((page) => (
+            <Link href={page.id} key={page.id} className="flex gap-4">
+              <img src={page.icon} alt={page.title} />
+              <span>{page.title}</span>
+            </Link>
+          ))}
         </nav>
       </div>
       <hr className="border-[#D9D9D9]" />
