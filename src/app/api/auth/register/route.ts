@@ -16,14 +16,23 @@ export async function POST(req: Request) {
 
     const db = (await connectDB).db("user");
 
-    if (data.email === db.collection("account").email) {
-      alert("이미 가입한 회원입니다.");
+    if (await db.collection("account").findOne({ email: data.email })) {
+      return NextResponse.json(
+        { message: "이미 가입한 회원입니다." },
+        { status: 400 },
+      );
     } else {
       await db.collection("account").insertOne(data);
     }
 
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.json(
+      { message: "가입이 완료되었습니다." },
+      { status: 200 },
+    );
   } catch (error) {
-    return NextResponse.json({ message: "가입 실패" }, { status: 500 });
+    return NextResponse.json(
+      { message: "가입에 실패했습니다." },
+      { status: 500 },
+    );
   }
 }
