@@ -1,5 +1,8 @@
+"use client";
+
 import useLoginModalStore from "@/store/useLoginModal";
 import { useForm } from "react-hook-form";
+import { signIn } from "next-auth/react";
 
 export default function LoginContent() {
   const { toggle } = useLoginModalStore();
@@ -7,6 +10,7 @@ export default function LoginContent() {
   const {
     register,
     formState: { isValid },
+    handleSubmit,
   } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -14,6 +18,25 @@ export default function LoginContent() {
       password: "",
     },
   });
+
+  const onSubmit = async (data: { email: string; password: string }) => {
+    try {
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (result.error) {
+        alert(result.error);
+      } else {
+        toggle();
+      }
+    } catch (error) {
+      alert("로그인 중 오류가 발생했습니다.");
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -24,7 +47,7 @@ export default function LoginContent() {
         </button>
       </div>
 
-      <form className="text-black" noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} className="text-black" noValidate>
         <label htmlFor="email" className="label label-text pb-0">
           이메일
         </label>

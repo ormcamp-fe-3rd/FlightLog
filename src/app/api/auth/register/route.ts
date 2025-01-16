@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "../../../../util/common/database";
 import bcrypt from "bcrypt";
-import { redirect } from "next/navigation";
 
 export async function POST(req: Request) {
   try {
@@ -16,7 +15,12 @@ export async function POST(req: Request) {
     data.password = hash;
 
     const db = (await connectDB).db("user");
-    await db.collection("account").insertOne(data);
+
+    if (data.email === db.collection("account").email) {
+      alert("이미 가입한 회원입니다.");
+    } else {
+      await db.collection("account").insertOne(data);
+    }
 
     return NextResponse.redirect(new URL("/", req.url));
   } catch (error) {
