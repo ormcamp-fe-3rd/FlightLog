@@ -6,37 +6,15 @@ import AttitudePanel from "@/components/map/AttitudePanel";
 import FlightProgressBar from "@/components/map/FlightProgressBar";
 import MapView from "@/components/map/MapView";
 import ControlPanel from "@/components/map/ControlPanel";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useSidebarStore from "@/store/useSidebar";
-import { BREAKPOINTS } from "@/constants";
+import useResizePanelControl from "@/hooks/useResizePanelControl";
 
 export default function MapPage() {
-  const { isSidebarOpen, close, open } = useSidebarStore();
-  const [isStatusOpen, setIsStatusOpen] = useState(true);
-  const [isAttitudeOpen, setIsAttitudeOpen] = useState(true);
+  const { isSidebarOpen } = useSidebarStore();
+  const { isStatusOpen, setIsStatusOpen, isAttitudeOpen, setIsAttitudeOpen } =
+    useResizePanelControl();
   const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const isDesktop = window.innerWidth > BREAKPOINTS.TABLET;
-      if (!isDesktop) {
-        close();
-        setIsStatusOpen(false);
-        setIsAttitudeOpen(false);
-      } else {
-        open();
-        setIsStatusOpen(true);
-        setIsAttitudeOpen(true);
-      }
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [close, open]);
 
   const toggleStatusPanel = () => {
     setIsStatusOpen(!isStatusOpen);
@@ -73,7 +51,7 @@ export default function MapPage() {
         </div>
         <div className="absolute bottom-7 left-1/2 z-10 w-1/2 min-w-80 -translate-x-1/2">
           <FlightProgressBar progress={progress} setProgress={setProgress} />
-          <div className="hidden justify-center md:flex">
+          <div className="flex justify-center">
             <ControlPanel
               onFlightInfoClick={toggleStatusPanel}
               onAttitudeClick={toggleAttitudePanel}
