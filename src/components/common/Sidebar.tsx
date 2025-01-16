@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { formatTimestamp } from "@/utils/formatTimestamp";
 import useData from "@/store/useData";
 import { PAGES } from "@/constants";
+import findOperationStartTime from "@/utils/findOperationStartTime";
 
 export default function Sidebar() {
   const {
@@ -14,12 +15,11 @@ export default function Sidebar() {
     fetchRobotData,
     telemetryData,
     fetchTelemetryData,
+    validOperationLabels,
+    setValidOperationLabel,
     setSelectedOperation,
     toggleSelectedOperation,
   } = useData();
-  const [operationTime, setOperationTime] = useState<Record<string, string>>(
-    {},
-  );
   const positionData = telemetryData[33] || [];
 
   useEffect(() => {
@@ -40,30 +40,16 @@ export default function Sidebar() {
     const validOperationLabel = validOperations.reduce<{
       [key: string]: string;
     }>((acc, value) => {
-      const timestamp = findOperationStartTime(value["_id"]);
+      const timestamp = findOperationStartTime(value["_id"], positionData);
       if (timestamp !== "No timestamp found") {
         acc[value._id] = formatTimestamp(timestamp);
       }
       return acc;
     }, {});
 
-    setOperationTime(validOperationLabel);
+    setValidOperationLabel(validOperationLabel);
     setSelectedOperation(validOperationLabel);
   }, [operationData, telemetryData]);
-
-  // 운행 시작시간 가져오기
-  const findOperationStartTime = (operationId: string) => {
-    const data = positionData.find((telemetry) => {
-      return telemetry.operation === operationId;
-    });
-
-    if (data && data.timestamp) {
-      return data.timestamp;
-    } else {
-      console.warn(`No timestamp found for operation ID: ${operationId}`);
-      return "No timestamp found";
-    }
-  };
 
   const robotIds = [...new Set(operationData.map((value) => value["robot"]))];
   const robotNames = robotData.reduce(
@@ -104,7 +90,7 @@ export default function Sidebar() {
                 {operationData.map((operation) => {
                   if (
                     operation["robot"] === robotId &&
-                    operationTime[operation["_id"]]
+                    validOperationLabels[operation["_id"]]
                   ) {
                     return (
                       <div key={operation._id} className="flex flex-col pl-4">
@@ -117,7 +103,7 @@ export default function Sidebar() {
                               toggleSelectedOperation(operation._id)
                             }
                           />
-                          <span>{operationTime[operation._id]}</span>
+                          <span>{validOperationLabels[operation._id]}</span>
                         </label>
                       </div>
                     );

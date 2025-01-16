@@ -12,6 +12,9 @@ interface DataState {
   telemetryData: { [key: string]: Telemetries[] };
   fetchTelemetryData: () => Promise<void>;
 
+  validOperationLabels: Record<string, string>;
+  setValidOperationLabel: (labels: Record<string, string>) => void;
+
   selectedOperationId: string[];
   setSelectedOperation: (operations: Record<string, string>) => void;
   toggleSelectedOperation: (operationId: string) => void;
@@ -49,6 +52,11 @@ const useData = create<DataState>((set) => ({
       {},
     );
     set({ telemetryData: categorizedData });
+  },
+
+  validOperationLabels: {},
+  setValidOperationLabel: (labels) => {
+    set({ validOperationLabels: labels });
   },
 
   selectedOperationId: [],
