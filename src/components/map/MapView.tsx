@@ -17,9 +17,14 @@ import { formatTimeString } from "@/utils/formatTimestamp";
 interface MapViewProps {
   selectedFlight: string;
   progress: number;
+  onMarkerClick: (id: string) => void;
 }
 
-export default function MapView({ selectedFlight, progress }: MapViewProps) {
+export default function MapView({
+  selectedFlight,
+  progress,
+  onMarkerClick,
+}: MapViewProps) {
   const { telemetryData, selectedOperationId } = useData();
   const [operationLatlngs, setOperationLatlngs] = useState<
     Record<string, [number, number][]>
@@ -94,7 +99,11 @@ export default function MapView({ selectedFlight, progress }: MapViewProps) {
                   positions={operationLatlngs[id]}
                   pathOptions={{ color: getColorFromId(id) }}
                 />
-                <Marker position={currentPosition} icon={icon}>
+                <Marker
+                  position={currentPosition}
+                  icon={icon}
+                  eventHandlers={{ click: () => onMarkerClick(id) }}
+                >
                   <Popup>
                     <div>
                       <p>시간: {formatTimeString(currentTime)}</p>
