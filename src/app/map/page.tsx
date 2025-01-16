@@ -8,6 +8,7 @@ import MapView from "@/components/map/MapView";
 import ControlPanel from "@/components/map/ControlPanel";
 import { useEffect, useState } from "react";
 import useSidebarStore from "@/store/useSidebar";
+import { BREAKPOINTS } from "@/constants";
 
 export default function MapPage() {
   const { isSidebarOpen, close, open } = useSidebarStore();
@@ -17,7 +18,7 @@ export default function MapPage() {
 
   useEffect(() => {
     const handleResize = () => {
-      const isDesktop = window.innerWidth > 744;
+      const isDesktop = window.innerWidth > BREAKPOINTS.TABLET;
       if (!isDesktop) {
         close();
         setIsStatusOpen(false);
