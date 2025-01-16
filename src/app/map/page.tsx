@@ -15,7 +15,7 @@ export default function MapPage() {
   const { isSidebarOpen } = useSidebarStore();
   const { isStatusOpen, setIsStatusOpen, isAttitudeOpen, setIsAttitudeOpen } =
     useResizePanelControl();
-  const [selectedFlight, setSelectedFlight] = useState("");
+  const [selectedFlight, setSelectedFlight] = useState("all");
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {

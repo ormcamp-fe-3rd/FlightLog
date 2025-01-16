@@ -12,7 +12,7 @@ export default function SelectFlightLog({ onSelect }: SelectFlightLogProps) {
         className="select select-bordered w-full max-w-xs"
         onChange={(e) => onSelect(e.target.value)}
       >
-        <option value="">Select Operation</option>
+        <option value="all">Select Operation</option>
         {selectedOperationId.map((id) => {
           return (
             <option key={id} value={id}>
