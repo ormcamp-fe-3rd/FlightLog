@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { connectDB } from "../../../../../util/database";
+import { connectDB } from "../../../../util/common/database";
 import bcrypt from "bcrypt";
 import { redirect } from "next/navigation";
 

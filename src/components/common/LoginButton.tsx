@@ -1,7 +1,7 @@
 "use client";
 import useLoginModalStore from "@/store/useLoginModal";
 import AuthModal from "@/components/home/AuthModal";
-import { AUTH_LOGIN } from "@/type/common/auth-type";
+import { AUTH_LOGIN } from "@/util/common/AuthLogin";
 
 import { signOut, useSession } from "next-auth/react";
 
@@ -11,8 +11,10 @@ export default function LoginButton() {
   return (
     <>
       <button
-        onClick={
-          session.status === AUTH_LOGIN.STATUS.AUTHENTICATED ? signOut : toggle
+        onClick={() =>
+          session.status === AUTH_LOGIN.STATUS.AUTHENTICATED
+            ? signOut()
+            : toggle()
         }
       >
         {session.status === AUTH_LOGIN.STATUS.AUTHENTICATED
