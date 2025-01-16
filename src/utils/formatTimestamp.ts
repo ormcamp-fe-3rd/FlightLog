@@ -22,3 +22,14 @@ export function formatTimestamp(timestamp: string) {
 
   return formattedDate;
 }
+
+export function formatTimeString(timestamp: string) {
+  const date = new Date(timestamp);
+  const timestring = date.toLocaleString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+
+  return timestring;
+}

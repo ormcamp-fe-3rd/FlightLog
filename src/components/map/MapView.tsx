@@ -12,12 +12,14 @@ import L from "leaflet";
 import useData from "@/store/useData";
 import React, { useEffect, useState } from "react";
 import { getColorFromId } from "@/utils/getColorFromId";
+import { formatTimeString } from "@/utils/formatTimestamp";
 
-interface Props {
+interface MapViewProps {
+  selectedFlight: string;
   progress: number;
 }
 
-export default function MapView({ progress }: Props) {
+export default function MapView({ selectedFlight, progress }: MapViewProps) {
   const { telemetryData, selectedOperationId } = useData();
   const [operationLatlngs, setOperationLatlngs] = useState<
     Record<string, [number, number][]>
@@ -33,15 +35,20 @@ export default function MapView({ progress }: Props) {
     const positionData = telemetryData[33] || []; // msgId 33 데이터(Position)
     const result = positionData
       .filter((data) => data.operation === operationId)
-      .reduce(
-        (acc, value) => {
-          const lat = value.payload.lat * 1e-7;
-          const lon = value.payload.lon * 1e-7;
-          acc.push([lat, lon]);
-          return acc;
-        },
-        [] as [number, number][],
-      );
+      .map((data) => {
+        const lat = data.payload.lat * 1e-7;
+        const lon = data.payload.lon * 1e-7;
+        return [lat, lon];
+      });
+    return result as [number, number][];
+  };
+
+  // 운행별 시간 데이터 반환
+  const getOperationTimes = (operationId: string) => {
+    const positionData = telemetryData[33] || []; // msgId 33 데이터(Position)
+    const result = positionData
+      .filter((data) => data.operation === operationId)
+      .map((data) => data.timestamp);
     return result;
   };
 
@@ -75,8 +82,12 @@ export default function MapView({ progress }: Props) {
           if (operationLatlngs[id] && operationLatlngs[id].length > 0) {
             // Progress 비율에 따라 위치 계산
             const totalSteps = operationLatlngs[id].length;
-            const index = Math.floor((progress / 100) * (totalSteps - 1));
+            const index =
+              selectedFlight === "all" || selectedFlight === id
+                ? Math.floor((progress / 100) * (totalSteps - 1))
+                : 0;
             const currentPosition = operationLatlngs[id][index];
+            const currentTime = getOperationTimes(id)[index];
             return (
               <React.Fragment key={id}>
                 <Polyline
@@ -86,9 +97,9 @@ export default function MapView({ progress }: Props) {
                 <Marker position={currentPosition} icon={icon}>
                   <Popup>
                     <div>
-                      <p>운행 ID: {id}</p>
-                      <p>위도: {currentPosition[0]}</p>
-                      <p>경도: {currentPosition[1]}</p>
+                      <p>시간: {formatTimeString(currentTime)}</p>
+                      <p>위도: {currentPosition[0].toFixed(4)}</p>
+                      <p>경도: {currentPosition[1].toFixed(4)}</p>
                     </div>
                   </Popup>
                 </Marker>
