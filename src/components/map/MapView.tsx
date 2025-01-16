@@ -38,14 +38,49 @@ export default function MapView({ progress }: Props) {
     Record<string, [number, number][]>
   >({});
 
-  const icon = L.icon({
-    iconUrl: "/images/map/marker-icon.png",
-    iconSize: [30, 30],
-  });
+  const calculateDirection = (
+    currentPoint: [number, number],
+    nextPoint: [number, number],
+  ) => {
+    const deltaY = nextPoint[0] - currentPoint[0];
+    const deltaX = nextPoint[1] - currentPoint[1];
+    const bearing = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
+    const droneHeading = (90 - bearing) % 360;
 
-  // 운행별 위치 데이터 반환
+    return droneHeading < 0 ? droneHeading + 360 : droneHeading;
+  };
+
+  const createRotatedIcon = (rotationAngle: number) =>
+    L.divIcon({
+      className: "",
+      html: `
+        <div 
+          style="
+            width: 30px; 
+            height: 30px; 
+            background: url('/images/map/marker-icon.png') no-repeat center/contain; 
+            transform: rotate(${rotationAngle}deg);
+            transition: transform 0.3s ease;
+          ">
+        </div>
+      `,
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
+    });
+
+  const interpolatePosition = (
+    position1: [number, number],
+    position2: [number, number],
+    factor: number,
+  ): [number, number] => {
+    return [
+      position1[0] + (position2[0] - position1[0]) * factor,
+      position1[1] + (position2[1] - position1[1]) * factor,
+    ];
+  };
+
   const getOperationlatlings = (operationId: string) => {
-    const positionData = telemetryData[33] || []; // msgId 33 데이터(Position)
+    const positionData = telemetryData[33] || [];
     const result = positionData
       .filter((data) => data.operation === operationId)
       .map((data) => {
@@ -93,6 +128,7 @@ export default function MapView({ progress }: Props) {
         />
         {selectedOperationId.map((id) => {
           if (operationLatlngs[id] && operationLatlngs[id].length > 0) {
+<<<<<<< HEAD
             // Progress 비율에 따라 위치 계산
             const totalSteps = operationLatlngs[id].length;
 <<<<<<< HEAD
@@ -106,12 +142,34 @@ export default function MapView({ progress }: Props) {
             const index = Math.floor((progress / 100) * (totalSteps - 1));
             const currentPosition = operationLatlngs[id][index];
 >>>>>>> 2742578 ([feat] 프로그래스바 조작에 맞춰 드론마커 위치 업데이트)
+=======
+            const positions = operationLatlngs[id];
+            const totalSteps = positions.length - 1;
+            const exactProgress = (progress / 100) * totalSteps;
+            const currentIndex = Math.floor(exactProgress);
+            const nextIndex = Math.min(currentIndex + 1, totalSteps);
+
+            const segmentProgress = exactProgress - currentIndex;
+            const currentPoint = positions[currentIndex];
+            const nextPoint = positions[nextIndex];
+
+            const interpolatedPosition = interpolatePosition(
+              currentPoint,
+              nextPoint,
+              segmentProgress,
+            );
+
+            const direction = calculateDirection(currentPoint, nextPoint);
+            const rotatedIcon = createRotatedIcon(direction);
+
+>>>>>>> 0388e4b ([feat] 지도에서 드론이 경로 따라 움직일때 진행방향에 따라서 회전하도록 수정, 버전 안정화)
             return (
               <React.Fragment key={id}>
                 <Polyline
-                  positions={operationLatlngs[id]}
+                  positions={positions}
                   pathOptions={{ color: getColorFromId(id) }}
                 />
+<<<<<<< HEAD
 <<<<<<< HEAD
                 <Marker
                   position={currentPosition}
@@ -131,6 +189,15 @@ export default function MapView({ progress }: Props) {
                       <p>위도: {currentPosition[0]}</p>
                       <p>경도: {currentPosition[1]}</p>
 >>>>>>> 2742578 ([feat] 프로그래스바 조작에 맞춰 드론마커 위치 업데이트)
+=======
+                <Marker position={interpolatedPosition} icon={rotatedIcon}>
+                  <Popup>
+                    <div>
+                      <p>운행 ID: {id}</p>
+                      <p>위도: {interpolatedPosition[0].toFixed(6)}</p>
+                      <p>경도: {interpolatedPosition[1].toFixed(6)}</p>
+                      <p>방향: {Math.round(direction)}°</p>
+>>>>>>> 0388e4b ([feat] 지도에서 드론이 경로 따라 움직일때 진행방향에 따라서 회전하도록 수정, 버전 안정화)
                     </div>
                   </Popup>
                 </Marker>
