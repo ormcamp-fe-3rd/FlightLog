@@ -5,21 +5,13 @@ import useLoginModalStore from "@/store/useLoginModal";
 import LoginContent from "@/components/home/LoginContent";
 import RegisterContent from "@/components/home/RegisterContent";
 import SocialLoginButton from "@/components/home/SocialLoginButton";
+import usePreventScroll from "@/hook/usePreventScroll";
 
 export default function AuthModal() {
   const { toggle, isLoginModalOpen } = useLoginModalStore();
   const [register, setRegister] = useState(false);
 
-  useEffect(() => {
-    if (isLoginModalOpen) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
-    return () => {
-      document.body.classList.remove("overflow-hidden");
-    };
-  }, [isLoginModalOpen]);
+  usePreventScroll(isLoginModalOpen);
 
   return (
     <div
