@@ -6,6 +6,24 @@ export default function RegisterContent() {
   const { toggle } = useLoginModalStore();
   const { register, errors, isValid } = useRegisterForm();
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
+    const response = await fetch("/api/auth/register", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (response.status === 400) {
+      alert(data.message);
+    } else if (response.status === 200) {
+      alert(data.message);
+      toggle();
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-between">
@@ -14,12 +32,7 @@ export default function RegisterContent() {
           ✖️
         </button>
       </div>
-      <form
-        method="POST"
-        action="/api/auth/register"
-        className="text-black"
-        noValidate
-      >
+      <form onSubmit={handleSubmit} className="text-black" noValidate>
         {formFields.map((field) => (
           <div key={field.id}>
             <label htmlFor={field.id} className="label label-text pb-0">
