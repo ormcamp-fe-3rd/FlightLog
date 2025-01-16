@@ -19,7 +19,7 @@ export default function AuthModal() {
       onClick={toggle}
     >
       <div
-        className="w-96 rounded-lg bg-white p-6 shadow-lg"
+        className="w-96 rounded-lg bg-white p-12 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         {register === true ? <RegisterContent /> : <LoginContent />}
