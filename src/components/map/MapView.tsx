@@ -35,9 +35,49 @@ export default function MapView({
     iconSize: [30, 30],
   });
 
-  // 운행별 위치 데이터 반환
+  const calculateDirection = (
+    currentPoint: [number, number],
+    nextPoint: [number, number],
+  ) => {
+    const deltaY = nextPoint[0] - currentPoint[0];
+    const deltaX = nextPoint[1] - currentPoint[1];
+    const bearing = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
+    const droneHeading = (90 - bearing) % 360;
+
+    return droneHeading < 0 ? droneHeading + 360 : droneHeading;
+  };
+
+  const createRotatedIcon = (rotationAngle: number) =>
+    L.divIcon({
+      className: "",
+      html: `
+        <div 
+          style="
+            width: 30px; 
+            height: 30px; 
+            background: url('/images/map/marker-icon.png') no-repeat center/contain; 
+            transform: rotate(${rotationAngle}deg);
+            transition: transform 0.3s ease;
+          ">
+        </div>
+      `,
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
+    });
+
+  const interpolatePosition = (
+    position1: [number, number],
+    position2: [number, number],
+    factor: number,
+  ): [number, number] => {
+    return [
+      position1[0] + (position2[0] - position1[0]) * factor,
+      position1[1] + (position2[1] - position1[1]) * factor,
+    ];
+  };
+
   const getOperationlatlings = (operationId: string) => {
-    const positionData = telemetryData[33] || []; // msgId 33 데이터(Position)
+    const positionData = telemetryData[33] || [];
     const result = positionData
       .filter((data) => data.operation === operationId)
       .map((data) => {
@@ -85,30 +125,46 @@ export default function MapView({
         />
         {selectedOperationId.map((id) => {
           if (operationLatlngs[id] && operationLatlngs[id].length > 0) {
-            // Progress 비율에 따라 위치 계산
-            const totalSteps = operationLatlngs[id].length;
-            const index =
+            const positions = operationLatlngs[id];
+            const totalSteps = positions.length - 1;
+            const exactProgress =
               selectedFlight === "all" || selectedFlight === id
-                ? Math.floor((progress / 100) * (totalSteps - 1))
+                ? (progress / 100) * totalSteps
                 : 0;
-            const currentPosition = operationLatlngs[id][index];
-            const currentTime = getOperationTimes(id)[index];
+            const currentIndex = Math.floor(exactProgress);
+            const nextIndex = Math.min(currentIndex + 1, totalSteps);
+
+            const segmentProgress = exactProgress - currentIndex;
+            const currentPoint = positions[currentIndex];
+            const nextPoint = positions[nextIndex];
+            const currentTime = getOperationTimes(id)[currentIndex];
+
+            const interpolatedPosition = interpolatePosition(
+              currentPoint,
+              nextPoint,
+              segmentProgress,
+            );
+
+            const direction = calculateDirection(currentPoint, nextPoint);
+            const rotatedIcon = createRotatedIcon(direction);
+
             return (
               <React.Fragment key={id}>
                 <Polyline
-                  positions={operationLatlngs[id]}
+                  positions={positions}
                   pathOptions={{ color: getColorFromId(id) }}
                 />
                 <Marker
-                  position={currentPosition}
-                  icon={icon}
+                  position={interpolatedPosition}
+                  icon={rotatedIcon}
                   eventHandlers={{ click: () => onMarkerClick(id) }}
                 >
                   <Popup>
                     <div>
                       <p>시간: {formatTimeString(currentTime)}</p>
-                      <p>위도: {currentPosition[0].toFixed(4)}</p>
-                      <p>경도: {currentPosition[1].toFixed(4)}</p>
+                      <p>위도: {interpolatedPosition[0].toFixed(6)}</p>
+                      <p>경도: {interpolatedPosition[1].toFixed(6)}</p>
+                      <p>방향: {Math.round(direction)}°</p>
                     </div>
                   </Popup>
                 </Marker>
