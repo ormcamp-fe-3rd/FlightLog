@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import useSidebarStore from "@/store/useSidebar";
+import LoginButton from "./LoginButton";
 
 export default function Header() {
   const { toggle } = useSidebarStore();
-
   return (
     <header className="flex h-14 items-center justify-between bg-black p-4 text-white">
       <div className="flex items-center gap-5">
@@ -16,7 +16,7 @@ export default function Header() {
           FlightLog
         </Link>
       </div>
-      <Link href="/login">Login</Link>
+      <LoginButton />
     </header>
   );
 }
