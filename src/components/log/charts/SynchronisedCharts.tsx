@@ -3,6 +3,11 @@ import React, { useEffect, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsExporting from "highcharts/modules/exporting";
+import {
+  getSatellites,
+  getBattery,
+  getPosition,
+} from "@/components/log/charts/ChartsData";
 
 if (typeof Highcharts === "object") {
   HighchartsExporting(Highcharts);
