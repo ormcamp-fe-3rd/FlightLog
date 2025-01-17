@@ -13,6 +13,7 @@ export default function MapPage() {
   const { isSidebarOpen, close, open } = useSidebarStore();
   const [isStatusOpen, setIsStatusOpen] = useState(true);
   const [isAttitudeOpen, setIsAttitudeOpen] = useState(true);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -57,7 +58,7 @@ export default function MapPage() {
       </div>
       <div className="relative h-full min-w-[344px] flex-1 border-red-600">
         <div className="h-full">
-          <MapView />
+          <MapView progress={progress} />
         </div>
         <div className="absolute right-8 top-8 z-10 flex h-[90%] flex-col gap-4">
           <div
@@ -70,7 +71,7 @@ export default function MapPage() {
           </div>
         </div>
         <div className="absolute bottom-7 left-1/2 z-10 w-1/2 min-w-80 -translate-x-1/2">
-          <FlightProgressBar />
+          <FlightProgressBar progress={progress} setProgress={setProgress} />
           <div className="hidden justify-center md:flex">
             <ControlPanel
               onFlightInfoClick={toggleStatusPanel}

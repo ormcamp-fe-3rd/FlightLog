@@ -13,17 +13,59 @@ import useData from "@/store/useData";
 import React, { useEffect, useState } from "react";
 import { getColorFromId } from "@/utils/getColorFromId";
 
-export default function MapView() {
+interface Props {
+  progress: number;
+}
+
+export default function MapView({ progress }: Props) {
   const { telemetryData, selectedOperationId } = useData();
   const [operationLatlngs, setOperationLatlngs] = useState<
     Record<string, [number, number][]>
   >({});
 
-  const icon = L.icon({ iconUrl: "/images/map/marker-icon.png" });
+  const calculateDirection = (
+    currentPoint: [number, number],
+    nextPoint: [number, number],
+  ) => {
+    const deltaY = nextPoint[0] - currentPoint[0];
+    const deltaX = nextPoint[1] - currentPoint[1];
+    const bearing = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
+    const droneHeading = (90 - bearing) % 360;
 
-  // 운행별 위치 데이터 반환
+    return droneHeading < 0 ? droneHeading + 360 : droneHeading;
+  };
+
+  const createRotatedIcon = (rotationAngle: number) =>
+    L.divIcon({
+      className: "",
+      html: `
+        <div 
+          style="
+            width: 30px; 
+            height: 30px; 
+            background: url('/images/map/marker-icon.png') no-repeat center/contain; 
+            transform: rotate(${rotationAngle}deg);
+            transition: transform 0.3s ease;
+          ">
+        </div>
+      `,
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
+    });
+
+  const interpolatePosition = (
+    position1: [number, number],
+    position2: [number, number],
+    factor: number,
+  ): [number, number] => {
+    return [
+      position1[0] + (position2[0] - position1[0]) * factor,
+      position1[1] + (position2[1] - position1[1]) * factor,
+    ];
+  };
+
   const getOperationlatlings = (operationId: string) => {
-    const positionData = telemetryData[33] || []; // msgId 33 데이터(Position)
+    const positionData = telemetryData[33] || [];
     const result = positionData
       .filter((data) => data.operation === operationId)
       .reduce(
@@ -66,12 +108,41 @@ export default function MapView() {
         />
         {selectedOperationId.map((id) => {
           if (operationLatlngs[id] && operationLatlngs[id].length > 0) {
+            const positions = operationLatlngs[id];
+            const totalSteps = positions.length - 1;
+            const exactProgress = (progress / 100) * totalSteps;
+            const currentIndex = Math.floor(exactProgress);
+            const nextIndex = Math.min(currentIndex + 1, totalSteps);
+
+            const segmentProgress = exactProgress - currentIndex;
+            const currentPoint = positions[currentIndex];
+            const nextPoint = positions[nextIndex];
+
+            const interpolatedPosition = interpolatePosition(
+              currentPoint,
+              nextPoint,
+              segmentProgress,
+            );
+
+            const direction = calculateDirection(currentPoint, nextPoint);
+            const rotatedIcon = createRotatedIcon(direction);
+
             return (
               <React.Fragment key={id}>
                 <Polyline
-                  positions={operationLatlngs[id]}
+                  positions={positions}
                   pathOptions={{ color: getColorFromId(id) }}
-                ></Polyline>
+                />
+                <Marker position={interpolatedPosition} icon={rotatedIcon}>
+                  <Popup>
+                    <div>
+                      <p>운행 ID: {id}</p>
+                      <p>위도: {interpolatedPosition[0].toFixed(6)}</p>
+                      <p>경도: {interpolatedPosition[1].toFixed(6)}</p>
+                      <p>방향: {Math.round(direction)}°</p>
+                    </div>
+                  </Popup>
+                </Marker>
               </React.Fragment>
             );
           }
