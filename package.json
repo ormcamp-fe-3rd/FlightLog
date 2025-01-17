@@ -12,13 +12,17 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0388e4b ([feat] 지도에서 드론이 경로 따라 움직일때 진행방향에 따라서 회전하도록 수정, 버전 안정화)
+=======
+>>>>>>> 9bbf33d ([fix]three.js 문제 해결 next.js 버전 변경)
     "@hookform/resolvers": "^3.10.0",
     "@react-three/drei": "^9.90.0",
     "@react-three/fiber": "^8.15.0",
     "@types/three": "^0.156.0",
     "bcrypt": "^5.1.1",
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
     "@react-three/drei": "^9.120.8",
@@ -34,6 +38,8 @@
 >>>>>>> c34ba6f ([chore] react-three-fiber 알파버전으로 수정하여 오류 해결)
 =======
 >>>>>>> 0388e4b ([feat] 지도에서 드론이 경로 따라 움직일때 진행방향에 따라서 회전하도록 수정, 버전 안정화)
+=======
+>>>>>>> 9bbf33d ([fix]three.js 문제 해결 next.js 버전 변경)
     "daisyui": "^4.12.23",
     "highcharts": "^11.2.0",
     "highcharts-react-official": "^3.2.1",
@@ -45,6 +51,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.54.2",
     "react-leaflet": "^4.2.1",
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -60,11 +67,16 @@
     "three": "^0.159.0",
     "zod": "^3.24.1",
 >>>>>>> 0388e4b ([feat] 지도에서 드론이 경로 따라 움직일때 진행방향에 따라서 회전하도록 수정, 버전 안정화)
+=======
+    "three": "^0.159.0",
+    "zod": "^3.24.1",
+>>>>>>> 9bbf33d ([fix]three.js 문제 해결 next.js 버전 변경)
     "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.16",
     "@types/node": "^20",
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -78,6 +90,9 @@
 =======
     "@types/react": "^18.2.0",
 >>>>>>> 0388e4b ([feat] 지도에서 드론이 경로 따라 움직일때 진행방향에 따라서 회전하도록 수정, 버전 안정화)
+=======
+    "@types/react": "^18.2.0",
+>>>>>>> 9bbf33d ([fix]three.js 문제 해결 next.js 버전 변경)
     "@types/react-dom": "^18",
     "eslint": "^8.56.0",
     "eslint-config-next": "14.0.4",
@@ -87,9 +102,12 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     "ts-jest": "^29.2.5",
 =======
 >>>>>>> 0388e4b ([feat] 지도에서 드론이 경로 따라 움직일때 진행방향에 따라서 회전하도록 수정, 버전 안정화)
+=======
+>>>>>>> 9bbf33d ([fix]three.js 문제 해결 next.js 버전 변경)
     "typescript": "5.7.2"
 =======
     "typescript": "^5.7.3"
