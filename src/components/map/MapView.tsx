@@ -12,16 +12,28 @@ import L from "leaflet";
 import useData from "@/store/useData";
 import React, { useEffect, useState } from "react";
 import { getColorFromId } from "@/utils/getColorFromId";
+import { formatTimeString } from "@/utils/formatTimestamp";
 
-interface Props {
+interface MapViewProps {
+  selectedFlight: string;
   progress: number;
+  onMarkerClick: (id: string) => void;
 }
 
-export default function MapView({ progress }: Props) {
+export default function MapView({
+  selectedFlight,
+  progress,
+  onMarkerClick,
+}: MapViewProps) {
   const { telemetryData, selectedOperationId } = useData();
   const [operationLatlngs, setOperationLatlngs] = useState<
     Record<string, [number, number][]>
   >({});
+
+  const icon = L.icon({
+    iconUrl: "/images/map/marker-icon.png",
+    iconSize: [30, 30],
+  });
 
   const calculateDirection = (
     currentPoint: [number, number],
@@ -68,15 +80,20 @@ export default function MapView({ progress }: Props) {
     const positionData = telemetryData[33] || [];
     const result = positionData
       .filter((data) => data.operation === operationId)
-      .reduce(
-        (acc, value) => {
-          const lat = value.payload.lat * 1e-7;
-          const lon = value.payload.lon * 1e-7;
-          acc.push([lat, lon]);
-          return acc;
-        },
-        [] as [number, number][],
-      );
+      .map((data) => {
+        const lat = data.payload.lat * 1e-7;
+        const lon = data.payload.lon * 1e-7;
+        return [lat, lon];
+      });
+    return result as [number, number][];
+  };
+
+  // 운행별 시간 데이터 반환
+  const getOperationTimes = (operationId: string) => {
+    const positionData = telemetryData[33] || []; // msgId 33 데이터(Position)
+    const result = positionData
+      .filter((data) => data.operation === operationId)
+      .map((data) => data.timestamp);
     return result;
   };
 
@@ -110,13 +127,17 @@ export default function MapView({ progress }: Props) {
           if (operationLatlngs[id] && operationLatlngs[id].length > 0) {
             const positions = operationLatlngs[id];
             const totalSteps = positions.length - 1;
-            const exactProgress = (progress / 100) * totalSteps;
+            const exactProgress =
+              selectedFlight === "all" || selectedFlight === id
+                ? (progress / 100) * totalSteps
+                : 0;
             const currentIndex = Math.floor(exactProgress);
             const nextIndex = Math.min(currentIndex + 1, totalSteps);
 
             const segmentProgress = exactProgress - currentIndex;
             const currentPoint = positions[currentIndex];
             const nextPoint = positions[nextIndex];
+            const currentTime = getOperationTimes(id)[currentIndex];
 
             const interpolatedPosition = interpolatePosition(
               currentPoint,
@@ -133,10 +154,14 @@ export default function MapView({ progress }: Props) {
                   positions={positions}
                   pathOptions={{ color: getColorFromId(id) }}
                 />
-                <Marker position={interpolatedPosition} icon={rotatedIcon}>
+                <Marker
+                  position={interpolatedPosition}
+                  icon={rotatedIcon}
+                  eventHandlers={{ click: () => onMarkerClick(id) }}
+                >
                   <Popup>
                     <div>
-                      <p>운행 ID: {id}</p>
+                      <p>시간: {formatTimeString(currentTime)}</p>
                       <p>위도: {interpolatedPosition[0].toFixed(6)}</p>
                       <p>경도: {interpolatedPosition[1].toFixed(6)}</p>
                       <p>방향: {Math.round(direction)}°</p>
