@@ -3,7 +3,7 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
-import { connectDB } from "@/util/common/database";
+import { connectDB } from "@/lib/database";
 
 function getRequiredEnvVar(name: string): string {
   const value = process.env[name];

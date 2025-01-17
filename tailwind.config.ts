@@ -25,7 +25,7 @@ export default {
   },
   plugins: [require("daisyui")],
   daisyui: {
-    themes: ["light"],
+    themes: ["lofi"],
     base: false,
   },
 } satisfies Config;
