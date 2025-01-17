@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 
-export default function FlightProgressBar() {
-  const [progress, setProgress] = useState(50);
+interface Props {
+  progress: number;
+  setProgress: (value: number) => void;
+}
 
+export default function FlightProgressBar({ progress, setProgress }: Props) {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setProgress(Number(event.target.value));
   };
@@ -18,15 +21,8 @@ export default function FlightProgressBar() {
         value={progress}
         onChange={handleInputChange}
         className="range"
-        step="25"
+        step="0.1"
       />
-      <div className="flex w-full justify-between px-2 text-xs">
-        <span>|</span>
-        <span>|</span>
-        <span>|</span>
-        <span>|</span>
-        <span>|</span>
-      </div>
     </>
   );
 }
