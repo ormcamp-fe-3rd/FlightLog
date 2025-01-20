@@ -23,7 +23,7 @@ export function formatTimestamp(timestamp: string) {
   return formattedDate;
 }
 
-export function formatTimeString(timestamp: string) {
+export function formatTimeString(timestamp: number) {
   const date = new Date(timestamp);
   const timestring = date.toLocaleString([], {
     hour: "2-digit",
