@@ -27,14 +27,12 @@ interface SynchronisedChartsProps {
   numOfDatasets?: number;
   chartWidth?: number;
   chartHeight?: number;
-  operationId?: string;
 }
 
 const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
   numOfDatasets = 3,
   chartWidth = 400,
   chartHeight = 200,
-  operationId,
 }) => {
   const { telemetryData, selectedOperationId } = useData();
 
@@ -46,42 +44,72 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
     const fetchData = async () => {
       try {
         setLoading(true);
-        if (!operationId) {
-          throw new Error("operationId is undefined");
-        }
-        const satellites = await getSatellites(telemetryData, operationId);
-        const battery = await getBattery(telemetryData, operationId);
-        const position = await getPosition(telemetryData, operationId);
 
-        const xAxisData = position.map((pos) => pos[0]); // lat 값을 xData로 사용
+        const satelites = getSatellites(telemetryData, selectedOperationId);
+        const position = getPosition(telemetryData, selectedOperationId);
+
+        const xAxisData = position.map((item) => item[2]);
         setXData(xAxisData);
 
-        const formattedSatellites = satellites.map((data, i) => ({
-          name: `Satellites ${i + 1}`,
-          type: "line",
-          unit: "count",
-          data,
-        }));
+        console.log(xAxisData);
 
-        const formattedBattery = [
+        const formattedLat = [
           {
-            name: "Battery",
-            type: "area",
-            unit: "%",
-            data: battery.map((item) => item[2]), // battery_remaining
+            name: "위도",
+            type: "line",
+            unit: "",
+            data: position.map((item) => item[0]),
           },
         ];
 
-        setChartData([...formattedSatellites, ...formattedBattery]);
+        const formattedLon = [
+          {
+            name: "경도",
+            type: "line",
+            unit: "",
+            data: position.map((item) => item[1]),
+          },
+        ];
+
+        const formattedSatellites = [
+          {
+            name: "드론 갯수",
+            type: "line",
+            unit: "",
+            data: satelites.map((item) => item[0]),
+          },
+        ];
+
+        // const formattedSatellites = satellites.map((data) => ({
+        //   name: `Satellites`,
+        //   type: "line",
+        //   unit: "count",
+        //   data,
+        // }));
+
+        // const formattedBattery = [
+        //   {
+        //     name: "Battery",
+        //     type: "area",
+        //     unit: "%",
+        //     data: battery.map((item) => item[2]), // battery_remaining
+        //   },
+        // ];
+
+        setChartData([
+          ...formattedLat,
+          ...formattedLon,
+          ...formattedSatellites,
+        ]);
       } catch (error) {
-        console.error("Error fetching MongoDB data:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [operationId]);
+  }, [telemetryData, selectedOperationId]);
 
   useEffect(() => {
     const oldReset = Highcharts.Pointer.prototype.reset;
@@ -109,6 +137,9 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
     const colour =
       colours && colours.length > index ? colours[index] : undefined;
 
+    const maxYValue = Math.max(...dataset.data); // y축 최대값 계산
+    const minYValue = Math.min(...dataset.data); // y축 최대값 계산
+
     const options = {
       chart: {
         zooming: {
@@ -123,7 +154,7 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
       xAxis: {
         crosshair: true,
         labels: {
-          format: "{value} km",
+          format: "{value}",
         },
         events: {
           afterSetExtremes: function (event: Highcharts.ExtremesObject) {
@@ -138,6 +169,8 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
         title: {
           text: dataset.unit,
         },
+        min: minYValue,
+        max: maxYValue,
       },
       plotOptions: {
         series: {
@@ -158,6 +191,7 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
         valueSuffix: ` ${dataset.unit}`,
       },
     };
+
     return (
       <HighchartsReact
         highcharts={Highcharts}
@@ -185,7 +219,7 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
     <div
       onMouseMove={handleMouseMove}
       onTouchMove={handleMouseMove}
-      className="grid grid-cols-2"
+      className="grid grid-cols-3"
     >
       {loading ? (
         <p>Loading...</p>
