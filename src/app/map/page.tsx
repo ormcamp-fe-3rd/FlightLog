@@ -6,6 +6,7 @@ import AttitudePanel from "@/components/map/AttitudePanel";
 import FlightProgressBar from "@/components/map/FlightProgressBar";
 import MapView from "@/components/map/MapView";
 import ControlPanel from "@/components/map/ControlPanel";
+import TimeSearch from "@/components/map/TimeSearch";
 import { useState } from "react";
 import useSidebarStore from "@/store/useSidebar";
 import useResizePanelControl from "@/hooks/useResizePanelControl";
@@ -17,6 +18,11 @@ export default function MapPage() {
     useResizePanelControl();
   const [selectedFlight, setSelectedFlight] = useState("all");
   const [progress, setProgress] = useState(0);
+  const [isProgressBar, setIsProgressBar] = useState(true);
+
+  const handleToggle = () => {
+    setIsProgressBar((prev) => !prev);
+  };
 
   const toggleStatusPanel = () => {
     setIsStatusOpen(!isStatusOpen);
@@ -60,13 +66,26 @@ export default function MapPage() {
             <AttitudePanel />
           </div>
         </div>
-        <div className="absolute bottom-7 left-1/2 z-10 w-1/2 min-w-80 -translate-x-1/2">
-          <FlightProgressBar progress={progress} setProgress={setProgress} />
-          <div className="flex justify-center">
+        <div className="absolute bottom-7 left-1/2 z-10 mb-4 flex w-1/2 min-w-80 -translate-x-1/2 flex-col items-center">
+          <div className="w-full">
+            {isProgressBar ? (
+              <FlightProgressBar
+                progress={progress}
+                setProgress={setProgress}
+              />
+            ) : (
+              <TimeSearch
+                onTimeChange={(time) => console.log("Selected time:", time)}
+              />
+            )}
+          </div>
+          <div>
             <ControlPanel
               onFlightInfoClick={toggleStatusPanel}
               onAttitudeClick={toggleAttitudePanel}
               onZoomClick={zoomToDrone}
+              isProgressBar={isProgressBar}
+              onToggle={handleToggle}
             />
           </div>
         </div>

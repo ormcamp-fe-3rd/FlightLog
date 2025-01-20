@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 interface Props {
   progress: number;
   setProgress: (value: number) => void;
