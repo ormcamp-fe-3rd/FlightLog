@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { formatTimestamp } from "@/utils/formatTimestamp";
 import useData from "@/store/useData";
 import { PAGES } from "@/constants";
@@ -17,6 +17,7 @@ export default function Sidebar() {
     fetchTelemetryData,
     validOperationLabels,
     setValidOperationLabel,
+    selectedOperationId,
     setSelectedOperation,
     toggleSelectedOperation,
   } = useData();
@@ -92,12 +93,15 @@ export default function Sidebar() {
                     operation["robot"] === robotId &&
                     validOperationLabels[operation["_id"]]
                   ) {
+                    const isChecked = selectedOperationId.includes(
+                      operation._id,
+                    );
                     return (
                       <div key={operation._id} className="flex flex-col pl-4">
                         <label className="flex cursor-pointer items-center gap-3">
                           <input
                             type="checkbox"
-                            defaultChecked
+                            checked={isChecked}
                             className="checkbox checkbox-sm"
                             onChange={() =>
                               toggleSelectedOperation(operation._id)
