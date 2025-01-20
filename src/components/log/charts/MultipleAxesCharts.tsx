@@ -3,7 +3,20 @@ import React from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-export default function DroneCharts() {
+import useData from "@/store/useData";
+
+export default function BatteryStatusChart() {
+  const { telemetryData } = useData();
+  const batteryData = telemetryData[147] || []; // msgId 147 (BATTERY_STATUS)
+
+  // 이벤트 발생 시간대, 배터리 온도, 전압, 배터리 잔량만 필터링
+  const filteredBatteryData = batteryData.map((data: any) => ({
+    timestamp: new Date(data.timestamp),
+    temperature: data.payload.temperature,
+    voltages: data.payload.voltages[0],
+    batteryRemaining: data.payload.batteryRemaining,
+  }));
+
   const options = {
     chart: {
       // zooming: {
@@ -13,11 +26,9 @@ export default function DroneCharts() {
       width: 800,
     },
     title: {
-      text: "Average Monthly Weather Data for Tokyo",
+      text: "드론 배터리 데이터",
     },
-    subtitle: {
-      text: "Source: WorldClimate.com",
-    },
+
     xAxis: [
       {
         categories: [],
