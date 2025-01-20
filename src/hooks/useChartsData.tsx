@@ -3,10 +3,11 @@ export const getSatellites = (telemetryData: any, operationId: string[]) => {
   return satelitesData
     .filter((data: any) => operationId.includes(data.operation))
     .map((data: any) => {
+      const id = data.operationId;
       const satelitesCount = data.payload.satellitesVisible;
       const timestamp = data.timestamp;
-      return [satelitesCount, timestamp];
-    }) as [number, number][];
+      return [id, satelitesCount, timestamp];
+    }) as [number, number, number][];
 };
 
 export const getPosition = (telemetryData: any, operationId: string[]) => {
@@ -14,11 +15,13 @@ export const getPosition = (telemetryData: any, operationId: string[]) => {
   return positionData
     .filter((data: any) => operationId.includes(data.operation))
     .map((data: any) => {
+      const id = data.operationId;
       const lat = data.payload.lat * 1e-7;
       const lon = data.payload.lon * 1e-7;
+      const alt = data.payload.alt * 1e-7;
       const timestamp = data.timestamp;
-      return [lat, lon, timestamp];
-    }) as [number, number, number][];
+      return [id, lat, lon, alt, timestamp];
+    }) as [number, number, number, number, number][];
 };
 
 export const getBattery = (telemetryData: any, operationId: string[]) => {
