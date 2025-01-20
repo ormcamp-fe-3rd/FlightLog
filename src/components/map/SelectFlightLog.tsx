@@ -3,19 +3,18 @@ import useData from "@/store/useData";
 interface SelectFlightLogProps {
   value: string;
   onSelect: (value: string) => void;
-  setProgress: (value: number) => void;
 }
 
 export default function SelectFlightLog({
   value,
   onSelect,
-  setProgress,
 }: SelectFlightLogProps) {
   const { selectedOperationId, validOperationLabels } = useData();
+
   const handleSelection = (value: string) => {
     onSelect(value);
-    setProgress(0);
   };
+
   return (
     <div className="w-[280px]">
       <select

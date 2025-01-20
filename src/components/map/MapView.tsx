@@ -72,14 +72,9 @@ export default function MapView({
   }, [telemetryData, selectedOperationId]);
 
   useEffect(() => {
-    if (selectedFlight === "all") {
-      const allTimestamps = Object.values(operationTimestamps).flat();
-      setSelectedTimestamp(allTimestamps.sort((a, b) => a - b));
-    } else {
-      const selectedTimestamp = operationTimestamps[selectedFlight];
-      setSelectedTimestamp(selectedTimestamp);
-    }
-  }, [operationTimestamps, selectedFlight]);
+    const allTimestamps = Object.values(operationTimestamps).flat();
+    setSelectedTimestamp(allTimestamps.sort((a, b) => a - b));
+  }, [operationTimestamps]);
 
   useEffect(() => {
     if (!selectedTimestamp || selectedTimestamp.length < 2) return;
