@@ -48,37 +48,36 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
         const satelites = getSatellites(telemetryData, selectedOperationId);
         const position = getPosition(telemetryData, selectedOperationId);
 
-        const xAxisData = position.map((item) => item[2]);
+        const xAxisData = position.map((item) => item[4]);
         setXData(xAxisData);
 
-        console.log(xAxisData);
+        const formattedLat: Dataset = {
+          name: "위도",
+          type: "line",
+          unit: "",
+          data: position.map((item) => item[1]),
+        };
 
-        const formattedLat = [
-          {
-            name: "위도",
-            type: "line",
-            unit: "",
-            data: position.map((item) => item[0]),
-          },
-        ];
+        const formattedLon: Dataset = {
+          name: "경도",
+          type: "line",
+          unit: "",
+          data: position.map((item) => item[2]),
+        };
 
-        const formattedLon = [
-          {
-            name: "경도",
-            type: "line",
-            unit: "",
-            data: position.map((item) => item[1]),
-          },
-        ];
+        const formattedAlt: Dataset = {
+          name: "고도",
+          type: "line",
+          unit: "",
+          data: position.map((item) => item[3]),
+        };
 
-        const formattedSatellites = [
-          {
-            name: "드론 갯수",
-            type: "line",
-            unit: "",
-            data: satelites.map((item) => item[0]),
-          },
-        ];
+        const formattedSatellites: Dataset = {
+          name: "드론 갯수",
+          type: "line",
+          unit: "",
+          data: satelites.map((item) => item[1]), // [number, number][] 중 첫 번째 값만 추출
+        };
 
         // const formattedSatellites = satellites.map((data) => ({
         //   name: `Satellites`,
@@ -97,9 +96,10 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
         // ];
 
         setChartData([
-          ...formattedLat,
-          ...formattedLon,
-          ...formattedSatellites,
+          formattedLat,
+          formattedLon,
+          formattedAlt,
+          formattedSatellites,
         ]);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -219,13 +219,13 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
     <div
       onMouseMove={handleMouseMove}
       onTouchMove={handleMouseMove}
-      className="grid grid-cols-3"
+      className="grid grid-cols-1"
     >
       {loading ? (
         <p>Loading...</p>
       ) : (
         chartData
-          .slice(0, numOfDatasets) // props를 사용하여 데이터셋 개수 조정
+          .slice(0, numOfDatasets)
           .map((dataset, index) => (
             <div key={dataset.name}>{renderChart(dataset, index)}</div>
           ))
