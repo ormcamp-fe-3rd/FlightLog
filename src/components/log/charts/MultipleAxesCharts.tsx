@@ -6,16 +6,22 @@ import HighchartsReact from "highcharts-react-official";
 import useData from "@/store/useData";
 
 export default function BatteryStatusChart() {
-  const { telemetryData } = useData();
+  const { telemetryData, selectedOperationId, validOperationLabels } =
+    useData();
   const batteryData = telemetryData[147] || []; // msgId 147 (BATTERY_STATUS)
 
-  // 이벤트 발생 시간대, 배터리 온도, 전압, 배터리 잔량만 필터링
-  const filteredBatteryData = batteryData.map((data: any) => ({
-    timestamp: new Date(data.timestamp),
-    temperature: data.payload.temperature,
-    voltages: data.payload.voltages[0],
-    batteryRemaining: data.payload.batteryRemaining,
-  }));
+  // 선택된 운행의 배터리 정보만 필터링
+  const filteredBatteryData = batteryData
+    .filter((data: any) => selectedOperationId.includes(data.operation))
+    .map((data: any) => ({
+      operationLabel: validOperationLabels[data.operation],
+      timestamp: new Date(data.timestamp),
+      temperature: data.payload.temperature,
+      voltages: data.payload.voltages[0],
+      batteryRemaining: data.payload.batteryRemaining,
+    }));
+
+  console.log(selectedOperationId.map((id) => validOperationLabels[id]));
 
   const options = {
     chart: {
