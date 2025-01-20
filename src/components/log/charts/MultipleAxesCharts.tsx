@@ -1,61 +1,16 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-interface MultipleAxesChartsProps {
-  numOfDatasets?: number;
-  chartWidth?: number;
-  chartHeight?: number;
-}
-
-interface Dataset {
-  name: string;
-  type: string;
-  unit: string;
-  data: number[];
-}
-
-const WeatherChart: React.FC<MultipleAxesChartsProps> = ({
-  chartHeight = 400,
-  chartWidth = 800,
-}) => {
-  interface ChartData {
-    xData: number[];
-    datasets: Dataset[];
-  }
-
-  const [chartData, setChartData] = useState<ChartData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/activity.json");
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok.");
-        }
-
-        const json = await response.json();
-        setChartData(json);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
+export default function DroneCharts() {
   const options = {
     chart: {
-      zooming: {
-        type: "xy",
-      },
-      height: chartHeight,
-      width: chartWidth,
+      // zooming: {
+      //   type: "xy",
+      // },
+      height: 400,
+      width: 800,
     },
     title: {
       text: "Average Monthly Weather Data for Tokyo",
@@ -65,88 +20,72 @@ const WeatherChart: React.FC<MultipleAxesChartsProps> = ({
     },
     xAxis: [
       {
-        categories: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
-        crosshair: true,
+        categories: [],
+        crosshair: true, //마우스 호버시 시각적 가이드 제공 기능
       },
     ],
     yAxis: [
       {
-        // Primary yAxis
         labels: {
-          format: "{value}°C",
-          style: {
-            color: Highcharts.getOptions().colors?.[2] ?? "#000000",
-          },
+          format: "{value}",
         },
         title: {
           text: "Temperature",
-          style: {
-            color: Highcharts.getOptions().colors?.[2] ?? "#000000",
-          },
         },
         opposite: true,
       },
       {
-        // Secondary yAxis
-        gridLineWidth: 0,
-        title: {
-          text: "Rainfall",
-          style: {
-            color: Highcharts.getOptions().colors?.[0] ?? "#000000",
-          },
-        },
-        labels: {
-          format: "{value} mm",
-          style: {
-            color: Highcharts.getOptions().colors?.[0] ?? "#000000",
-          },
-        },
+        // // Secondary yAxis
+        // gridLineWidth: 0,
+        // title: {
+        //   text: "Rainfall",
+        //   style: {
+        //     color: Highcharts.getOptions().colors?.[0] ?? "#000000",
+        //   },
+        // },
+        // labels: {
+        //   format: "{value} mm",
+        //   style: {
+        //     color: Highcharts.getOptions().colors?.[0] ?? "#000000",
+        //   },
+        // },
       },
       {
         // Tertiary yAxis
-        gridLineWidth: 0,
-        title: {
-          text: "Sea-Level Pressure",
-          style: {
-            color: Highcharts.getOptions().colors?.[1] ?? "#000000",
-          },
-        },
-        labels: {
-          format: "{value} mb",
-          style: {
-            color: Highcharts.getOptions().colors?.[1] ?? "#000000",
-          },
-        },
-        opposite: true,
+        // gridLineWidth: 0,
+        // title: {
+        //   text: "Sea-Level Pressure",
+        //   style: {
+        //     color: Highcharts.getOptions().colors?.[1] ?? "#000000",
+        //   },
+        // },
+        // labels: {
+        //   format: "{value} mb",
+        //   style: {
+        //     color: Highcharts.getOptions().colors?.[1] ?? "#000000",
+        //   },
+        // },
+        // opposite: true,
       },
     ],
-    tooltip: {
-      shared: true,
-    },
-    legend: {
-      layout: "vertical",
-      align: "left",
-      x: 80,
-      verticalAlign: "top",
-      y: 55,
-      floating: true,
-      backgroundColor:
-        Highcharts.defaultOptions.legend?.backgroundColor ??
-        "rgba(255,255,255,0.25)", // theme
-    },
+
+    // 툴팁 제거시, 포커스된 데이터를 집중적으로 보여줌
+    // tooltip: {
+    //   shared: true,
+    // },
+    // legend: {
+    //   layout: "vertical",
+    //   align: "left",
+    //   x: 80,
+    //   verticalAlign: "top",
+    //   y: 55,
+    //   floating: true,
+    //   backgroundColor:
+    //     Highcharts.defaultOptions.legend?.backgroundColor ??
+    //     "rgba(255,255,255,0.25)", // theme
+    // },
+
+    // 하드코딩 데이터
     series: [
       {
         name: "Rainfall",
@@ -187,49 +126,8 @@ const WeatherChart: React.FC<MultipleAxesChartsProps> = ({
         },
       },
     ],
-    responsive: {
-      rules: [
-        {
-          condition: {
-            maxWidth: 500,
-          },
-          chartOptions: {
-            legend: {
-              floating: false,
-              layout: "horizontal",
-              align: "center",
-              verticalAlign: "bottom",
-              x: 0,
-              y: 0,
-            },
-            yAxis: [
-              {
-                labels: {
-                  align: "right",
-                  x: 0,
-                  y: -6,
-                },
-                showLastLabel: false,
-              },
-              {
-                labels: {
-                  align: "left",
-                  x: 0,
-                  y: -6,
-                },
-                showLastLabel: false,
-              },
-              {
-                visible: false,
-              },
-            ],
-          },
-        },
-      ],
-    },
+    // responsive: {},
   };
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
-};
-
-export default WeatherChart;
+}
