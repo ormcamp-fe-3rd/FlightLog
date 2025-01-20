@@ -43,67 +43,55 @@ export default function BatteryStatusChart() {
     ],
     yAxis: [
       {
+        title: {
+          text: "배터리 잔량 (%)",
+        },
         labels: {
-          format: "{value}",
+          format: "{value}%",
+        },
+        min: 0,
+        max: 100,
+      },
+      {
+        labels: {
+          format: "{value}°C",
         },
         title: {
-          text: "Temperature",
+          text: "온도 (°C)",
         },
         opposite: true,
       },
       {
-        // // Secondary yAxis
-        // gridLineWidth: 0,
-        // title: {
-        //   text: "Rainfall",
-        //   style: {
-        //     color: Highcharts.getOptions().colors?.[0] ?? "#000000",
-        //   },
-        // },
-        // labels: {
-        //   format: "{value} mm",
-        //   style: {
-        //     color: Highcharts.getOptions().colors?.[0] ?? "#000000",
-        //   },
-        // },
-      },
-      {
-        // Tertiary yAxis
-        // gridLineWidth: 0,
-        // title: {
-        //   text: "Sea-Level Pressure",
-        //   style: {
-        //     color: Highcharts.getOptions().colors?.[1] ?? "#000000",
-        //   },
-        // },
-        // labels: {
-        //   format: "{value} mb",
-        //   style: {
-        //     color: Highcharts.getOptions().colors?.[1] ?? "#000000",
-        //   },
-        // },
-        // opposite: true,
+        title: {
+          text: "전압 (V)",
+        },
+        labels: {
+          format: "{value}V",
+        },
+        opposite: true,
       },
     ],
 
-    // 툴팁 제거시, 포커스된 데이터를 집중적으로 보여줌
-    // tooltip: {
-    //   shared: true,
-    // },
-    // legend: {
-    //   layout: "vertical",
-    //   align: "left",
-    //   x: 80,
-    //   verticalAlign: "top",
-    //   y: 55,
-    //   floating: true,
-    //   backgroundColor:
-    //     Highcharts.defaultOptions.legend?.backgroundColor ??
-    //     "rgba(255,255,255,0.25)", // theme
-    // },
-
     // 하드코딩 데이터에서 전역 데이터로 변환
     series: [
+      {
+        name: "배터리 잔량",
+        type: "column",
+        yAxis: 0,
+        data: filteredBatteryData.map((data) => data.batteryRemaining),
+        tooltip: {
+          valueSuffix: " %",
+        },
+      },
+      {
+        name: "배터리 온도",
+        type: "spline",
+        yAxis: 1,
+        data: filteredBatteryData.map((data) => data.temperature),
+        tooltip: {
+          valueSuffix: " °C",
+        },
+      },
       {
         name: "배터리 전압",
         type: "spline",
@@ -117,25 +105,7 @@ export default function BatteryStatusChart() {
           valueSuffix: " V",
         },
       },
-      {
-        name: "배터리 온도",
-        type: "spline",
-        data: filteredBatteryData.map((data) => data.temperature),
-        tooltip: {
-          valueSuffix: " °C",
-        },
-      },
-      {
-        name: "배터리 잔량",
-        type: "column",
-        yAxis: 1,
-        data: filteredBatteryData.map((data) => data.batteryRemaining),
-        tooltip: {
-          valueSuffix: " %",
-        },
-      },
     ],
-    // responsive: {},
   };
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
