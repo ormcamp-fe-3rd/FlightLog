@@ -29,7 +29,7 @@ export default function BatteryStatusChart() {
       //   type: "xy",
       // },
       height: 400,
-      width: 800,
+      width: 1200,
     },
     title: {
       text: "드론 배터리 데이터",
@@ -102,44 +102,36 @@ export default function BatteryStatusChart() {
     //     "rgba(255,255,255,0.25)", // theme
     // },
 
-    // 하드코딩 데이터
+    // 하드코딩 데이터에서 전역 데이터로 변환
     series: [
       {
-        name: "Rainfall",
-        type: "column",
-        yAxis: 1,
-        data: [
-          49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
-          95.6, 54.4,
-        ],
-        tooltip: {
-          valueSuffix: " mm",
-        },
-      },
-      {
-        name: "Sea-Level Pressure",
+        name: "배터리 전압",
         type: "spline",
         yAxis: 2,
-        data: [
-          1016, 1016, 1015.9, 1015.5, 1012.3, 1009.5, 1009.6, 1010.2, 1013.1,
-          1016.9, 1018.2, 1016.7,
-        ],
+        data: filteredBatteryData.map((data) => data.voltages),
         marker: {
           enabled: false,
         },
         dashStyle: "shortdot",
         tooltip: {
-          valueSuffix: " mb",
+          valueSuffix: " V",
         },
       },
       {
-        name: "Temperature",
+        name: "배터리 온도",
         type: "spline",
-        data: [
-          7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6,
-        ],
+        data: filteredBatteryData.map((data) => data.temperature),
         tooltip: {
           valueSuffix: " °C",
+        },
+      },
+      {
+        name: "배터리 잔량",
+        type: "column",
+        yAxis: 1,
+        data: filteredBatteryData.map((data) => data.batteryRemaining),
+        tooltip: {
+          valueSuffix: " %",
         },
       },
     ],
