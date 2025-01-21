@@ -14,7 +14,7 @@ export default function BatteryStatusChart() {
       temperature: data[0],
       voltages: data[1],
       batteryRemaining: data[2],
-      timestamp: new Date(data[3]),
+      timestamp: new Date(data[3]).getTime(),
     }),
   );
 
@@ -32,7 +32,14 @@ export default function BatteryStatusChart() {
 
     xAxis: [
       {
-        categories: [],
+        categories: batteryData.map((data) =>
+          new Date(data.timestamp).toLocaleTimeString("ko-KR", {
+            hour: "2-digit",
+            minute: "2-digit",
+            // second: "2-digit",
+            hour12: false,
+          }),
+        ),
         crosshair: true,
       },
     ],
