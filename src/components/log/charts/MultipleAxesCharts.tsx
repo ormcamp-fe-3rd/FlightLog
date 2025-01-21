@@ -2,26 +2,21 @@
 import React from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-
 import useData from "@/store/useData";
+import { getBattery } from "@/hooks/useChartsData";
 
 export default function BatteryStatusChart() {
   const { telemetryData, selectedOperationId, validOperationLabels } =
     useData();
-  const batteryData = telemetryData[147] || []; // msgId 147 (BATTERY_STATUS)
 
-  // 선택된 운행의 배터리 정보만 필터링
-  const filteredBatteryData = batteryData
-    .filter((data: any) => selectedOperationId.includes(data.operation))
-    .map((data: any) => ({
-      operationLabel: validOperationLabels[data.operation],
-      timestamp: new Date(data.timestamp),
-      temperature: data.payload.temperature,
-      voltages: data.payload.voltages[0],
-      batteryRemaining: data.payload.batteryRemaining,
-    }));
-
-  console.log(selectedOperationId.map((id) => validOperationLabels[id]));
+  const batteryData = getBattery(telemetryData, selectedOperationId).map(
+    (data) => ({
+      temperature: data[0],
+      voltages: data[1],
+      batteryRemaining: data[2],
+      timestamp: new Date(data[3]),
+    }),
+  );
 
   const options = {
     chart: {
@@ -38,7 +33,7 @@ export default function BatteryStatusChart() {
     xAxis: [
       {
         categories: [],
-        crosshair: true, //마우스 호버시 시각적 가이드 제공 기능
+        crosshair: true,
       },
     ],
     yAxis: [
@@ -72,13 +67,12 @@ export default function BatteryStatusChart() {
       },
     ],
 
-    // 하드코딩 데이터에서 전역 데이터로 변환
     series: [
       {
         name: "배터리 잔량",
         type: "column",
         yAxis: 0,
-        data: filteredBatteryData.map((data) => data.batteryRemaining),
+        data: batteryData.map((data) => data.batteryRemaining),
         tooltip: {
           valueSuffix: " %",
         },
@@ -87,7 +81,7 @@ export default function BatteryStatusChart() {
         name: "배터리 온도",
         type: "spline",
         yAxis: 1,
-        data: filteredBatteryData.map((data) => data.temperature),
+        data: batteryData.map((data) => data.temperature),
         tooltip: {
           valueSuffix: " °C",
         },
@@ -96,7 +90,7 @@ export default function BatteryStatusChart() {
         name: "배터리 전압",
         type: "spline",
         yAxis: 2,
-        data: filteredBatteryData.map((data) => data.voltages),
+        data: batteryData.map((data) => data.voltages),
         marker: {
           enabled: false,
         },
