@@ -1,15 +1,20 @@
 import useData from "@/store/useData";
+import { Telemetries } from "@/types/api";
 import { useEffect, useState } from "react";
 
 interface CombinedData {
   lat?: number | string;
   lon?: number | string;
   alt?: number | string;
-  relativeAlt?: number | string; // 상대 고도
   speed?: number | string; // 속도
   heading?: number | string; // 진행 방향
-  hAcc?: number | string; // 수평 정확도
-  vAcc?: number | string; // 수직 정확도
+  groundSpeed?: number | string; // 지면 속도
+  roll?: number | string; // 롤 각도
+  pitch?: number | string; // 피치 각도
+  yaw?: number | string; // 요 각도
+  batteryRemaining?: number | string; // 배터리 잔량
+  energyConsumed?: number | string; // 소비된 에너지
+  statusMessage?: string; // 상태 메시지
 }
 
 interface Props {
@@ -37,23 +42,12 @@ export function useTelemetryData({
     const currentTime = allStartTime + (totalDuration * progress) / 100;
 
     const updatedStatus = selectedOperationId.map((id) => {
-      const positionData = telemetryData[33]
-        .map((data) => ({
-          ...data,
-          timestamp: Date.parse(data.timestamp),
-        }))
-        .filter((data) => data.timestamp <= currentTime);
-
-      const latestPositionData = positionData[positionData.length - 1];
-
-      const gpsData = telemetryData[24]
-        .map((data) => ({
-          ...data,
-          timestamp: Date.parse(data.timestamp),
-        }))
-        .filter((data) => data.timestamp <= currentTime);
-
-      const latestGpsData = gpsData[gpsData.length - 1];
+      const latestPositionData = getLatestData(telemetryData, 33, currentTime);
+      const latestGpsData = getLatestData(telemetryData, 24, currentTime);
+      const latestSpeedData = getLatestData(telemetryData, 74, currentTime);
+      const latestAttitudeData = getLatestData(telemetryData, 30, currentTime);
+      const latestBatteryData = getLatestData(telemetryData, 147, currentTime);
+      const latestStatusData = getLatestData(telemetryData, 253, currentTime);
 
       if (!latestPositionData && !latestGpsData) {
         setCurrentData([]);
@@ -63,12 +57,18 @@ export function useTelemetryData({
       const mergedData: CombinedData = {
         lat: (latestPositionData?.payload.lat * 1e-7).toFixed(4),
         lon: (latestPositionData?.payload.lon * 1e-7).toFixed(4),
-        alt: `${latestPositionData?.payload.alt * 1e-3}m`,
-        relativeAlt: latestPositionData?.payload.relative_alt * 1e-3,
-        speed: `${latestGpsData?.payload.vel.toFixed(2)}m/s`,
+        alt: `${(latestPositionData?.payload.alt * 1e-3).toFixed(2)}m`,
         heading: `${(latestPositionData?.payload.hdg * 1e-2).toFixed(2)}°`,
-        hAcc: latestGpsData?.payload.hAcc,
-        vAcc: latestGpsData?.payload.vAcc,
+        speed: `${latestGpsData?.payload.vel.toFixed(2)}m/s`,
+
+        groundSpeed: `${latestSpeedData?.payload.groundspeed?.toFixed(2)}m/s`,
+        roll: latestAttitudeData?.payload.roll?.toFixed(2),
+        pitch: latestAttitudeData?.payload.pitch?.toFixed(2),
+        yaw: latestAttitudeData?.payload.yaw?.toFixed(2),
+
+        batteryRemaining: `${latestBatteryData?.payload.batteryRemaining}%`,
+        energyConsumed: `${latestBatteryData?.payload.energyConsumed}mWh`,
+        statusMessage: latestStatusData?.payload.text,
       };
 
       return { flightId: id, status: mergedData };
@@ -76,6 +76,21 @@ export function useTelemetryData({
 
     setCurrentData(updatedStatus);
   }, [telemetryData, progress, selectedTimestamp]);
+
+  const getLatestData = (
+    telemetryData: { [key: string]: Telemetries[] },
+    id: number,
+    currentTime: number,
+  ) => {
+    const filteredData = telemetryData[id]
+      ?.map((data) => ({
+        ...data,
+        timestamp: Date.parse(data.timestamp),
+      }))
+      .filter((data) => data.timestamp <= currentTime);
+
+    return filteredData?.[filteredData.length - 1] ?? null;
+  };
 
   return currentData;
 }

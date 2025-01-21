@@ -22,7 +22,7 @@ export default function SelectFlightLog({
         onChange={(e) => handleSelection(e.target.value)}
         value={value}
       >
-        <option value="all">Select Operation</option>
+        <option disabled>Select Operation</option>
         {selectedOperationId.map((id) => {
           return (
             <option key={id} value={id}>

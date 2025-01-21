@@ -31,7 +31,7 @@ export default function StatusPanel({
       <div className="flex flex-col gap-2">
         <div className="flex gap-4">
           <img src="/images/map/icon-GPS.svg"></img>
-          <div>GPS 정보</div>
+          <div>위치 정보</div>
         </div>
         <div className="flex">
           <div className="flex-1">
@@ -46,24 +46,8 @@ export default function StatusPanel({
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex gap-4">
-          <img src="/images/map/icon-Flight.svg" alt="Flight info" />
-          <div>비행 정보</div>
-        </div>
-        <div className="flex">
-          <div className="flex-1">
-            <div>속도</div>
-            <div>{statusData?.speed}</div>
-          </div>
-          <div className="flex-1">
-            <div>방향</div>
-            <div>{statusData?.heading}</div>
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col gap-2">
-        <div className="flex gap-4">
           <img src="/images/map/icon-Altitude.svg" alt="Altitude" />
-          <div>고도 정보</div>
+          <div>비행 정보</div>
         </div>
         <div className="flex">
           <div className="flex-1">
@@ -71,25 +55,31 @@ export default function StatusPanel({
             <div>{statusData?.alt}</div>
           </div>
           <div className="flex-1">
-            <div>상대 고도</div>
-            <div>{statusData?.relativeAlt}</div>
+            <div>속도</div>
+            <div>{statusData?.groundSpeed}</div>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-4">
+          <img src="/images/map/icon-Flight.svg" alt="Flight info" />
+          <div>기기 정보</div>
+        </div>
+        <div className="flex">
+          <div className="flex-1">
+            <div>방향</div>
+            <div>{statusData?.heading}</div>
+          </div>
+          <div className="flex-1">
+            <div>배터리 잔량</div>
+            <div>{statusData?.batteryRemaining}</div>
           </div>
         </div>
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex gap-4">
           <img src="/images/map/icon-Accuracy.svg" alt="Accuracy" />
-          <div>정확도</div>
-        </div>
-        <div className="flex">
-          <div className="flex-1">
-            <div>수평 정확도</div>
-            <div>{statusData?.hAcc}</div>
-          </div>
-          <div className="flex-1">
-            <div>수직 정확도</div>
-            <div>{statusData?.vAcc}</div>
-          </div>
+          <div>기타</div>
         </div>
       </div>
     </div>

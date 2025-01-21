@@ -17,12 +17,12 @@ export default function MapPage() {
   const { isStatusOpen, setIsStatusOpen, isAttitudeOpen, setIsAttitudeOpen } =
     useResizePanelControl();
   const { selectedOperationId } = useData();
-  const [selectedFlight, setSelectedFlight] = useState("all");
+  const [selectedFlight, setSelectedFlight] = useState(selectedOperationId[0]);
   const [progress, setProgress] = useState(0);
   const [selectedTimestamp, setSelectedTimestamp] = useState<number[]>([]);
 
   useEffect(() => {
-    setSelectedFlight("all");
+    setSelectedFlight(selectedOperationId[0]);
     setProgress(0);
   }, [selectedOperationId]);
 
