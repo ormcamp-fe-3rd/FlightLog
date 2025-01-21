@@ -19,6 +19,7 @@ interface MapViewProps {
   progress: number;
   selectedTimestamp: number[];
   setSelectedTimestamp: (timestamp: number[]) => void;
+  onMarkerClick: (id: string) => void;
 }
 
 export default function MapView({
@@ -26,6 +27,7 @@ export default function MapView({
   progress,
   selectedTimestamp,
   setSelectedTimestamp,
+  onMarkerClick,
 }: MapViewProps) {
   const { telemetryData, selectedOperationId } = useData();
   const [operationLatlngs, setOperationLatlngs] = useState<
@@ -256,6 +258,7 @@ export default function MapView({
               key={id}
               positions={positions}
               pathOptions={{ color: getColorFromId(id) }}
+              eventHandlers={{ click: () => onMarkerClick(id) }}
             />
           );
         })}

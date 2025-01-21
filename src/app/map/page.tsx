@@ -52,6 +52,7 @@ export default function MapPage() {
             progress={progress}
             selectedTimestamp={selectedTimestamp}
             setSelectedTimestamp={setSelectedTimestamp}
+            onMarkerClick={setSelectedFlight}
           />
         </div>
         <div className="absolute right-8 top-8 z-10 flex max-h-[90%] flex-col gap-4">
