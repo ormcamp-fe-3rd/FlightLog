@@ -30,6 +30,7 @@ export default function FlightProgressBar({
 
     if (newProgress >= 0 && newProgress <= 100) {
       if (isPlaying) {
+        setProgress(newProgress);
         handlePlay(timestamp, newProgress);
       } else {
         setProgress(newProgress);
