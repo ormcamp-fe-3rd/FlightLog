@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import AuthProvider from "@/components/common/AuthProvider";
 import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
 
@@ -27,9 +28,11 @@ export default function RootLayout({
       <body
         className={`flex min-h-full flex-col ${pretendard.className} ${pretendard.variable}`}
       >
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <AuthProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

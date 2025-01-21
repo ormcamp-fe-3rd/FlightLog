@@ -1,7 +1,19 @@
+import ServiceStart from "@/components/home/ServiceStart";
+import ImageGallery from "@/components/home/ImageGallery";
+import ServiceTitle from "@/components/home/ServiceTitle";
+import Cards from "@/components/home/Cards";
+import DataService from "@/components/home/DataService";
+
 export default function Home() {
   return (
-    <div className="flex items-center justify-center">
-      <h1>홈 페이지</h1>
-    </div>
+    <>
+      <div className="mx-auto max-w-7xl break-keep px-4 py-12">
+        <ServiceStart />
+        <ImageGallery />
+        <ServiceTitle />
+        <Cards />
+        <DataService />
+      </div>
+    </>
   );
 }
