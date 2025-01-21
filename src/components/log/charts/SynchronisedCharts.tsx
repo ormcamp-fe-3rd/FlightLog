@@ -138,6 +138,8 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
       dataset.unit[i],
     ]);
 
+    /*
+
     // dataset.unit 값을 중복 제거하여 고유값을 가져옵니다.
     const uniqueUnits = Array.from(new Set(dataset.unit));
 
@@ -166,6 +168,7 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
           break;
       }
     });
+    */
 
     const colours = Highcharts.getOptions().colors;
     const colour =
@@ -221,21 +224,21 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
         {
           name: `${dataset.name} 1`,
           type: dataset.type,
-          data: data1, // 첫 번째 유닛 데이터만 사용
+          data: data, // 첫 번째 유닛 데이터만 사용
           color: colour,
         },
         // 두 번째 라인: dataset2
         {
           name: `${dataset.name} 2`,
           type: dataset.type,
-          data: data2, // 두 번째 유닛 데이터만 사용
+          data: data, // 두 번째 유닛 데이터만 사용
           color: colour,
         },
         // 세 번째 라인 : dataset3
         {
           name: `${dataset.name} 3`,
           type: dataset.type,
-          data: data3, // 세 번째 유닛 데이터만 사용
+          data: data, // 세 번째 유닛 데이터만 사용
           color: colour,
         },
       ],
