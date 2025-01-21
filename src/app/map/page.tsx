@@ -100,7 +100,14 @@ export default function MapPage() {
             />
           </div>
           <div className={`${isAttitudeOpen ? "block" : "hidden"}`}>
-            <AttitudePanel />
+            <AttitudePanel
+              roll={roll}
+              pitch={pitch}
+              yaw={yaw}
+              rollSpeed={rollSpeed}
+              pitchSpeed={pitchSpeed}
+              yawSpeed={yawSpeed}
+            />
           </div>
         </div>
         <div className="absolute bottom-7 left-1/2 z-10 flex w-2/3 min-w-80 -translate-x-1/2 flex-col gap-1">
