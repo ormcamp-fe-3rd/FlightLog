@@ -1,79 +1,102 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
-import { CameraControls, useGLTF, useTexture } from "@react-three/drei";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import { useTexture } from "@react-three/drei";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import * as THREE from "three";
+import { useRef } from "react";
 
-function Drone() {
-  const gltf = useGLTF("/images/map/drone/scene.gltf");
-  const textures = useTexture({
-    map: "/images/map/drone/material_0_diffuse.png",
-    normalMap: "/images/map/drone/material_0_normal.png",
-    roughnessMap: "/images/map/drone/material_0_specularGlossiness.png",
-    aoMap: "/images/map/drone/material_0_occlusion.png",
+interface AttitudePanelProps {
+  roll: number;
+  pitch: number;
+  yaw: number;
+  rollSpeed?: number;
+  pitchSpeed?: number;
+  yawSpeed?: number;
+}
+
+function Drone({ roll, pitch, yaw }: AttitudePanelProps) {
+  const gltf = useLoader(GLTFLoader, "/images/map/drone/scene.gltf");
+
+  // 텍스처 로드
+  const baseColorMap = useTexture(
+    "/images/map/drone/0.701961_0.701961_0.701961_0.000000_0.000000_baseColor.jpeg",
+  );
+  const metallicRoughnessMap = useTexture(
+    "/images/map/drone/0.701961_0.701961_0.701961_0.000000_0.000000_metallicRoughness.png",
+  );
+
+  const droneRef = useRef<THREE.Group>(null);
+
+  useFrame(() => {
+    if (droneRef.current) {
+      droneRef.current.rotation.x = pitch;
+      droneRef.current.rotation.y = yaw;
+      droneRef.current.rotation.z = roll;
+    }
   });
 
   return (
-    <primitive
-      object={gltf.scene}
-      dispose={null}
-      children={gltf.scene.children.map((child: THREE.Object3D) => {
-        if ((child as THREE.Mesh).isMesh) {
-          const mesh = child as THREE.Mesh;
-          return (
-            <mesh key={mesh.uuid} geometry={mesh.geometry}>
-              <meshStandardMaterial
-                {...textures}
-                roughness={0.5}
-                metalness={0.5}
-              />
-            </mesh>
-          );
-        }
-        return null;
-      })}
-    />
+    <group ref={droneRef} scale={[8, 8, 8]}>
+      //크기
+      <primitive object={gltf.scene} />
+      <meshStandardMaterial
+        map={baseColorMap}
+        roughnessMap={metallicRoughnessMap}
+        roughness={1.0}
+        metalness={0.5}
+      />
+    </group>
   );
 }
 
-export default function AttitudePanel() {
+export default function AttitudePanel({
+  roll,
+  pitch,
+  yaw,
+  rollSpeed,
+  pitchSpeed,
+  yawSpeed,
+}: AttitudePanelProps) {
   return (
     <div className="flex h-full w-full flex-col justify-between rounded-[30px] bg-white p-4">
+      {/* 자세 데이터 */}
       <div>
-        <div>Roll: </div>
-        <div>Pitch: </div>
-        <div>Yaw: </div>
+        <div>Roll: {roll.toFixed(2)} rad</div>
+        <div>Pitch: {pitch.toFixed(2)} rad</div>
+        <div>Yaw: {yaw.toFixed(2)} rad</div>
       </div>
+
+      {/* 3D 모델 */}
       <div>
         <Canvas
-          camera={{ position: [0.5, 1.3, 1.5], fov: 75 }} //카메라
-          style={{ width: 250, height: 140 }}
+          camera={{ position: [0.5, 1.3, 1.5], fov: 75 }}
+          style={{ width: "250px", height: "140px" }}
           gl={{
             antialias: true,
             toneMapping: THREE.ACESFilmicToneMapping,
             toneMappingExposure: 1.5,
           }}
         >
-          <color attach="background" args={["white"]} /> // 배경색
-          <ambientLight intensity={0.5} /> //조명
-          <directionalLight intensity={1.5} position={[5, 10, 5]} /> //조명
-          <Drone /> // 3D모델
-          <CameraControls /> //마우스컨트롤
+          <color attach="background" args={["white"]} />
+          <ambientLight intensity={1.0} />
+          <directionalLight intensity={2.0} position={[5, 10, 5]} />
+          <Drone roll={roll} pitch={pitch} yaw={yaw} />
         </Canvas>
       </div>
-      <div className="flex w-full justify-between">
-        <div>
-          <div>Roll 속도</div>
-          <div>Roll 속도</div>
-        </div>
-        <div>
-          <div>Pitch 속도</div>
-          <div>Pitch 속도</div>
-        </div>
-        <div>
-          <div>Yaw 속도</div>
-          <div>Yaw 속도</div>
-        </div>
+
+      {/* 속도 데이터 */}
+      <div className="mt-4 flex w-full justify-between">
+        {[
+          { label: "Roll 속도", value: rollSpeed },
+          { label: "Pitch 속도", value: pitchSpeed },
+          { label: "Yaw 속도", value: yawSpeed },
+        ].map((item) => (
+          <div key={item.label} className="text-center">
+            <div>{item.label}</div>
+            <div>{(item.value ?? 0).toFixed(4)} rad/s</div>
+          </div>
+        ))}
       </div>
     </div>
   );

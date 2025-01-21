@@ -20,6 +20,13 @@ export default function MapPage() {
   const [progress, setProgress] = useState(0);
   const [isProgressBar, setIsProgressBar] = useState(true);
 
+  const [roll, setRoll] = useState(0);
+  const [pitch, setPitch] = useState(0);
+  const [yaw, setYaw] = useState(0);
+  const [rollSpeed, setRollSpeed] = useState(0);
+  const [pitchSpeed, setPitchSpeed] = useState(0);
+  const [yawSpeed, setYawSpeed] = useState(0);
+
   const handleToggle = () => {
     setIsProgressBar((prev) => !prev);
   };
@@ -36,6 +43,22 @@ export default function MapPage() {
     // Todo
   };
 
+  const updateAttitudeData = (data: {
+    roll: number;
+    pitch: number;
+    yaw: number;
+    rollSpeed: number;
+    pitchSpeed: number;
+    yawSpeed: number;
+  }) => {
+    setRoll(data.roll);
+    setPitch(data.pitch);
+    setYaw(data.yaw);
+    setRollSpeed(data.rollSpeed);
+    setPitchSpeed(data.pitchSpeed);
+    setYawSpeed(data.yawSpeed);
+  };
+
   return (
     <div className="flex h-[calc(100vh-56px)] overflow-hidden">
       <div
@@ -49,6 +72,7 @@ export default function MapPage() {
             selectedFlight={selectedFlight}
             progress={progress}
             onMarkerClick={setSelectedFlight}
+            onAttitudeChange={updateAttitudeData}
           />
         </div>
         <div className="absolute right-8 top-8 z-10 flex h-[90%] flex-col gap-4">
@@ -63,7 +87,14 @@ export default function MapPage() {
             <StatusPanel />
           </div>
           <div className={`${isAttitudeOpen ? "block" : "hidden"}`}>
-            <AttitudePanel />
+            <AttitudePanel
+              roll={roll}
+              pitch={pitch}
+              yaw={yaw}
+              rollSpeed={rollSpeed}
+              pitchSpeed={pitchSpeed}
+              yawSpeed={yawSpeed}
+            />
           </div>
         </div>
         <div className="absolute bottom-7 left-1/2 z-10 mb-4 flex w-1/2 min-w-80 -translate-x-1/2 flex-col items-center">
