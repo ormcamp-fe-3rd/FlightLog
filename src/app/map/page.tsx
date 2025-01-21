@@ -48,7 +48,6 @@ export default function MapPage() {
       <div className="relative h-full min-w-[344px] flex-1 border-red-600">
         <div className="h-full">
           <MapView
-            selectedFlight={selectedFlight}
             progress={progress}
             selectedTimestamp={selectedTimestamp}
             setSelectedTimestamp={setSelectedTimestamp}
@@ -63,7 +62,12 @@ export default function MapPage() {
           <div
             className={`${isStatusOpen ? "block" : "hidden"} overflow-hidden`}
           >
-            <StatusPanel />
+            <StatusPanel
+              progress={progress}
+              selectedTimestamp={selectedTimestamp}
+              selectedOperationId={selectedOperationId}
+              selectedFlight={selectedFlight}
+            />
           </div>
           <div className={`${isAttitudeOpen ? "block" : "hidden"}`}>
             <AttitudePanel />

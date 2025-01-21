@@ -15,7 +15,6 @@ import { getColorFromId } from "@/utils/getColorFromId";
 import { formatTimeString } from "@/utils/formatTimestamp";
 
 interface MapViewProps {
-  selectedFlight: string;
   progress: number;
   selectedTimestamp: number[];
   setSelectedTimestamp: (timestamp: number[]) => void;
@@ -23,7 +22,6 @@ interface MapViewProps {
 }
 
 export default function MapView({
-  selectedFlight,
   progress,
   selectedTimestamp,
   setSelectedTimestamp,
@@ -66,11 +64,8 @@ export default function MapView({
       {} as Record<string, number[]>,
     );
 
-    const allTimestamps = Object.values(operationTimestamps).flat();
-
     setOperationLatlngs(updatedLatlngs);
     setOperationTimestamps(updatedTimestamps);
-    setSelectedTimestamp(allTimestamps.sort((a, b) => a - b));
   }, [telemetryData, selectedOperationId]);
 
   useEffect(() => {
