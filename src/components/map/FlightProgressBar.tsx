@@ -1,6 +1,7 @@
 "use client";
 
-import { formatTimeString } from "@/utils/formatTimestamp";
+import calculateCurrentTime from "@/utils/calculateCurrentTime";
+import calculateProgressByTimestamp from "@/utils/calculateProgressByTimestamp";
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
@@ -77,27 +78,6 @@ export default function FlightProgressBar({
       clearInterval(intervalId.current);
       setIsPlaying(false);
     }
-  };
-
-  // 시간별 진행도 계산
-  const calculateProgressByTimestamp = (
-    timestamps: number[],
-    currentTime: number,
-  ) => {
-    if (timestamps.length === 0) return 0;
-
-    const totalDuration = timestamps[timestamps.length - 1] - timestamps[0];
-    const elapsed = currentTime - timestamps[0];
-    return Math.min((elapsed / totalDuration) * 100, 100);
-  };
-
-  // 진행도별 시간 계산
-  const calculateCurrentTime = (timestamps: number[], progress: number) => {
-    if (!timestamps) return null;
-    const totalDuration = timestamps[timestamps.length - 1] - timestamps[0];
-    const currentTime = timestamps[0] + (totalDuration * progress) / 100;
-    const result = formatTimeString(currentTime);
-    return result;
   };
 
   const startTime = calculateCurrentTime(timestamp, 0);
