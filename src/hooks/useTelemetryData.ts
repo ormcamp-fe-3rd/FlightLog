@@ -1,3 +1,4 @@
+import { CONVERSION_FACTORS, TELEMETRY_MSGID } from "@/constants";
 import useData from "@/store/useData";
 import { Telemetries } from "@/types/api";
 import { useEffect, useState } from "react";
@@ -42,12 +43,36 @@ export function useTelemetryData({
     const currentTime = allStartTime + (totalDuration * progress) / 100;
 
     const updatedStatus = selectedOperationId.map((id) => {
-      const latestPositionData = getLatestData(telemetryData, 33, currentTime);
-      const latestGpsData = getLatestData(telemetryData, 24, currentTime);
-      const latestSpeedData = getLatestData(telemetryData, 74, currentTime);
-      const latestAttitudeData = getLatestData(telemetryData, 30, currentTime);
-      const latestBatteryData = getLatestData(telemetryData, 147, currentTime);
-      const latestStatusData = getLatestData(telemetryData, 253, currentTime);
+      const latestPositionData = getLatestData(
+        telemetryData,
+        TELEMETRY_MSGID.POSITION,
+        currentTime,
+      );
+      const latestGpsData = getLatestData(
+        telemetryData,
+        TELEMETRY_MSGID.GPS,
+        currentTime,
+      );
+      const latestSpeedData = getLatestData(
+        telemetryData,
+        TELEMETRY_MSGID.SPEED,
+        currentTime,
+      );
+      const latestAttitudeData = getLatestData(
+        telemetryData,
+        TELEMETRY_MSGID.ATTITUDE,
+        currentTime,
+      );
+      const latestBatteryData = getLatestData(
+        telemetryData,
+        TELEMETRY_MSGID.BATTERY,
+        currentTime,
+      );
+      const latestStatusData = getLatestData(
+        telemetryData,
+        TELEMETRY_MSGID.STATUS,
+        currentTime,
+      );
 
       if (!latestPositionData && !latestGpsData) {
         setCurrentData([]);
@@ -55,10 +80,14 @@ export function useTelemetryData({
 
       // 데이터 병합
       const mergedData: CombinedData = {
-        lat: (latestPositionData?.payload.lat * 1e-7).toFixed(4),
-        lon: (latestPositionData?.payload.lon * 1e-7).toFixed(4),
-        alt: `${(latestPositionData?.payload.alt * 1e-3).toFixed(2)}m`,
-        heading: `${(latestPositionData?.payload.hdg * 1e-2).toFixed(2)}°`,
+        lat: (
+          latestPositionData?.payload.lat * CONVERSION_FACTORS.LAT_LON
+        ).toFixed(4),
+        lon: (
+          latestPositionData?.payload.lon * CONVERSION_FACTORS.LAT_LON
+        ).toFixed(4),
+        alt: `${(latestPositionData?.payload.alt * CONVERSION_FACTORS.ALTITUDE).toFixed(2)}m`,
+        heading: `${(latestPositionData?.payload.hdg * CONVERSION_FACTORS.HEADING).toFixed(2)}°`,
         speed: `${latestGpsData?.payload.vel.toFixed(2)}m/s`,
 
         groundSpeed: `${latestSpeedData?.payload.groundspeed?.toFixed(2)}m/s`,
