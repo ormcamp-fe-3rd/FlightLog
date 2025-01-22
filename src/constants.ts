@@ -29,3 +29,18 @@ export const CONTROL_BUTTONS = [
     iconClassName: "size-7 p-1",
   },
 ] as const;
+
+export const TELEMETRY_MSGID = {
+  POSITION: 33,
+  GPS: 24,
+  SPEED: 74,
+  ATTITUDE: 30,
+  BATTERY: 147,
+  STATUS: 253,
+} as const;
+
+export const CONVERSION_FACTORS = {
+  LAT_LON: 1e-7,
+  ALTITUDE: 1e-3,
+  HEADING: 1e-2,
+} as const;

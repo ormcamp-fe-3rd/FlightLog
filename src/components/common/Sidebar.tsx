@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { formatTimestamp } from "@/utils/formatTimestamp";
 import useData from "@/store/useData";
 import { PAGES } from "@/constants";
 import findOperationStartTime from "@/utils/findOperationStartTime";
+import { getColorFromId } from "@/utils/getColorFromId";
 
 export default function Sidebar() {
   const {
@@ -17,6 +18,7 @@ export default function Sidebar() {
     fetchTelemetryData,
     validOperationLabels,
     setValidOperationLabel,
+    selectedOperationId,
     setSelectedOperation,
     toggleSelectedOperation,
   } = useData();
@@ -92,18 +94,29 @@ export default function Sidebar() {
                     operation["robot"] === robotId &&
                     validOperationLabels[operation["_id"]]
                   ) {
+                    const isChecked = selectedOperationId.includes(
+                      operation._id,
+                    );
                     return (
-                      <div key={operation._id} className="flex flex-col pl-4">
-                        <label className="flex cursor-pointer items-center gap-3">
+                      <div key={operation._id} className="flex flex-col px-1">
+                        <label className="flex cursor-pointer items-center gap-2">
                           <input
                             type="checkbox"
-                            defaultChecked
+                            checked={isChecked}
                             className="checkbox checkbox-sm"
                             onChange={() =>
                               toggleSelectedOperation(operation._id)
                             }
                           />
-                          <span>{validOperationLabels[operation._id]}</span>
+                          <span className="w-44">
+                            {validOperationLabels[operation._id]}
+                          </span>
+                          <span
+                            className="size-2 rounded-full"
+                            style={{
+                              backgroundColor: getColorFromId(operation._id),
+                            }}
+                          />
                         </label>
                       </div>
                     );
