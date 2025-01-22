@@ -23,13 +23,19 @@ export default function SelectFlightLog({
         value={value}
       >
         <option disabled>Select Operation</option>
-        {selectedOperationId.map((id) => {
-          return (
-            <option key={id} value={id}>
-              {validOperationLabels[id]}
-            </option>
-          );
-        })}
+        {selectedOperationId
+          .sort((a, b) => {
+            const dateA = new Date(validOperationLabels[a]).getTime();
+            const dateB = new Date(validOperationLabels[b]).getTime();
+            return dateA - dateB;
+          })
+          .map((id) => {
+            return (
+              <option key={id} value={id}>
+                {validOperationLabels[id]}
+              </option>
+            );
+          })}
       </select>
     </div>
   );
