@@ -8,7 +8,7 @@ export default function LogPage() {
       <Sidebar />
       <div className="block">
         <MultipleAxesCharts />
-        <SynchronisedCharts numOfDatasets={4} />
+        {/* <SynchronisedCharts numOfDatasets={4} /> */}
       </div>
     </div>
   );
