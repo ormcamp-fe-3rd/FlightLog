@@ -35,6 +35,8 @@ const BatteryStatusChart = () => {
     selectedOperationId.includes(data.operation),
   );
 
+  const hasData = filteredData.length > 0;
+
   const createChartOptions = () => {
     const colorSchemes = {
       battery: ["#00ff00", "#33cc33", "#269926", "#1a661a"], // green
@@ -227,11 +229,15 @@ const BatteryStatusChart = () => {
 
   return (
     <div>
-      <HighchartsReact
-        ref={chartComponentRef}
-        highcharts={Highcharts}
-        options={createChartOptions()}
-      />
+      {hasData ? (
+        <HighchartsReact
+          ref={chartComponentRef}
+          highcharts={Highcharts}
+          options={createChartOptions()}
+        />
+      ) : (
+        <p className="p-10 text-center text-gray-500">데이터가 없습니다.</p>
+      )}
     </div>
   );
 };
