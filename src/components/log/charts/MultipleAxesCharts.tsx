@@ -86,11 +86,16 @@ const BatteryStatusChart = () => {
     // 그래프 Y축에 사용할 각 데이터 최대, 최소 값
     const tempData = filteredData.map((data) => data.payload.temperature);
     const voltData = filteredData.map((data) => data.payload.voltages[0]);
+    const batteryData = filteredData.map(
+      (data) => data.payload.batteryRemaining,
+    );
 
     const tempMax = Math.ceil(Math.max(...tempData));
     const tempMin = Math.floor(Math.min(...tempData));
     const voltMax = Math.ceil(Math.max(...voltData));
     const voltMin = Math.floor(Math.min(...voltData));
+    const batteryMax = Math.ceil(Math.max(...batteryData));
+    const batteryMin = Math.floor(Math.min(...batteryData));
 
     return {
       chart: {
@@ -190,8 +195,8 @@ const BatteryStatusChart = () => {
         {
           title: { text: "배터리 잔량 (%)" },
           labels: { format: "{value}%" },
-          max: 100,
-          min: 0,
+          max: batteryMax,
+          min: batteryMin,
           opposite: true,
         },
       ],
