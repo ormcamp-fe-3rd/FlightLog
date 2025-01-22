@@ -6,30 +6,25 @@ import AttitudePanel from "@/components/map/AttitudePanel";
 import FlightProgressBar from "@/components/map/FlightProgressBar";
 import MapView from "@/components/map/MapView";
 import ControlPanel from "@/components/map/ControlPanel";
-import TimeSearch from "@/components/map/TimeSearch";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSidebarStore from "@/store/useSidebar";
 import useResizePanelControl from "@/hooks/useResizePanelControl";
 import SelectFlightLog from "@/components/map/SelectFlightLog";
+import useData from "@/store/useData";
 
 export default function MapPage() {
   const { isSidebarOpen } = useSidebarStore();
   const { isStatusOpen, setIsStatusOpen, isAttitudeOpen, setIsAttitudeOpen } =
     useResizePanelControl();
-  const [selectedFlight, setSelectedFlight] = useState("all");
+  const { selectedOperationId } = useData();
+  const [selectedFlight, setSelectedFlight] = useState(selectedOperationId[0]);
   const [progress, setProgress] = useState(0);
-  const [isProgressBar, setIsProgressBar] = useState(true);
+  const [selectedTimestamp, setSelectedTimestamp] = useState<number[]>([]);
 
-  const [roll, setRoll] = useState(0);
-  const [pitch, setPitch] = useState(0);
-  const [yaw, setYaw] = useState(0);
-  const [rollSpeed, setRollSpeed] = useState(0);
-  const [pitchSpeed, setPitchSpeed] = useState(0);
-  const [yawSpeed, setYawSpeed] = useState(0);
-
-  const handleToggle = () => {
-    setIsProgressBar((prev) => !prev);
-  };
+  useEffect(() => {
+    setSelectedFlight(selectedOperationId[0]);
+    setProgress(0);
+  }, [selectedOperationId]);
 
   const toggleStatusPanel = () => {
     setIsStatusOpen(!isStatusOpen);
@@ -69,22 +64,27 @@ export default function MapPage() {
       <div className="relative h-full min-w-[344px] flex-1 border-red-600">
         <div className="h-full">
           <MapView
-            selectedFlight={selectedFlight}
             progress={progress}
+            selectedTimestamp={selectedTimestamp}
+            setSelectedTimestamp={setSelectedTimestamp}
             onMarkerClick={setSelectedFlight}
             onAttitudeChange={updateAttitudeData}
           />
         </div>
-        <div className="absolute right-8 top-8 z-10 flex h-[90%] flex-col gap-4">
+        <div className="absolute right-8 top-8 z-10 flex max-h-[90%] flex-col gap-4">
           <SelectFlightLog
             value={selectedFlight}
             onSelect={setSelectedFlight}
-            setProgress={setProgress}
           />
           <div
             className={`${isStatusOpen ? "block" : "hidden"} overflow-hidden`}
           >
-            <StatusPanel />
+            <StatusPanel
+              progress={progress}
+              selectedTimestamp={selectedTimestamp}
+              selectedOperationId={selectedOperationId}
+              selectedFlight={selectedFlight}
+            />
           </div>
           <div className={`${isAttitudeOpen ? "block" : "hidden"}`}>
             <AttitudePanel
@@ -97,20 +97,13 @@ export default function MapPage() {
             />
           </div>
         </div>
-        <div className="absolute bottom-7 left-1/2 z-10 mb-4 flex w-1/2 min-w-80 -translate-x-1/2 flex-col items-center">
-          <div className="w-full">
-            {isProgressBar ? (
-              <FlightProgressBar
-                progress={progress}
-                setProgress={setProgress}
-              />
-            ) : (
-              <TimeSearch
-                onTimeChange={(time) => console.log("Selected time:", time)}
-              />
-            )}
-          </div>
-          <div>
+        <div className="absolute bottom-7 left-1/2 z-10 w-1/2 min-w-80 -translate-x-1/2">
+          <FlightProgressBar
+            progress={progress}
+            setProgress={setProgress}
+            timestamp={selectedTimestamp}
+          />
+          <div className="flex justify-center">
             <ControlPanel
               onFlightInfoClick={toggleStatusPanel}
               onAttitudeClick={toggleAttitudePanel}
