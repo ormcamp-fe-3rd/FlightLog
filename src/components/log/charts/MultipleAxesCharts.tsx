@@ -50,7 +50,7 @@ const BatteryStatusChart = () => {
             times[batterRemain],
             data.payload.batteryRemaining,
           ]),
-          tooltip: { valueSuffix: "%" },
+          tooltip: { valueSuffix: " %", xDateFormat: "%Y-%m-%d %H:%M:%S" },
         },
         {
           name: `온도 (${validOperationLabels[operationId]})`,
@@ -82,6 +82,15 @@ const BatteryStatusChart = () => {
     const filteredSeries = series
       .flat()
       .filter((s) => s.data && s.data.length > 0);
+
+    // 그래프 Y축에 사용할 각 데이터 최대, 최소 값
+    const tempData = filteredData.map((data) => data.payload.temperature);
+    const voltData = filteredData.map((data) => data.payload.voltages[0]);
+
+    const tempMax = Math.ceil(Math.max(...tempData));
+    const tempMin = Math.floor(Math.min(...tempData));
+    const voltMax = Math.ceil(Math.max(...voltData));
+    const voltMin = Math.floor(Math.min(...voltData));
 
     return {
       chart: {
@@ -147,7 +156,7 @@ const BatteryStatusChart = () => {
           },
         ],
         inputEnabled: true,
-        selected: 6,
+        selected: 8,
         inputDateFormat: "%Y-%m-%d %H:%M",
         inputEditDateFormat: "%Y-%m-%d %H:%M",
       },
@@ -168,11 +177,15 @@ const BatteryStatusChart = () => {
         {
           title: { text: "온도 (°C)" },
           labels: { format: "{value}°C" },
+          max: tempMax,
+          min: tempMin,
         },
         {
           title: { text: "전압 (V)" },
           labels: { format: "{value}V" },
           opposite: true,
+          max: voltMax,
+          min: voltMin,
         },
         {
           title: { text: "배터리 잔량 (%)" },
