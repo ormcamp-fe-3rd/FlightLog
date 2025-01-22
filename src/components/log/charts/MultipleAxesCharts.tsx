@@ -2,7 +2,13 @@
 import React from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import HighchartsStock from "highcharts/modules/stock";
 import useData from "@/store/useData";
+
+// Highcharts Stock 모듈 초기화
+if (typeof Highcharts === "object") {
+  HighchartsStock(Highcharts);
+}
 
 const BatteryStatusChart = () => {
   const { telemetryData, selectedOperationId, validOperationLabels } =
@@ -13,33 +19,15 @@ const BatteryStatusChart = () => {
     selectedOperationId.includes(data.operation),
   );
 
-  const groupByDate = () => {
-    const dateGroups = new Map();
-
-    filteredData.forEach((data) => {
-      const date = new Date(data.timestamp).toLocaleDateString();
-      if (!dateGroups.has(date)) {
-        dateGroups.set(date, []);
-      }
-      dateGroups.get(date).push(data);
-    });
-
-    return dateGroups;
-  };
-
-  const createChartOptions = (date: string, dateData: any[]) => {
+  const createChartOptions = () => {
     const colorSchemes = {
       battery: ["#00ff00", "#33cc33", "#269926", "#1a661a"], // green
       temperature: ["#ff6666", "#ff3333", "#ff0000", "#cc0000"], // red
       voltage: ["#3366ff", "#0044cc", "#003399", "#002266"], // blue
     };
 
-    const currentDateData = dateData.filter(
-      (data) => new Date(data.timestamp).toLocaleDateString() === date,
-    );
-
     const series = selectedOperationId.map((opId, index) => {
-      const operationData = currentDateData
+      const operationData = filteredData
         .filter((data) => data.operation === opId)
         .sort(
           (a, b) =>
@@ -89,11 +77,51 @@ const BatteryStatusChart = () => {
 
     return {
       chart: {
-        zooming: { type: "xy" },
-        height: 400,
+        height: 500,
         width: 1200,
       },
-      title: { text: `배터리 상태: ${date}` },
+      rangeSelector: {
+        enabled: true,
+        buttons: [
+          {
+            type: "minute",
+            count: 1,
+            text: "1분",
+          },
+          {
+            type: "minute",
+            count: 3,
+            text: "3분",
+          },
+          {
+            type: "hour",
+            count: 1,
+            text: "1시간",
+          },
+          {
+            type: "day",
+            count: 1,
+            text: "1일",
+          },
+          {
+            type: "week",
+            count: 1,
+            text: "1주",
+          },
+          {
+            type: "month",
+            count: 1,
+            text: "1개월",
+          },
+          {
+            type: "all",
+            text: "전체",
+          },
+        ],
+        inputEnabled: true,
+        selected: 3,
+      },
+      title: { text: "배터리 상태" },
       xAxis: {
         type: "datetime",
         crosshair: true,
@@ -143,17 +171,9 @@ const BatteryStatusChart = () => {
     };
   };
 
-  const dateGroups = groupByDate();
   return (
     <div>
-      {Array.from(dateGroups).map(([date, dateData]) => (
-        <div key={date}>
-          <HighchartsReact
-            highcharts={Highcharts}
-            options={createChartOptions(date, dateData)}
-          />
-        </div>
-      ))}
+      <HighchartsReact highcharts={Highcharts} options={createChartOptions()} />
     </div>
   );
 };
