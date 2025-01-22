@@ -97,15 +97,15 @@ const BatteryStatusChart = () => {
         height: 600,
         width: 1200,
         zooming: {
-          enabled: true,
-          type: "x",
+          mouseWheel: {
+            enabled: true,
+            type: "x",
+          },
         },
         panning: {
           enabled: true,
           type: "x",
-          key: "shift",
         },
-        panKey: "shift",
       },
       rangeSelector: {
         enabled: true,
@@ -157,8 +157,8 @@ const BatteryStatusChart = () => {
         ],
         inputEnabled: true,
         selected: 8,
-        inputDateFormat: "%Y-%m-%d %H:%M",
-        inputEditDateFormat: "%Y-%m-%d %H:%M",
+        inputDateFormat: "%Y-%m-%d %H:%M:%S",
+        inputEditDateFormat: "%Y-%m-%d %H:%M:%S",
       },
       navigator: {
         enabled: true,
@@ -196,7 +196,7 @@ const BatteryStatusChart = () => {
         },
       ],
       tooltip: {
-        shared: false,
+        shared: true,
         crosshairs: true,
       },
       legend: {
