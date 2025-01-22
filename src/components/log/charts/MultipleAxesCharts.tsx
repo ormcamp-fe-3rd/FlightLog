@@ -10,6 +10,23 @@ if (typeof Highcharts === "object") {
 }
 
 const BatteryStatusChart = () => {
+  const chartComponentRef = React.useRef<HighchartsReact.RefObject>(null);
+  const [chartWidth, setChartWidth] = React.useState(1000);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      const containerWidth = window.innerWidth;
+      setChartWidth(containerWidth);
+
+      if (chartComponentRef.current) {
+        chartComponentRef.current.chart.reflow();
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const { telemetryData, selectedOperationId, validOperationLabels } =
     useData();
   const batteryData = telemetryData[147] || [];
@@ -100,7 +117,7 @@ const BatteryStatusChart = () => {
     return {
       chart: {
         height: 600,
-        width: 1200,
+        width: chartWidth * 0.8,
         zooming: {
           mouseWheel: {
             enabled: true,
@@ -204,32 +221,17 @@ const BatteryStatusChart = () => {
         shared: true,
         crosshairs: true,
       },
-      legend: {
-        layout: "horizontal",
-        align: "center",
-        verticalAlign: "bottom",
-      },
       series: filteredSeries,
-      responsive: {
-        rules: [
-          {
-            condition: { maxWidth: 500 },
-            chartOptions: {
-              legend: {
-                layout: "horizontal",
-                align: "center",
-                verticalAlign: "bottom",
-              },
-            },
-          },
-        ],
-      },
     };
   };
 
   return (
     <div>
-      <HighchartsReact highcharts={Highcharts} options={createChartOptions()} />
+      <HighchartsReact
+        ref={chartComponentRef}
+        highcharts={Highcharts}
+        options={createChartOptions()}
+      />
     </div>
   );
 };
