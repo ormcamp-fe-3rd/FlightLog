@@ -4,17 +4,17 @@ import { Telemetries } from "@/types/api";
 import { useEffect, useState } from "react";
 
 interface CombinedData {
-  lat?: number | string;
-  lon?: number | string;
-  alt?: number | string;
-  speed?: number | string; // 속도
-  heading?: number | string; // 진행 방향
-  groundSpeed?: number | string; // 지면 속도
-  roll?: number | string; // 롤 각도
-  pitch?: number | string; // 피치 각도
-  yaw?: number | string; // 요 각도
-  batteryRemaining?: number | string; // 배터리 잔량
-  energyConsumed?: number | string; // 소비된 에너지
+  lat?: number;
+  lon?: number;
+  alt?: number;
+  speed?: number; // 속도
+  heading?: number; // 진행 방향
+  groundSpeed?: number; // 지면 속도
+  roll?: number; // 롤 각도
+  pitch?: number; // 피치 각도
+  yaw?: number; // 요 각도
+  batteryRemaining?: number; // 배터리 잔량
+  energyConsumed?: number; // 소비된 에너지
   statusMessage?: string; // 상태 메시지
 }
 
@@ -31,7 +31,7 @@ export function useTelemetryData({
 }: Props) {
   const { telemetryData } = useData();
   const [currentData, setCurrentData] = useState<
-    { flightId: string; status: CombinedData }[]
+    { flightId: string; status: Record<string, string | undefined> }[]
   >([]);
 
   useEffect(() => {
@@ -80,27 +80,44 @@ export function useTelemetryData({
 
       // 데이터 병합
       const mergedData: CombinedData = {
-        lat: (
-          latestPositionData?.payload.lat * CONVERSION_FACTORS.LAT_LON
-        ).toFixed(4),
-        lon: (
-          latestPositionData?.payload.lon * CONVERSION_FACTORS.LAT_LON
-        ).toFixed(4),
-        alt: `${(latestPositionData?.payload.alt * CONVERSION_FACTORS.ALTITUDE).toFixed(2)}m`,
-        heading: `${(latestPositionData?.payload.hdg * CONVERSION_FACTORS.HEADING).toFixed(2)}°`,
-        speed: `${latestGpsData?.payload.vel.toFixed(2)}m/s`,
+        lat: latestPositionData?.payload.lat * CONVERSION_FACTORS.LAT_LON,
+        lon: latestPositionData?.payload.lon * CONVERSION_FACTORS.LAT_LON,
+        alt: latestPositionData?.payload.alt * CONVERSION_FACTORS.ALTITUDE,
+        heading: latestPositionData?.payload.hdg * CONVERSION_FACTORS.HEADING,
 
-        groundSpeed: `${latestSpeedData?.payload.groundspeed?.toFixed(2)}m/s`,
-        roll: latestAttitudeData?.payload.roll?.toFixed(2),
-        pitch: latestAttitudeData?.payload.pitch?.toFixed(2),
-        yaw: latestAttitudeData?.payload.yaw?.toFixed(2),
+        speed: latestGpsData?.payload.vel,
+        groundSpeed: latestSpeedData?.payload.groundspeed,
+        roll: latestAttitudeData?.payload.roll,
+        pitch: latestAttitudeData?.payload.pitch,
+        yaw: latestAttitudeData?.payload.yaw,
 
-        batteryRemaining: `${latestBatteryData?.payload.batteryRemaining}%`,
-        energyConsumed: `${latestBatteryData?.payload.energyConsumed}mWh`,
+        batteryRemaining: latestBatteryData?.payload.batteryRemaining,
+        energyConsumed: latestBatteryData?.payload.energyConsumed,
         statusMessage: latestStatusData?.payload.text,
       };
 
-      return { flightId: id, status: mergedData };
+      const formatData = (data: CombinedData) => ({
+        lat: `${data.lat?.toFixed(4)}°`,
+        lon: `${data.lon?.toFixed(4)}°`,
+        alt: `${data.alt?.toFixed(2)}m`,
+        heading: `${data.heading?.toFixed(2)}°`,
+        speed: `${data.speed?.toFixed(2)}m/s`,
+        groundSpeed: `${data.groundSpeed?.toFixed(2)}m/s`,
+        roll: `${data.roll?.toFixed(2)} rad`,
+        pitch: `${data.pitch?.toFixed(2)} rad`,
+        yaw: `${data.yaw?.toFixed(2)} rad`,
+        batteryRemaining:
+          data.batteryRemaining !== undefined
+            ? `${data.batteryRemaining}%`
+            : undefined,
+        energyConsumed:
+          data.energyConsumed !== undefined
+            ? `${data.energyConsumed}mWh`
+            : undefined,
+        statusMessage: data.statusMessage,
+      });
+
+      return { flightId: id, status: formatData(mergedData) };
     });
 
     setCurrentData(updatedStatus);
