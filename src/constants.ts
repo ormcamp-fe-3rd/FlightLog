@@ -43,6 +43,10 @@ export const CONVERSION_FACTORS = {
   LAT_LON: 1e-7,
   ALTITUDE: 1e-3,
   HEADING: 1e-2,
+  BATTERY_REMAINING: 1e-2,
+  TEMPERATURE: 1e-2,
+  RAD_TO_DEG: 180 / Math.PI,
+  ALT_ELLIPSOID: 1e-2,
 } as const;
 
 export const PLAY_SPEED = [1, 2, 5, 10, 30];
