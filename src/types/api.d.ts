@@ -17,3 +17,10 @@ export interface Telemetries {
   timestamp: string;
   __v: number;
 }
+
+export interface Dataset {
+  name: string;
+  type: string;
+  unit: number[];
+  data: number[];
+}
