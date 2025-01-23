@@ -11,8 +11,6 @@ interface ControlPanelProps {
   onFlightInfoClick: () => void;
   onAttitudeClick: () => void;
   onZoomClick: () => void;
-  isProgressBar: boolean;
-  onToggle: () => void;
 }
 
 function ControlButton({
@@ -33,14 +31,11 @@ export default function ControlPanel({
   onFlightInfoClick,
   onAttitudeClick,
   onZoomClick,
-  isProgressBar,
-  onToggle,
 }: ControlPanelProps) {
   const buttonActions = {
     flightInfo: onFlightInfoClick,
     attitude: onAttitudeClick,
     zoom: onZoomClick,
-    toggle: onToggle,
   };
 
   return (
@@ -55,11 +50,6 @@ export default function ControlPanel({
             iconClassName={iconClassName}
           />
         ))}
-        <ControlButton
-          icon="/path/to/toggle-icon.png"
-          label={isProgressBar ? "Bar" : "Search"}
-          onClick={onToggle}
-        />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { useTexture } from "@react-three/drei";
+import { useTexture, CameraControls } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import * as THREE from "three";
 import { useRef } from "react";
@@ -14,6 +14,24 @@ interface AttitudePanelProps {
   pitchSpeed?: number;
   yawSpeed?: number;
 }
+
+const CANVAS_CONFIG = {
+  CAMERA: {
+    position: [0.5, 1.3, 1.5] as [number, number, number],
+    fov: 75,
+  },
+  DIMENSIONS: {
+    width: 250,
+    height: 140,
+  },
+  LIGHTING: {
+    ambient: 0.5,
+    directional: {
+      intensity: 1.5,
+      position: [5, 10, 5],
+    },
+  },
+} as const;
 
 function Drone({ roll, pitch, yaw }: AttitudePanelProps) {
   const gltf = useLoader(GLTFLoader, "/images/map/drone/scene.gltf");
@@ -40,6 +58,7 @@ function Drone({ roll, pitch, yaw }: AttitudePanelProps) {
     <group ref={droneRef} scale={[8, 8, 8]}>
       //크기
       <primitive object={gltf.scene} />
+      <CameraControls />
       <meshStandardMaterial
         map={baseColorMap}
         roughnessMap={metallicRoughnessMap}
@@ -62,16 +81,16 @@ export default function AttitudePanel({
     <div className="flex h-full w-full flex-col justify-between rounded-[30px] bg-white p-4">
       {/* 자세 데이터 */}
       <div>
-        <div>Roll: {roll.toFixed(2)} rad</div>
-        <div>Pitch: {pitch.toFixed(2)} rad</div>
-        <div>Yaw: {yaw.toFixed(2)} rad</div>
+        <div>Roll: {roll.toFixed(2)}</div>
+        <div>Pitch: {pitch.toFixed(2)}</div>
+        <div>Yaw: {yaw.toFixed(2)}</div>
       </div>
 
       {/* 3D 모델 */}
       <div>
         <Canvas
-          camera={{ position: [0.5, 1.3, 1.5], fov: 75 }}
-          style={{ width: "250px", height: "140px" }}
+          camera={CANVAS_CONFIG.CAMERA}
+          style={{ ...CANVAS_CONFIG.DIMENSIONS }}
           gl={{
             antialias: true,
             toneMapping: THREE.ACESFilmicToneMapping,
@@ -79,8 +98,10 @@ export default function AttitudePanel({
           }}
         >
           <color attach="background" args={["white"]} />
-          <ambientLight intensity={1.0} />
-          <directionalLight intensity={2.0} position={[5, 10, 5]} />
+          <ambientLight
+            intensity={CANVAS_CONFIG.LIGHTING.directional.intensity}
+          />
+          <directionalLight {...CANVAS_CONFIG.LIGHTING.directional} />
           <Drone roll={roll} pitch={pitch} yaw={yaw} />
         </Canvas>
       </div>
@@ -94,7 +115,7 @@ export default function AttitudePanel({
         ].map((item) => (
           <div key={item.label} className="text-center">
             <div>{item.label}</div>
-            <div>{(item.value ?? 0).toFixed(4)} rad/s</div>
+            <div>{(item.value ?? 0).toFixed(4)}</div>
           </div>
         ))}
       </div>

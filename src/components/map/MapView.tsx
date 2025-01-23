@@ -29,6 +29,17 @@ interface MapViewProps {
   }) => void;
 }
 
+const ICON_CONFIG = {
+  SIZE: [30, 30] as [number, number],
+  ANCHOR: [15, 15] as [number, number],
+  BASE_STYLE: `
+    width: 30px; 
+    height: 30px; 
+    background: url('/images/map/marker-icon.png') no-repeat center/contain;
+    transition: transform 0.3s ease;
+  `,
+} as const;
+
 export default function MapView({
   progress,
   selectedTimestamp,
@@ -221,16 +232,13 @@ export default function MapView({
       html: `
         <div 
           style="
-            width: 30px; 
-            height: 30px; 
-            background: url('/images/map/marker-icon.png') no-repeat center/contain; 
+            ${ICON_CONFIG.BASE_STYLE}
             transform: rotate(${rotationAngle}deg);
-            transition: transform 0.3s ease;
           ">
         </div>
       `,
-      iconSize: [30, 30],
-      iconAnchor: [15, 15],
+      iconSize: ICON_CONFIG.SIZE,
+      iconAnchor: ICON_CONFIG.ANCHOR,
     });
 
   // 진행도별 시간 계산
