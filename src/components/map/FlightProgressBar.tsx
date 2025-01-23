@@ -7,13 +7,13 @@ import { useEffect, useRef, useState } from "react";
 interface Props {
   progress: number;
   setProgress: (progress: number) => void;
-  timestamp: number[];
+  allTimestamps: number[];
 }
 
 export default function FlightProgressBar({
   progress,
   setProgress,
-  timestamp,
+  allTimestamps,
 }: Props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1); // 재생 속도 배율 (1x, 2x 등)
@@ -21,7 +21,7 @@ export default function FlightProgressBar({
 
   useEffect(() => {
     if (isPlaying) {
-      handlePlay(timestamp, progress);
+      handlePlay(allTimestamps, progress);
     }
   }, [playbackSpeed]);
 
@@ -32,7 +32,7 @@ export default function FlightProgressBar({
     if (newProgress >= 0 && newProgress <= 100) {
       if (isPlaying) {
         setProgress(newProgress);
-        handlePlay(timestamp, newProgress);
+        handlePlay(allTimestamps, newProgress);
       } else {
         setProgress(newProgress);
       }
@@ -80,15 +80,15 @@ export default function FlightProgressBar({
     }
   };
 
-  const startTime = calculateCurrentTime(timestamp, 0);
-  const endTime = calculateCurrentTime(timestamp, 100);
-  const currentTime = calculateCurrentTime(timestamp, progress);
+  const startTime = calculateCurrentTime(allTimestamps, 0);
+  const endTime = calculateCurrentTime(allTimestamps, 100);
+  const currentTime = calculateCurrentTime(allTimestamps, progress);
 
   return (
     <>
       <div>
         <div className="flex">
-          <button onClick={() => handlePlay(timestamp)}>Play</button>
+          <button onClick={() => handlePlay(allTimestamps)}>Play</button>
           <button onClick={handlePause}>Pause</button>
           <button onClick={() => setPlaybackSpeed(1)}>X1</button>
           <button onClick={() => setPlaybackSpeed(30)}>X30</button>

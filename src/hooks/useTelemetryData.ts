@@ -20,13 +20,13 @@ interface CombinedData {
 
 interface Props {
   progress: number;
-  selectedTimestamp: number[];
+  allTimestamps: number[];
   selectedOperationId: string[];
 }
 
 export function useTelemetryData({
   progress,
-  selectedTimestamp,
+  allTimestamps,
   selectedOperationId,
 }: Props) {
   const { telemetryData } = useData();
@@ -35,10 +35,10 @@ export function useTelemetryData({
   >([]);
 
   useEffect(() => {
-    if (!selectedTimestamp || selectedTimestamp.length === 0) return;
+    if (!allTimestamps || allTimestamps.length === 0) return;
 
-    const allStartTime = selectedTimestamp[0];
-    const allEndTime = selectedTimestamp[selectedTimestamp.length - 1];
+    const allStartTime = allTimestamps[0];
+    const allEndTime = allTimestamps[allTimestamps.length - 1];
     const totalDuration = allEndTime - allStartTime;
     const currentTime = allStartTime + (totalDuration * progress) / 100;
 
@@ -121,7 +121,7 @@ export function useTelemetryData({
     });
 
     setCurrentData(updatedStatus);
-  }, [telemetryData, progress, selectedTimestamp]);
+  }, [telemetryData, progress, allTimestamps]);
 
   const getLatestData = (
     telemetryData: { [key: string]: Telemetries[] },

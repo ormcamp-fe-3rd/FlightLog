@@ -4,20 +4,20 @@ import { useTelemetryData } from "@/hooks/useTelemetryData";
 
 interface StatusPanelProps {
   progress: number;
-  selectedTimestamp: number[];
+  allTimestamps: number[];
   selectedOperationId: string[];
   selectedFlight: string;
 }
 
 export default function StatusPanel({
   progress,
-  selectedTimestamp,
+  allTimestamps,
   selectedOperationId,
   selectedFlight,
 }: StatusPanelProps) {
   const currentData = useTelemetryData({
     progress,
-    selectedTimestamp,
+    allTimestamps,
     selectedOperationId,
   });
 
