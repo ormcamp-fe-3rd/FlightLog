@@ -44,3 +44,5 @@ export const CONVERSION_FACTORS = {
   ALTITUDE: 1e-3,
   HEADING: 1e-2,
 } as const;
+
+export const PLAY_SPEED = [1, 2, 5, 10, 30];

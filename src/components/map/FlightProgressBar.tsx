@@ -1,5 +1,6 @@
 "use client";
 
+import { PLAY_SPEED } from "@/constants";
 import calculateCurrentTime from "@/utils/calculateCurrentTime";
 import calculateProgressByTimestamp from "@/utils/calculateProgressByTimestamp";
 import { useEffect, useRef, useState } from "react";
@@ -39,7 +40,12 @@ export default function FlightProgressBar({
     }
   };
 
-  // 재생 기능
+  // 재생
+  const togglePlay = () => {
+    setIsPlaying(!isPlaying);
+    isPlaying ? handlePause() : handlePlay(allTimestamps);
+  };
+
   const handlePlay = (
     timestamps: number[],
     currentProgress: number = progress,
@@ -86,27 +92,40 @@ export default function FlightProgressBar({
 
   return (
     <>
-      <div>
-        <div className="flex">
-          <button onClick={() => handlePlay(allTimestamps)}>Play</button>
-          <button onClick={handlePause}>Pause</button>
-          <button onClick={() => setPlaybackSpeed(1)}>X1</button>
-          <button onClick={() => setPlaybackSpeed(30)}>X30</button>
-          <div>배속: {playbackSpeed}</div>
+      <div className="flex font-bold">
+        <div className="flex w-full justify-around">
+          <span>{startTime}</span>
+          <span>{currentTime}</span>
+          <span>{endTime}</span>
         </div>
-        <div>startTime: {startTime}</div>
-        <div>endTime: {endTime}</div>
-        <div>currentTime: {currentTime}</div>
       </div>
-      <input
-        type="range"
-        min={0}
-        max="100"
-        value={progress}
-        onChange={handleInputChange}
-        className="range"
-        step="0.1"
-      />
+      <div className="flex w-full items-center gap-4">
+        <button
+          onClick={togglePlay}
+          className="size-10 flex-shrink-0 rounded-full bg-blue-500 text-white hover:bg-blue-600"
+        >
+          {isPlaying ? "❚❚" : "▶"}
+        </button>
+        <input
+          type="range"
+          min={0}
+          max="100"
+          value={progress}
+          onChange={handleInputChange}
+          className="range"
+          step="0.1"
+        />
+        <select
+          className="select select-sm w-20"
+          onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
+        >
+          {PLAY_SPEED.map((rate) => (
+            <option key={rate} value={rate}>
+              {rate}x
+            </option>
+          ))}
+        </select>
+      </div>
     </>
   );
 }

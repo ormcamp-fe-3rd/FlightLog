@@ -83,7 +83,7 @@ export default function MapPage() {
             <AttitudePanel />
           </div>
         </div>
-        <div className="absolute bottom-7 left-1/2 z-10 w-1/2 min-w-80 -translate-x-1/2">
+        <div className="absolute bottom-7 left-1/2 z-10 w-2/3 min-w-80 -translate-x-1/2">
           <FlightProgressBar
             progress={progress}
             setProgress={setProgress}
