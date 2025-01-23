@@ -21,12 +21,14 @@ interface CombinedData {
 interface Props {
   progress: number;
   allTimestamps: number[];
+  operationTimestamps: Record<string, number[]>;
   selectedOperationId: string[];
 }
 
 export function useTelemetryData({
   progress,
   allTimestamps,
+  operationTimestamps,
   selectedOperationId,
 }: Props) {
   const { telemetryData } = useData();
@@ -43,39 +45,68 @@ export function useTelemetryData({
     const currentTime = allStartTime + (totalDuration * progress) / 100;
 
     const updatedStatus = selectedOperationId.map((id) => {
+      const operationTime = operationTimestamps[id];
+      if (!operationTime || operationTime.length === 0)
+        return { flightId: id, status: {} };
+
+      const operationStartTime = operationTime[0];
+      const operationEndTime = operationTime[operationTime.length - 1];
+      if (currentTime > operationEndTime) {
+        return { flightId: id, status: {} };
+      }
+
       const latestPositionData = getLatestData(
         telemetryData,
         TELEMETRY_MSGID.POSITION,
+        operationStartTime,
+        operationEndTime,
         currentTime,
       );
       const latestGpsData = getLatestData(
         telemetryData,
         TELEMETRY_MSGID.GPS,
+        operationStartTime,
+        operationEndTime,
         currentTime,
       );
       const latestSpeedData = getLatestData(
         telemetryData,
         TELEMETRY_MSGID.SPEED,
+        operationStartTime,
+        operationEndTime,
         currentTime,
       );
       const latestAttitudeData = getLatestData(
         telemetryData,
         TELEMETRY_MSGID.ATTITUDE,
+        operationStartTime,
+        operationEndTime,
         currentTime,
       );
       const latestBatteryData = getLatestData(
         telemetryData,
         TELEMETRY_MSGID.BATTERY,
+        operationStartTime,
+        operationEndTime,
         currentTime,
       );
       const latestStatusData = getLatestData(
         telemetryData,
         TELEMETRY_MSGID.STATUS,
+        operationStartTime,
+        operationEndTime,
         currentTime,
       );
 
-      if (!latestPositionData && !latestGpsData) {
-        setCurrentData([]);
+      if (
+        !latestPositionData &&
+        !latestGpsData &&
+        !latestSpeedData &&
+        !latestAttitudeData &&
+        !latestBatteryData &&
+        !latestStatusData
+      ) {
+        return { flightId: id, status: {} };
       }
 
       // 데이터 병합
@@ -121,11 +152,13 @@ export function useTelemetryData({
     });
 
     setCurrentData(updatedStatus);
-  }, [telemetryData, progress, allTimestamps]);
+  }, [telemetryData, progress, allTimestamps, operationTimestamps]);
 
   const getLatestData = (
     telemetryData: { [key: string]: Telemetries[] },
     id: number,
+    startTime: number,
+    endTime: number,
     currentTime: number,
   ) => {
     const filteredData = telemetryData[id]
@@ -133,7 +166,12 @@ export function useTelemetryData({
         ...data,
         timestamp: Date.parse(data.timestamp),
       }))
-      .filter((data) => data.timestamp <= currentTime);
+      .filter(
+        (data) =>
+          data.timestamp >= startTime &&
+          data.timestamp <= endTime &&
+          data.timestamp <= currentTime,
+      );
 
     return filteredData?.[filteredData.length - 1] ?? null;
   };

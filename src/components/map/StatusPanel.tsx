@@ -5,6 +5,7 @@ import { useTelemetryData } from "@/hooks/useTelemetryData";
 interface StatusPanelProps {
   progress: number;
   allTimestamps: number[];
+  operationTimestamps: Record<string, number[]>;
   selectedOperationId: string[];
   selectedFlight: string;
 }
@@ -12,12 +13,14 @@ interface StatusPanelProps {
 export default function StatusPanel({
   progress,
   allTimestamps,
+  operationTimestamps,
   selectedOperationId,
   selectedFlight,
 }: StatusPanelProps) {
   const currentData = useTelemetryData({
     progress,
     allTimestamps,
+    operationTimestamps,
     selectedOperationId,
   });
 

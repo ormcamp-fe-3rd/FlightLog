@@ -74,6 +74,7 @@ export default function MapPage() {
             <StatusPanel
               progress={progress}
               allTimestamps={allTimestamps}
+              operationTimestamps={operationTimestamps}
               selectedOperationId={selectedOperationId}
               selectedFlight={selectedFlight}
             />
