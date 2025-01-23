@@ -10,23 +10,14 @@ import findOperationStartTime from "@/utils/findOperationStartTime";
 export default function Sidebar() {
   const {
     operationData,
-    fetchOperationData,
     robotData,
-    fetchRobotData,
     telemetryData,
-    fetchTelemetryData,
     validOperationLabels,
     setValidOperationLabel,
     setSelectedOperation,
     toggleSelectedOperation,
   } = useData();
   const positionData = telemetryData[33] || [];
-
-  useEffect(() => {
-    fetchOperationData();
-    fetchRobotData();
-    fetchTelemetryData();
-  }, []);
 
   useEffect(() => {
     // telemetryData에 기록이 있는 operation만 필터링
