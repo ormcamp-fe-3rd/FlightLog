@@ -1,6 +1,6 @@
 "use client";
 
-import { useTelemetryData } from "@/hooks/useTelemetryData";
+import { useStatusData } from "@/hooks/useStatusData";
 
 interface StatusPanelProps {
   progress: number;
@@ -17,7 +17,7 @@ export default function StatusPanel({
   selectedOperationId,
   selectedFlight,
 }: StatusPanelProps) {
-  const currentData = useTelemetryData({
+  const currentData = useStatusData({
     progress,
     allTimestamps,
     operationTimestamps,

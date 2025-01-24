@@ -35,7 +35,7 @@ interface Props {
   selectedOperationId: string[];
 }
 
-export function useTelemetryData({
+export function useStatusData({
   progress,
   allTimestamps,
   operationTimestamps,
