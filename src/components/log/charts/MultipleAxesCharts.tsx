@@ -115,11 +115,12 @@ const BatteryStatusChart = () => {
     const voltMin = Math.floor(Math.min(...voltData));
     const batteryMax = Math.ceil(Math.max(...batteryData));
     const batteryMin = Math.floor(Math.min(...batteryData));
+    const sidebarWidth = 250;
 
     return {
       chart: {
         height: 600,
-        width: chartWidth * 0.8,
+        width: chartWidth - sidebarWidth,
         zooming: {
           mouseWheel: {
             enabled: true,
@@ -180,7 +181,7 @@ const BatteryStatusChart = () => {
           },
         ],
         inputEnabled: true,
-        selected: 8,
+        selected: 3,
         inputDateFormat: "%Y-%m-%d %H:%M:%S",
         inputEditDateFormat: "%Y-%m-%d %H:%M:%S",
       },
