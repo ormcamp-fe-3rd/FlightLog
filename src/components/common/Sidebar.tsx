@@ -19,7 +19,6 @@ export default function Sidebar() {
     validOperationLabels,
     setValidOperationLabel,
     selectedOperationId,
-    setSelectedOperation,
     toggleSelectedOperation,
   } = useData();
   const positionData = telemetryData[33] || [];
@@ -50,7 +49,6 @@ export default function Sidebar() {
     }, {});
 
     setValidOperationLabel(validOperationLabel);
-    setSelectedOperation(validOperationLabel);
   }, [operationData, telemetryData]);
 
   const robotIds = [...new Set(operationData.map((value) => value["robot"]))];
