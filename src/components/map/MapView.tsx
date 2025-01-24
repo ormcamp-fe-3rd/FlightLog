@@ -276,9 +276,8 @@ export default function MapView({
                 <Popup>
                   <div>
                     <p>시간: {calculateCurrentTime(allTimestamps, progress)}</p>
-                    <p>위도: {position[0].toFixed(6)}</p>
-                    <p>경도: {position[1].toFixed(6)}</p>
-                    <p>방향: {Math.round(direction)}°</p>
+                    <p>위도: {position[0].toFixed(4)}</p>
+                    <p>경도: {position[1].toFixed(4)}</p>
                   </div>
                 </Popup>
               </Marker>
