@@ -93,19 +93,18 @@ export default function FlightProgressBar({
   return (
     <>
       <div className="flex font-bold">
-        <div className="flex w-full justify-around">
-          <span>{startTime}</span>
-          <span>{currentTime}</span>
-          <span>{endTime}</span>
+        <div className="flex w-full justify-around font-bold">
+          <span>{currentTime ? `현재 시간: ${currentTime}` : ""}</span>
         </div>
       </div>
-      <div className="flex w-full items-center gap-4">
+      <div className="flex w-full items-center gap-4 font-bold">
         <button
           onClick={togglePlay}
           className="size-10 flex-shrink-0 rounded-full bg-blue-500 text-white hover:bg-blue-600"
         >
           {isPlaying ? "❚❚" : "▶"}
         </button>
+        {startTime}
         <input
           type="range"
           min={0}
@@ -115,6 +114,7 @@ export default function FlightProgressBar({
           className="range"
           step="0.1"
         />
+        {endTime}
         <select
           className="select select-sm w-20"
           onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
