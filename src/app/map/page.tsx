@@ -19,7 +19,10 @@ export default function MapPage() {
   const { selectedOperationId } = useData();
   const [selectedFlight, setSelectedFlight] = useState(selectedOperationId[0]);
   const [progress, setProgress] = useState(0);
-  const [selectedTimestamp, setSelectedTimestamp] = useState<number[]>([]);
+  const [operationTimestamps, setOperationTimestamps] = useState<
+    Record<string, number[]>
+  >({});
+  const [allTimestamps, setAllTimestamps] = useState<number[]>([]);
 
   const [roll, setRoll] = useState(0);
   const [pitch, setPitch] = useState(0);
@@ -32,6 +35,11 @@ export default function MapPage() {
     setSelectedFlight(selectedOperationId[0]);
     setProgress(0);
   }, [selectedOperationId]);
+
+  useEffect(() => {
+    const allTimestamps = Object.values(operationTimestamps).flat();
+    setAllTimestamps(allTimestamps.sort((a, b) => a - b));
+  }, [operationTimestamps]);
 
   const toggleStatusPanel = () => {
     setIsStatusOpen(!isStatusOpen);
@@ -72,8 +80,9 @@ export default function MapPage() {
         <div className="h-full">
           <MapView
             progress={progress}
-            selectedTimestamp={selectedTimestamp}
-            setSelectedTimestamp={setSelectedTimestamp}
+            operationTimestamps={operationTimestamps}
+            setOperationTimestamps={setOperationTimestamps}
+            allTimestamps={allTimestamps}
             onMarkerClick={setSelectedFlight}
             onAttitudeChange={updateAttitudeData}
           />
@@ -88,7 +97,8 @@ export default function MapPage() {
           >
             <StatusPanel
               progress={progress}
-              selectedTimestamp={selectedTimestamp}
+              allTimestamps={allTimestamps}
+              operationTimestamps={operationTimestamps}
               selectedOperationId={selectedOperationId}
               selectedFlight={selectedFlight}
             />
@@ -104,11 +114,11 @@ export default function MapPage() {
             />
           </div>
         </div>
-        <div className="absolute bottom-7 left-1/2 z-10 w-1/2 min-w-80 -translate-x-1/2">
+        <div className="absolute bottom-7 left-1/2 z-10 w-2/3 min-w-80 -translate-x-1/2">
           <FlightProgressBar
             progress={progress}
             setProgress={setProgress}
-            timestamp={selectedTimestamp}
+            allTimestamps={allTimestamps}
           />
           <div className="flex justify-center">
             <ControlPanel

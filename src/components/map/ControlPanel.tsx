@@ -40,7 +40,7 @@ export default function ControlPanel({
 
   return (
     <div>
-      <div className="w-73 flex h-16 items-center justify-around rounded-[30px] bg-white p-1">
+      <div className="flex h-16 w-72 items-end justify-around rounded-[30px] bg-white pb-1">
         {CONTROL_BUTTONS.map(({ id, icon, label, iconClassName }) => (
           <ControlButton
             key={id}

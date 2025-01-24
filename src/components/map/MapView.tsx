@@ -16,8 +16,9 @@ import { formatTimeString } from "@/utils/formatTimestamp";
 
 interface MapViewProps {
   progress: number;
-  selectedTimestamp: number[];
-  setSelectedTimestamp: (timestamp: number[]) => void;
+  operationTimestamps: Record<string, number[]>;
+  setOperationTimestamps: (timestamp: Record<string, number[]>) => void;
+  allTimestamps: number[];
   onMarkerClick: (id: string) => void;
   onAttitudeChange: (data: {
     roll: number;
@@ -42,17 +43,15 @@ const ICON_CONFIG = {
 
 export default function MapView({
   progress,
-  selectedTimestamp,
-  setSelectedTimestamp,
+  operationTimestamps,
+  setOperationTimestamps,
+  allTimestamps,
   onMarkerClick,
   onAttitudeChange,
 }: MapViewProps) {
   const { telemetryData, selectedOperationId } = useData();
   const [operationLatlngs, setOperationLatlngs] = useState<
     Record<string, [number, number][]>
-  >({});
-  const [operationTimestamps, setOperationTimestamps] = useState<
-    Record<string, number[]>
   >({});
   const [dronePositions, setDronePositions] = useState<
     { flightId: string; position: [number, number]; direction: number }[]
@@ -89,15 +88,10 @@ export default function MapView({
   }, [telemetryData, selectedOperationId]);
 
   useEffect(() => {
-    const allTimestamps = Object.values(operationTimestamps).flat();
-    setSelectedTimestamp(allTimestamps.sort((a, b) => a - b));
-  }, [operationTimestamps]);
+    if (!allTimestamps || allTimestamps.length < 2) return;
 
-  useEffect(() => {
-    if (!selectedTimestamp || selectedTimestamp.length < 2) return;
-
-    const allStartTime = selectedTimestamp[0];
-    const allEndTime = selectedTimestamp[selectedTimestamp.length - 1];
+    const allStartTime = allTimestamps[0];
+    const allEndTime = allTimestamps[allTimestamps.length - 1];
     const totalDuration = allEndTime - allStartTime;
     const currentTime = allStartTime + (totalDuration * progress) / 100;
 
@@ -132,7 +126,7 @@ export default function MapView({
     });
 
     setDronePositions(updatedPositions);
-  }, [progress, selectedTimestamp, operationTimestamps, operationLatlngs]);
+  }, [progress, allTimestamps, operationTimestamps, operationLatlngs]);
 
   // 운행별 위치 데이터 반환
   const getOperationlatlings = (operationId: string) => {
@@ -287,9 +281,7 @@ export default function MapView({
               >
                 <Popup>
                   <div>
-                    <p>
-                      시간: {calculateCurrentTime(selectedTimestamp, progress)}
-                    </p>
+                    <p>시간: {calculateCurrentTime(allTimestamps, progress)}</p>
                     <p>위도: {position[0].toFixed(6)}</p>
                     <p>경도: {position[1].toFixed(6)}</p>
                     <p>방향: {Math.round(direction)}°</p>
