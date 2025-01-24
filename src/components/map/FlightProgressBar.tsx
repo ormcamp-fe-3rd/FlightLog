@@ -1,5 +1,6 @@
 "use client";
 
+import { PLAY_SPEED } from "@/constants";
 import calculateCurrentTime from "@/utils/calculateCurrentTime";
 import calculateProgressByTimestamp from "@/utils/calculateProgressByTimestamp";
 import { useEffect, useRef, useState } from "react";
@@ -7,13 +8,13 @@ import { useEffect, useRef, useState } from "react";
 interface Props {
   progress: number;
   setProgress: (progress: number) => void;
-  timestamp: number[];
+  allTimestamps: number[];
 }
 
 export default function FlightProgressBar({
   progress,
   setProgress,
-  timestamp,
+  allTimestamps,
 }: Props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1); // 재생 속도 배율 (1x, 2x 등)
@@ -21,7 +22,7 @@ export default function FlightProgressBar({
 
   useEffect(() => {
     if (isPlaying) {
-      handlePlay(timestamp, progress);
+      handlePlay(allTimestamps, progress);
     }
   }, [playbackSpeed]);
 
@@ -32,14 +33,19 @@ export default function FlightProgressBar({
     if (newProgress >= 0 && newProgress <= 100) {
       if (isPlaying) {
         setProgress(newProgress);
-        handlePlay(timestamp, newProgress);
+        handlePlay(allTimestamps, newProgress);
       } else {
         setProgress(newProgress);
       }
     }
   };
 
-  // 재생 기능
+  // 재생
+  const togglePlay = () => {
+    setIsPlaying(!isPlaying);
+    isPlaying ? handlePause() : handlePlay(allTimestamps);
+  };
+
   const handlePlay = (
     timestamps: number[],
     currentProgress: number = progress,
@@ -80,33 +86,46 @@ export default function FlightProgressBar({
     }
   };
 
-  const startTime = calculateCurrentTime(timestamp, 0);
-  const endTime = calculateCurrentTime(timestamp, 100);
-  const currentTime = calculateCurrentTime(timestamp, progress);
+  const startTime = calculateCurrentTime(allTimestamps, 0);
+  const endTime = calculateCurrentTime(allTimestamps, 100);
+  const currentTime = calculateCurrentTime(allTimestamps, progress);
 
   return (
     <>
-      <div>
-        <div className="flex">
-          <button onClick={() => handlePlay(timestamp)}>Play</button>
-          <button onClick={handlePause}>Pause</button>
-          <button onClick={() => setPlaybackSpeed(1)}>X1</button>
-          <button onClick={() => setPlaybackSpeed(30)}>X30</button>
-          <div>배속: {playbackSpeed}</div>
+      <div className="flex font-bold">
+        <div className="flex w-full justify-around">
+          <span>{startTime}</span>
+          <span>{currentTime}</span>
+          <span>{endTime}</span>
         </div>
-        <div>startTime: {startTime}</div>
-        <div>endTime: {endTime}</div>
-        <div>currentTime: {currentTime}</div>
       </div>
-      <input
-        type="range"
-        min={0}
-        max="100"
-        value={progress}
-        onChange={handleInputChange}
-        className="range"
-        step="0.1"
-      />
+      <div className="flex w-full items-center gap-4">
+        <button
+          onClick={togglePlay}
+          className="size-10 flex-shrink-0 rounded-full bg-blue-500 text-white hover:bg-blue-600"
+        >
+          {isPlaying ? "❚❚" : "▶"}
+        </button>
+        <input
+          type="range"
+          min={0}
+          max="100"
+          value={progress}
+          onChange={handleInputChange}
+          className="range"
+          step="0.1"
+        />
+        <select
+          className="select select-sm w-20"
+          onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
+        >
+          {PLAY_SPEED.map((rate) => (
+            <option key={rate} value={rate}>
+              {rate}x
+            </option>
+          ))}
+        </select>
+      </div>
     </>
   );
 }
