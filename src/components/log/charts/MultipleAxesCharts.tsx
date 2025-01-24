@@ -1,9 +1,10 @@
 "use client";
 import React from "react";
-import Highcharts from "highcharts";
+import Highcharts, { color } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsStock from "highcharts/modules/stock";
 import useData from "@/store/useData";
+import { PositionMesh } from "@react-three/drei";
 
 if (typeof Highcharts === "object") {
   HighchartsStock(Highcharts);
@@ -11,6 +12,7 @@ if (typeof Highcharts === "object") {
 
 const BatteryStatusChart = () => {
   const chartComponentRef = React.useRef<HighchartsReact.RefObject>(null);
+  const chartContainerRef = React.useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = React.useState(1000);
 
   React.useEffect(() => {
@@ -25,6 +27,17 @@ const BatteryStatusChart = () => {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // 마우스가 그래프 바깥에 있을 때에만 window 스크롤이 가능하도록 함
+  React.useEffect(() => {
+    const handleWheel = (event: WheelEvent) => {
+      if (chartContainerRef.current?.contains(event.target as Node)) {
+        event.preventDefault();
+      }
+    };
+    document.addEventListener("wheel", handleWheel, { passive: false });
+    return () => document.removeEventListener("wheel", handleWheel);
   }, []);
 
   const { telemetryData, selectedOperationId, validOperationLabels } =
@@ -62,12 +75,12 @@ const BatteryStatusChart = () => {
       return [
         {
           name: `배터리 잔량 (${validOperationLabels[operationId]})`,
-          type: "area",
+          type: "areaspline",
           yAxis: 2,
           color: colorSchemes.battery[index % colorSchemes.battery.length],
           data: operationData.map((data, batterRemain) => [
             times[batterRemain],
-            data.payload.batteryRemaining,
+            data.payload.batteryRemaining / 100,
           ]),
           tooltip: { valueSuffix: " %", xDateFormat: "%Y-%m-%d %H:%M:%S" },
         },
@@ -80,7 +93,7 @@ const BatteryStatusChart = () => {
             colorSchemes.temperature[index % colorSchemes.temperature.length],
           data: operationData.map((data, temp) => [
             times[temp],
-            data.payload.temperature,
+            data.payload.temperature / 100,
           ]),
           tooltip: { valueSuffix: "°C" },
         },
@@ -91,7 +104,7 @@ const BatteryStatusChart = () => {
           color: colorSchemes.voltage[index % colorSchemes.voltage.length],
           data: operationData.map((data, volt) => [
             times[volt],
-            data.payload.voltages[0],
+            data.payload.voltages[0] / 1000,
           ]),
           tooltip: { valueSuffix: "V" },
         },
@@ -103,18 +116,22 @@ const BatteryStatusChart = () => {
       .filter((s) => s.data && s.data.length > 0);
 
     // 그래프 Y축에 사용할 각 데이터 최대, 최소 값
-    const tempData = filteredData.map((data) => data.payload.temperature);
-    const voltData = filteredData.map((data) => data.payload.voltages[0]);
+    const tempData = filteredData.map((data) => data.payload.temperature / 100);
+    const voltData = filteredData.map(
+      (data) => data.payload.voltages[0] / 1000,
+    );
     const batteryData = filteredData.map(
-      (data) => data.payload.batteryRemaining,
+      (data) => data.payload.batteryRemaining / 100,
     );
 
-    const tempMax = Math.ceil(Math.max(...tempData));
-    const tempMin = Math.floor(Math.min(...tempData));
-    const voltMax = Math.ceil(Math.max(...voltData));
-    const voltMin = Math.floor(Math.min(...voltData));
-    const batteryMax = Math.ceil(Math.max(...batteryData));
-    const batteryMin = Math.floor(Math.min(...batteryData));
+    const tempMax = Math.max(...tempData) < 100 ? 100 : Math.max(...tempData);
+    const tempMin = 0;
+    const voltMax = Math.max(...voltData) < 30 ? 30 : Math.max(...voltData);
+    const voltMin = 0;
+    const batteryMax =
+      Math.max(...batteryData) < 100 ? 100 : Math.max(...batteryData);
+    const batteryMin = 0;
+
     const sidebarWidth = 250;
 
     return {
@@ -180,20 +197,20 @@ const BatteryStatusChart = () => {
             text: "전체",
           },
         ],
-        inputEnabled: true,
+        inputEnabled: false,
         selected: 3,
-        inputDateFormat: "%Y-%m-%d %H:%M:%S",
-        inputEditDateFormat: "%Y-%m-%d %H:%M:%S",
+        // inputDateFormat: "%Y-%m-%d %H:%M:%S",
+        // inputEditDateFormat: "%Y-%m-%d %H:%M:%S",
       },
       navigator: {
         enabled: true,
-        height: 70,
-        margin: 10,
+        height: 80,
+        margin: 20,
       },
       scrollbar: {
         enabled: true,
       },
-      title: { text: "배터리 상태" },
+      title: { text: "배터리 상태", y: 20 },
       xAxis: {
         type: "datetime",
         crosshair: true,
@@ -229,7 +246,7 @@ const BatteryStatusChart = () => {
   };
 
   return (
-    <div>
+    <div ref={chartContainerRef}>
       {hasData ? (
         <HighchartsReact
           ref={chartComponentRef}
