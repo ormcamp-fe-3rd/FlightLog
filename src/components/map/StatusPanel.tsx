@@ -50,7 +50,7 @@ export default function StatusPanel({
       <div className="flex flex-col gap-2">
         <div className="flex gap-4">
           <img src="/images/map/icon-Accuracy.svg" alt="Accuracy" />
-          <div>속도 정보</div>
+          <div>속도/시간 정보</div>
         </div>
         <div className="flex">
           <div className="flex-1">
@@ -58,7 +58,7 @@ export default function StatusPanel({
             <div>{statusData?.groundSpeed}</div>
           </div>
           <div className="flex-1">
-            <div>총 비행 시간</div>
+            <div>비행 시간</div>
             <div>{statusData?.flightTime}</div>
           </div>
         </div>
