@@ -38,7 +38,7 @@ function Drone() {
 
 export default function AttitudePanel() {
   return (
-    <div className="flex h-full w-full flex-col justify-between rounded-[30px] bg-white p-4">
+    <div className="flex h-full w-[280px] flex-col justify-between rounded-[30px] bg-white p-4">
       <div>
         <div>Roll: </div>
         <div>Pitch: </div>
