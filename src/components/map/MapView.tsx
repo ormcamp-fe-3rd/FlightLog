@@ -83,8 +83,14 @@ export default function MapView({
       const startTime = timestamps[0];
       const endTime = timestamps[timestamps.length - 1];
 
+      // 운행 시작 전
+      if (currentTime < startTime) {
+        return { flightId: id, position: positions[0], direction: 0 };
+      }
+
+      // 운행 중
       if (currentTime >= startTime && currentTime <= endTime) {
-        // 운행별 개별 진행률 계산
+        // 개별 진행률 계산
         const operationProgress =
           ((currentTime - startTime) / (endTime - startTime)) * 100;
 
@@ -102,7 +108,12 @@ export default function MapView({
         return { flightId: id, position, direction };
       }
 
-      return { flightId: id, position: positions[0], direction: 0 }; // 운행 시작 전
+      // 운행 종료 후
+      return {
+        flightId: id,
+        position: positions[positions.length - 1],
+        direction: 0,
+      };
     });
 
     setDronePositions(updatedPositions);
