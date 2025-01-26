@@ -12,7 +12,7 @@ import L from "leaflet";
 import useData from "@/store/useData";
 import React, { useEffect, useState } from "react";
 import { getColorFromId } from "@/utils/getColorFromId";
-import { formatTimeString } from "@/utils/formatTimestamp";
+import { formatTimestamp } from "@/utils/formatTimestamp";
 
 interface MapViewProps {
   progress: number;
@@ -234,7 +234,7 @@ export default function MapView({
     if (!timestamps) return null;
     const totalDuration = timestamps[timestamps.length - 1] - timestamps[0];
     const currentTime = timestamps[0] + (totalDuration * progress) / 100;
-    const result = formatTimeString(currentTime);
+    const result = formatTimestamp(currentTime, "timestring");
     return result;
   };
 

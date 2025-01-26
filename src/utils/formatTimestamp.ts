@@ -42,14 +42,3 @@ export function formatTimestamp(
 
   return "Invalid Date"; // 예상치 못한 경우
 }
-
-export function formatTimeString(timestamp: number) {
-  const date = new Date(timestamp);
-  const timestring = date.toLocaleString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-
-  return timestring;
-}
