@@ -14,8 +14,8 @@ export default function Sidebar() {
     telemetryData,
     validOperationLabels,
     setValidOperationLabel,
-    setSelectedOperation,
     toggleSelectedOperation,
+    selectedOperationId,
   } = useData();
   const positionData = telemetryData[33] || [];
 
@@ -39,7 +39,6 @@ export default function Sidebar() {
     }, {});
 
     setValidOperationLabel(validOperationLabel);
-    setSelectedOperation(validOperationLabel);
   }, [operationData, telemetryData]);
 
   const robotIds = [...new Set(operationData.map((value) => value["robot"]))];
@@ -88,7 +87,9 @@ export default function Sidebar() {
                         <label className="flex cursor-pointer items-center gap-3">
                           <input
                             type="checkbox"
-                            defaultChecked
+                            checked={selectedOperationId.includes(
+                              operation._id,
+                            )}
                             className="checkbox checkbox-sm"
                             onChange={() =>
                               toggleSelectedOperation(operation._id)
