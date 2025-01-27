@@ -108,12 +108,11 @@ export default function MapPage() {
           </div>
           <div className={`${isAttitudeOpen ? "block" : "hidden"}`}>
             <AttitudePanel
-              roll={roll}
-              pitch={pitch}
-              yaw={yaw}
-              rollSpeed={rollSpeed}
-              pitchSpeed={pitchSpeed}
-              yawSpeed={yawSpeed}
+              progress={progress}
+              allTimestamps={allTimestamps}
+              operationTimestamps={operationTimestamps}
+              selectedOperationId={selectedOperationId}
+              selectedFlight={selectedFlight}
             />
           </div>
         </div>
