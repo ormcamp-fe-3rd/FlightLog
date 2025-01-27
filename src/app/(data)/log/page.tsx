@@ -4,12 +4,9 @@ import SynchronisedCharts from "@/components/log/charts/SynchronisedCharts";
 
 export default function LogPage() {
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="block">
-        <MultipleAxesCharts />
-        <SynchronisedCharts numOfDatasets={4} />
-      </div>
+    <div className="block">
+      <MultipleAxesCharts />
+      <SynchronisedCharts numOfDatasets={4} />
     </div>
   );
 }
