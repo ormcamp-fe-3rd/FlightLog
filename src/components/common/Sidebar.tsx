@@ -51,7 +51,13 @@ export default function Sidebar() {
     setValidOperationLabel(validOperationLabel);
   }, [operationData, telemetryData]);
 
-  const robotIds = [...new Set(operationData.map((value) => value["robot"]))];
+  const robotIds = [
+    ...new Set(
+      operationData
+        .sort((a, b) => a.robot.localeCompare(b.robot))
+        .map((value) => value["robot"]),
+    ),
+  ];
   const robotNames = robotData.reduce(
     (acc, robot) => {
       acc[robot._id] = robot.name;
