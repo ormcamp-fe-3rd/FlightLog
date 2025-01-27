@@ -83,12 +83,13 @@ export default function MapPage() {
             <AttitudePanel />
           </div>
         </div>
-        <div className="absolute bottom-7 left-1/2 z-10 w-2/3 min-w-80 -translate-x-1/2">
+        <div className="absolute bottom-7 left-1/2 z-10 flex w-2/3 min-w-80 -translate-x-1/2 flex-col gap-1">
           <FlightProgressBar
             progress={progress}
             setProgress={setProgress}
             allTimestamps={allTimestamps}
             operationTimestamps={operationTimestamps}
+            setSelectedFlight={setSelectedFlight}
           />
           <div className="flex justify-center">
             <ControlPanel

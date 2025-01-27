@@ -5,12 +5,14 @@ import calculateTimeByProgress from "@/utils/calculateTimeByProgress";
 import calculateProgressByTimestamp from "@/utils/calculateProgressByTimestamp";
 import { useEffect, useRef, useState } from "react";
 import Timeline from "@/components/map/Timeline";
+import { TimelineData } from "@/types/types";
 
 interface Props {
   progress: number;
   setProgress: (progress: number) => void;
   allTimestamps: number[];
   operationTimestamps: Record<string, number[]>;
+  setSelectedFlight: (id: string) => void;
 }
 
 export default function FlightProgressBar({
@@ -18,6 +20,7 @@ export default function FlightProgressBar({
   setProgress,
   allTimestamps,
   operationTimestamps,
+  setSelectedFlight,
 }: Props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1); // 재생 속도 배율 (1x, 2x 등)
@@ -40,6 +43,30 @@ export default function FlightProgressBar({
       } else {
         setProgress(newProgress);
       }
+    }
+  };
+
+  const handleTimelineClick = (id: string, timelineData: TimelineData[]) => {
+    const operation = timelineData.find((operation) => operation.id === id);
+    const startTime = operation?.start ?? 0;
+    const endTime = operation?.end ?? 0;
+    const startPoint = calculateProgressByTimestamp(allTimestamps, startTime);
+    const endPoint = calculateProgressByTimestamp(allTimestamps, endTime);
+
+    // 선택한 operation의 비행시간인 경우, 패널만 변경
+    if (progress >= startPoint && progress <= endPoint) {
+      setSelectedFlight(id);
+      return;
+    }
+
+    // 선택한 operation의 비행시간이 아닌 경우, 재생바 이동 및 패널 변경
+    if (isPlaying) {
+      setSelectedFlight(id);
+      setProgress(startPoint);
+      handlePlay(allTimestamps, startPoint);
+    } else {
+      setSelectedFlight(id);
+      setProgress(startPoint);
     }
   };
 
@@ -119,6 +146,7 @@ export default function FlightProgressBar({
           <Timeline
             allTimestamps={allTimestamps}
             operationTimestamps={operationTimestamps}
+            onTimelineClick={handleTimelineClick}
           />
         </div>
         {endTime}

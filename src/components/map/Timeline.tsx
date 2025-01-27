@@ -1,13 +1,16 @@
+import { TimelineData } from "@/types/types";
 import { getColorFromId } from "@/utils/getColorFromId";
 
 interface Props {
   allTimestamps: number[];
   operationTimestamps: Record<string, number[]>;
+  onTimelineClick: (id: string, timelineData: TimelineData[]) => void;
 }
 
 export default function Timeline({
   allTimestamps,
   operationTimestamps,
+  onTimelineClick,
 }: Props) {
   const startTimestamp = allTimestamps[0];
   const endTimestamp = allTimestamps[allTimestamps.length - 1];
@@ -64,13 +67,14 @@ export default function Timeline({
         return (
           <div
             key={operation.id}
-            className="absolute h-1 rounded-full"
+            className="absolute h-1 cursor-pointer rounded-full"
             style={{
               left: `${startPercent}%`,
               width: `${endPercent - startPercent}%`,
               top: `${operation.layer}px`,
               backgroundColor: `${getColorFromId(operation.id)}`,
             }}
+            onClick={() => onTimelineClick(operation.id, timelineData)}
           />
         );
       })}
