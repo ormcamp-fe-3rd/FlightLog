@@ -10,7 +10,7 @@ interface DataState {
   fetchRobotData: () => Promise<void>;
 
   telemetryData: { [key: string]: Telemetries[] };
-  fetchTelemetryData: () => Promise<void>;
+  fetchTelemetryData: (operationId: string) => Promise<void>;
 
   validOperationLabels: Record<string, string>;
   setValidOperationLabel: (labels: Record<string, string>) => void;
@@ -20,7 +20,7 @@ interface DataState {
   toggleSelectedOperation: (operationId: string) => void;
 }
 
-const useData = create<DataState>((set) => ({
+const useData = create<DataState>((set, get) => ({
   operationData: [],
   fetchOperationData: async () => {
     const result = await fetchData("operations");
@@ -34,8 +34,11 @@ const useData = create<DataState>((set) => ({
   },
 
   telemetryData: {},
-  fetchTelemetryData: async () => {
-    const result = await fetchData("telemetries");
+  fetchTelemetryData: async (operationId) => {
+    // 이미 불러온 데이터인지 확인 (캐시)
+    if (get().telemetryData[operationId]) return;
+
+    const result = await fetchData("telemetries", { operation: operationId });
 
     // msgId별로 데이터를 배열로 저장
     const categorizedData = result.reduce(
@@ -46,12 +49,14 @@ const useData = create<DataState>((set) => ({
           acc[msgId] = [];
         }
         acc[msgId].push(data);
-
         return acc;
       },
       {},
     );
-    set({ telemetryData: categorizedData });
+
+    set((state) => ({
+      telemetryData: { ...state.telemetryData, [operationId]: categorizedData },
+    }));
   },
 
   validOperationLabels: {},
@@ -64,7 +69,7 @@ const useData = create<DataState>((set) => ({
     const formattedData = Object.keys(operations);
     return set({ selectedOperationId: formattedData });
   },
-  toggleSelectedOperation: (operationId) => {
+  toggleSelectedOperation: async (operationId) => {
     set((state) => {
       const selectedOperationsSet = new Set(state.selectedOperationId);
 
@@ -74,6 +79,8 @@ const useData = create<DataState>((set) => ({
 
       return { selectedOperationId: [...selectedOperationsSet] };
     });
+    // 체크할 때만 텔레메트리 데이터 요청
+    await get().fetchTelemetryData(operationId);
   },
 }));
 
