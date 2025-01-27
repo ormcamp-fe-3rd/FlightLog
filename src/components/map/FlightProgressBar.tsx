@@ -4,17 +4,20 @@ import { PLAY_SPEED } from "@/constants";
 import calculateTimeByProgress from "@/utils/calculateTimeByProgress";
 import calculateProgressByTimestamp from "@/utils/calculateProgressByTimestamp";
 import { useEffect, useRef, useState } from "react";
+import Timeline from "@/components/map/Timeline";
 
 interface Props {
   progress: number;
   setProgress: (progress: number) => void;
   allTimestamps: number[];
+  operationTimestamps: Record<string, number[]>;
 }
 
 export default function FlightProgressBar({
   progress,
   setProgress,
   allTimestamps,
+  operationTimestamps,
 }: Props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1); // 재생 속도 배율 (1x, 2x 등)
@@ -103,15 +106,21 @@ export default function FlightProgressBar({
           {isPlaying ? "❚❚" : "▶"}
         </button>
         {startTime}
-        <input
-          type="range"
-          min={0}
-          max="100"
-          value={progress}
-          onChange={handleInputChange}
-          className="range"
-          step="0.1"
-        />
+        <div className="w-full">
+          <input
+            type="range"
+            min={0}
+            max="100"
+            value={progress}
+            onChange={handleInputChange}
+            className="range"
+            step="0.1"
+          />
+          <Timeline
+            allTimestamps={allTimestamps}
+            operationTimestamps={operationTimestamps}
+          />
+        </div>
         {endTime}
         <select
           className="select select-sm w-20"

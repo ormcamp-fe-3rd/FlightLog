@@ -88,6 +88,7 @@ export default function MapPage() {
             progress={progress}
             setProgress={setProgress}
             allTimestamps={allTimestamps}
+            operationTimestamps={operationTimestamps}
           />
           <div className="flex justify-center">
             <ControlPanel
