@@ -9,12 +9,12 @@ interface AppProviderProps {
 }
 
 export default function AppProvider({ children }: AppProviderProps) {
-  const { fetchOperationData, fetchRobotData, fetchTelemetryData } = useData();
+  const { fetchOperationData, fetchRobotData } = useData();
 
   useEffect(() => {
     fetchOperationData();
     fetchRobotData();
-    fetchTelemetryData();
+    // 텔레메트리 데이터는 체크했을 때 받아오도록 변경
   }, []);
 
   return <SessionProvider>{children}</SessionProvider>;
