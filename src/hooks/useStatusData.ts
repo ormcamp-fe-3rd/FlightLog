@@ -26,6 +26,7 @@ interface CombinedData {
   energyConsumed?: number; // 소비된 에너지
   statusMessage?: string; // 상태 메시지
   flightTime?: number; // 비행 시간
+  totalflightTime?: number; // 총 비행 시간
 }
 
 interface Props {
@@ -35,7 +36,7 @@ interface Props {
   selectedOperationId: string[];
 }
 
-export function useTelemetryData({
+export function useStatusData({
   progress,
   allTimestamps,
   operationTimestamps,
@@ -152,7 +153,8 @@ export function useTelemetryData({
           CONVERSION_FACTORS.BATTERY_REMAINING,
         energyConsumed: latestBatteryData?.payload.energyConsumed,
         statusMessage: latestStatusData?.payload.text,
-        flightTime: operationEndTime - operationStartTime,
+        flightTime: currentTime - operationStartTime,
+        totalflightTime: operationEndTime - operationStartTime,
       };
 
       const formatData = (data: CombinedData) => ({
@@ -178,6 +180,7 @@ export function useTelemetryData({
         energyConsumed: formatValue(data.energyConsumed, 0, "mWh"),
         statusMessage: data.statusMessage,
         flightTime: formatFlightTime(data.flightTime),
+        totalflightTime: formatFlightTime(data.totalflightTime),
       });
 
       return { flightId: id, status: formatData(mergedData) };

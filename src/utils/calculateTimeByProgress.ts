@@ -1,6 +1,6 @@
 import { formatTimestamp } from "./formatTimestamp";
 
-export default function calculateCurrentTime(
+export default function calculateTimeByProgress(
   timestamps: number[],
   progress: number,
 ) {

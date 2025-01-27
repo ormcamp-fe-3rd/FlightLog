@@ -12,7 +12,7 @@ import L from "leaflet";
 import useData from "@/store/useData";
 import React, { useEffect, useState } from "react";
 import { getColorFromId } from "@/utils/getColorFromId";
-import { formatTimeString } from "@/utils/formatTimestamp";
+import { formatTimestamp } from "@/utils/formatTimestamp";
 
 interface MapViewProps {
   progress: number;
@@ -83,8 +83,14 @@ export default function MapView({
       const startTime = timestamps[0];
       const endTime = timestamps[timestamps.length - 1];
 
+      // 운행 시작 전
+      if (currentTime < startTime) {
+        return { flightId: id, position: positions[0], direction: 0 };
+      }
+
+      // 운행 중
       if (currentTime >= startTime && currentTime <= endTime) {
-        // 운행별 개별 진행률 계산
+        // 개별 진행률 계산
         const operationProgress =
           ((currentTime - startTime) / (endTime - startTime)) * 100;
 
@@ -102,7 +108,12 @@ export default function MapView({
         return { flightId: id, position, direction };
       }
 
-      return { flightId: id, position: positions[0], direction: 0 }; // 운행 시작 전
+      // 운행 종료 후
+      return {
+        flightId: id,
+        position: positions[positions.length - 1],
+        direction: 0,
+      };
     });
 
     setDronePositions(updatedPositions);
@@ -223,7 +234,7 @@ export default function MapView({
     if (!timestamps) return null;
     const totalDuration = timestamps[timestamps.length - 1] - timestamps[0];
     const currentTime = timestamps[0] + (totalDuration * progress) / 100;
-    const result = formatTimeString(currentTime);
+    const result = formatTimestamp(currentTime, "timestring");
     return result;
   };
 
@@ -265,9 +276,8 @@ export default function MapView({
                 <Popup>
                   <div>
                     <p>시간: {calculateCurrentTime(allTimestamps, progress)}</p>
-                    <p>위도: {position[0].toFixed(6)}</p>
-                    <p>경도: {position[1].toFixed(6)}</p>
-                    <p>방향: {Math.round(direction)}°</p>
+                    <p>위도: {position[0].toFixed(4)}</p>
+                    <p>경도: {position[1].toFixed(4)}</p>
                   </div>
                 </Popup>
               </Marker>

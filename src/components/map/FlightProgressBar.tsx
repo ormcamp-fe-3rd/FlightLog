@@ -1,7 +1,7 @@
 "use client";
 
 import { PLAY_SPEED } from "@/constants";
-import calculateCurrentTime from "@/utils/calculateCurrentTime";
+import calculateTimeByProgress from "@/utils/calculateTimeByProgress";
 import calculateProgressByTimestamp from "@/utils/calculateProgressByTimestamp";
 import { useEffect, useRef, useState } from "react";
 
@@ -86,26 +86,23 @@ export default function FlightProgressBar({
     }
   };
 
-  const startTime = calculateCurrentTime(allTimestamps, 0);
-  const endTime = calculateCurrentTime(allTimestamps, 100);
-  const currentTime = calculateCurrentTime(allTimestamps, progress);
+  const startTime = calculateTimeByProgress(allTimestamps, 0);
+  const endTime = calculateTimeByProgress(allTimestamps, 100);
+  const currentTime = calculateTimeByProgress(allTimestamps, progress);
 
   return (
     <>
-      <div className="flex font-bold">
-        <div className="flex w-full justify-around">
-          <span>{startTime}</span>
-          <span>{currentTime}</span>
-          <span>{endTime}</span>
-        </div>
+      <div className="flex w-full justify-around font-bold">
+        <span>{currentTime ? `현재 시간: ${currentTime}` : ""}</span>
       </div>
-      <div className="flex w-full items-center gap-4">
+      <div className="flex w-full items-center gap-4 font-bold">
         <button
           onClick={togglePlay}
           className="size-10 flex-shrink-0 rounded-full bg-blue-500 text-white hover:bg-blue-600"
         >
           {isPlaying ? "❚❚" : "▶"}
         </button>
+        {startTime}
         <input
           type="range"
           min={0}
@@ -115,6 +112,7 @@ export default function FlightProgressBar({
           className="range"
           step="0.1"
         />
+        {endTime}
         <select
           className="select select-sm w-20"
           onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTelemetryData } from "@/hooks/useTelemetryData";
+import { useStatusData } from "@/hooks/useStatusData";
 
 interface StatusPanelProps {
   progress: number;
@@ -17,7 +17,7 @@ export default function StatusPanel({
   selectedOperationId,
   selectedFlight,
 }: StatusPanelProps) {
-  const currentData = useTelemetryData({
+  const currentData = useStatusData({
     progress,
     allTimestamps,
     operationTimestamps,
@@ -30,7 +30,7 @@ export default function StatusPanel({
   const statusData = filteredData.length > 0 ? filteredData[0].status : null;
 
   return (
-    <div className="flex max-h-full w-[280px] flex-col gap-6 overflow-y-scroll rounded-[30px] bg-black py-6 pl-10 text-white opacity-80">
+    <div className="flex max-h-full w-[280px] flex-col gap-6 rounded-[30px] bg-black py-6 pl-10 text-white opacity-80">
       <div className="flex flex-col gap-2">
         <div className="flex gap-4">
           <img src="/images/map/icon-Altitude.svg" alt="Altitude" />
@@ -50,7 +50,7 @@ export default function StatusPanel({
       <div className="flex flex-col gap-2">
         <div className="flex gap-4">
           <img src="/images/map/icon-Accuracy.svg" alt="Accuracy" />
-          <div>속도 정보</div>
+          <div>속도/시간 정보</div>
         </div>
         <div className="flex">
           <div className="flex-1">
@@ -58,7 +58,7 @@ export default function StatusPanel({
             <div>{statusData?.groundSpeed}</div>
           </div>
           <div className="flex-1">
-            <div>총 비행 시간</div>
+            <div>비행 시간</div>
             <div>{statusData?.flightTime}</div>
           </div>
         </div>
