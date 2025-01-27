@@ -34,13 +34,16 @@ const useData = create<DataState>((set) => ({
   },
 
   telemetryData: {},
-  fetchTelemetryData: async () => {
-    const result = await fetchData("telemetries");
+  fetchTelemetryData: async (operationId) => {
+    // 이미 불러온 데이터인지 확인 (캐시)
+    if (get().telemetryData[operationId]) return;
 
-    // msgId별로 데이터를 배열로 저장
-    const categorizedData = result.reduce(
+    const result = await fetchData("telemetries", { operation: operationId });
+
+    // msgId별로 데이터를 그룹화
+    const categorizedData = filteredData.reduce(
       (acc: { [key: string]: Telemetries[] }, data: Telemetries) => {
-        const { msgId } = data; // msgId 추출
+        const { msgId } = data;
 
         if (!acc[msgId]) {
           acc[msgId] = [];
@@ -51,7 +54,10 @@ const useData = create<DataState>((set) => ({
       },
       {},
     );
-    set({ telemetryData: categorizedData });
+
+    set((state) => ({
+      telemetryData: { ...state.telemetryData, [operationId]: categorizedData },
+    }));
   },
 
   validOperationLabels: {},
@@ -62,9 +68,11 @@ const useData = create<DataState>((set) => ({
   selectedOperationId: [],
   setSelectedOperation: (operations) => {
     const formattedData = Object.keys(operations);
-    return set({ selectedOperationId: formattedData });
+    set({ selectedOperationId: formattedData });
+
+    get().fetchTelemetryData();
   },
-  toggleSelectedOperation: (operationId) => {
+  toggleSelectedOperation: async (operationId) => {
     set((state) => {
       const selectedOperationsSet = new Set(state.selectedOperationId);
 
@@ -74,6 +82,8 @@ const useData = create<DataState>((set) => ({
 
       return { selectedOperationId: [...selectedOperationsSet] };
     });
+    // 체크할 때만 텔레메트리 데이터 요청
+    await get().fetchTelemetryData(operationId);
   },
 }));
 
