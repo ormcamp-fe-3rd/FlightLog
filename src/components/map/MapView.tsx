@@ -20,14 +20,6 @@ interface MapViewProps {
   setOperationTimestamps: (timestamp: Record<string, number[]>) => void;
   allTimestamps: number[];
   onMarkerClick: (id: string) => void;
-  onAttitudeChange: (data: {
-    roll: number;
-    pitch: number;
-    yaw: number;
-    rollSpeed: number;
-    pitchSpeed: number;
-    yawSpeed: number;
-  }) => void;
 }
 
 const ICON_CONFIG = {
@@ -47,7 +39,6 @@ export default function MapView({
   setOperationTimestamps,
   allTimestamps,
   onMarkerClick,
-  onAttitudeChange,
 }: MapViewProps) {
   const { telemetryData, selectedOperationId } = useData();
   const [operationLatlngs, setOperationLatlngs] = useState<
