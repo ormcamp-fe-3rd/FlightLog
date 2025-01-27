@@ -52,3 +52,5 @@ export const CONVERSION_FACTORS = {
 export const PLAY_SPEED = [1, 2, 5, 10, 30];
 
 export const TIMELINE_HEIGHT = 4;
+
+export const INITIAL_POSITION = { LAT: 37.566381, LNG: 126.977717 } as const;

@@ -6,6 +6,7 @@ import {
   Marker,
   Popup,
   Polyline,
+  useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -13,6 +14,7 @@ import useData from "@/store/useData";
 import React, { useEffect, useState } from "react";
 import { getColorFromId } from "@/utils/getColorFromId";
 import { formatTimestamp } from "@/utils/formatTimestamp";
+import { INITIAL_POSITION } from "@/constants";
 
 interface MapViewProps {
   progress: number;
@@ -36,6 +38,12 @@ export default function MapView({
   const [dronePositions, setDronePositions] = useState<
     { flightId: string; position: [number, number]; direction: number }[]
   >([]);
+  const [operationStartPoint, setOperationStartPoint] =
+    useState<Record<string, [number, number]>>();
+  const [mapPosition, setMapPosition] = useState<[number, number]>([
+    INITIAL_POSITION.LAT,
+    INITIAL_POSITION.LNG,
+  ]);
 
   useEffect(() => {
     const updatedLatlngs = selectedOperationId.reduce(
@@ -63,8 +71,22 @@ export default function MapView({
       {} as Record<string, number[]>,
     );
 
+    const updatedStartPoint = selectedOperationId.reduce(
+      (acc, id) => {
+        const startPoint = updatedLatlngs[id][0];
+        acc[id] = startPoint;
+        return acc;
+      },
+      {} as Record<string, [number, number]>,
+    );
+
+    if (operationStartPoint) {
+      setMapPosition(updatedStartPoint[selectedOperationId[0]]);
+    }
+
     setOperationLatlngs(updatedLatlngs);
     setOperationTimestamps(updatedTimestamps);
+    setOperationStartPoint(updatedStartPoint);
   }, [telemetryData, selectedOperationId]);
 
   useEffect(() => {
@@ -241,7 +263,7 @@ export default function MapView({
   return (
     <div className="relative z-0 h-full w-full">
       <MapContainer
-        center={[-35.3632599, 149.1652374]}
+        center={[37.566381, 126.977717]}
         zoom={15}
         scrollWheelZoom={true}
         className="h-full w-full"
@@ -283,7 +305,24 @@ export default function MapView({
               </Marker>
             );
           })}
+        <MapLogic position={mapPosition} />
       </MapContainer>
     </div>
   );
+}
+
+interface MapLogicProps {
+  position: [number, number];
+}
+
+function MapLogic({ position }: MapLogicProps) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (map && position) {
+      map.setView(position, map.getZoom());
+    }
+  }, [map, position]);
+
+  return null;
 }
