@@ -14,7 +14,6 @@ import useData from "@/store/useData";
 import React, { useEffect, useState } from "react";
 import { getColorFromId } from "@/utils/getColorFromId";
 import { formatTimestamp } from "@/utils/formatTimestamp";
-import { INITIAL_POSITION } from "@/constants";
 
 interface MapViewProps {
   progress: number;
@@ -22,6 +21,12 @@ interface MapViewProps {
   setOperationTimestamps: (timestamp: Record<string, number[]>) => void;
   allTimestamps: number[];
   onMarkerClick: (id: string) => void;
+  operationStartPoint: Record<string, [number, number]> | undefined;
+  setOperationStartPoint: (
+    startpoints: Record<string, [number, number]>,
+  ) => void;
+  mapPosition: [number, number];
+  setMapPosition: (latlng: [number, number]) => void;
 }
 
 export default function MapView({
@@ -30,6 +35,10 @@ export default function MapView({
   setOperationTimestamps,
   allTimestamps,
   onMarkerClick,
+  operationStartPoint,
+  setOperationStartPoint,
+  mapPosition,
+  setMapPosition,
 }: MapViewProps) {
   const { telemetryData, selectedOperationId } = useData();
   const [operationLatlngs, setOperationLatlngs] = useState<
@@ -38,12 +47,6 @@ export default function MapView({
   const [dronePositions, setDronePositions] = useState<
     { flightId: string; position: [number, number]; direction: number }[]
   >([]);
-  const [operationStartPoint, setOperationStartPoint] =
-    useState<Record<string, [number, number]>>();
-  const [mapPosition, setMapPosition] = useState<[number, number]>([
-    INITIAL_POSITION.LAT,
-    INITIAL_POSITION.LNG,
-  ]);
 
   useEffect(() => {
     const updatedLatlngs = selectedOperationId.reduce(

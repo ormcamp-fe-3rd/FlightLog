@@ -11,6 +11,7 @@ import useSidebarStore from "@/store/useSidebar";
 import useResizePanelControl from "@/hooks/useResizePanelControl";
 import SelectFlightLog from "@/components/map/SelectFlightLog";
 import useData from "@/store/useData";
+import { INITIAL_POSITION } from "@/constants";
 
 export default function MapPage() {
   const { isSidebarOpen } = useSidebarStore();
@@ -23,6 +24,12 @@ export default function MapPage() {
     Record<string, number[]>
   >({});
   const [allTimestamps, setAllTimestamps] = useState<number[]>([]);
+  const [operationStartPoint, setOperationStartPoint] =
+    useState<Record<string, [number, number]>>();
+  const [mapPosition, setMapPosition] = useState<[number, number]>([
+    INITIAL_POSITION.LAT,
+    INITIAL_POSITION.LNG,
+  ]);
 
   useEffect(() => {
     setSelectedFlight(selectedOperationId[0]);
@@ -43,7 +50,12 @@ export default function MapPage() {
   };
 
   const zoomToDrone = () => {
-    // Todo
+    if (operationStartPoint && operationStartPoint[selectedFlight]) {
+      const [lat, lng] = operationStartPoint[selectedFlight];
+      setMapPosition([lat, lng]);
+    } else {
+      console.warn(`Start point not found for ID: ${selectedFlight}`);
+    }
   };
 
   return (
@@ -61,6 +73,10 @@ export default function MapPage() {
             setOperationTimestamps={setOperationTimestamps}
             allTimestamps={allTimestamps}
             onMarkerClick={setSelectedFlight}
+            operationStartPoint={operationStartPoint}
+            setOperationStartPoint={setOperationStartPoint}
+            mapPosition={mapPosition}
+            setMapPosition={setMapPosition}
           />
         </div>
         <div className="absolute right-8 top-8 z-10 flex max-h-[90%] flex-col gap-4">
