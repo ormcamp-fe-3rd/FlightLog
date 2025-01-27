@@ -27,7 +27,7 @@ export default function LoginContent() {
         redirect: false,
       });
 
-      if (result.error) {
+      if (result?.error) {
         alert(result.error);
       } else {
         toggle();

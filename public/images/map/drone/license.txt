@@ -1,0 +1,11 @@
+Model Information:
+* title:	dron
+* source:	https://sketchfab.com/3d-models/dron-d2d0be8972a1445da054363e0dd8f58d
+* author:	horizon man (https://sketchfab.com/mazurilla260)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "dron" (https://sketchfab.com/3d-models/dron-d2d0be8972a1445da054363e0dd8f58d) by horizon man (https://sketchfab.com/mazurilla260) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -1,14 +1,13 @@
 import useLoginModalStore from "@/store/useLoginModal";
-import { formFields } from "@/util/common/RegsiterFormFormat";
-import { useRegisterForm } from "@/util/common/RegsiterFormFormat";
+import { formFields, useRegisterForm } from "@/utils/RegsiterFormFormat";
 
 export default function RegisterContent() {
   const { toggle } = useLoginModalStore();
   const { register, errors, isValid } = useRegisterForm();
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(event.currentTarget as HTMLFormElement);
 
     const response = await fetch("/api/auth/register", {
       method: "POST",

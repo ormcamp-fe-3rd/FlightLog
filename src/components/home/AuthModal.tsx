@@ -5,7 +5,7 @@ import useLoginModalStore from "@/store/useLoginModal";
 import LoginContent from "@/components/home/LoginContent";
 import RegisterContent from "@/components/home/RegisterContent";
 import SocialLoginButton from "@/components/home/SocialLoginButton";
-import usePreventScroll from "@/hook/usePreventScroll";
+import usePreventScroll from "@/hooks/usePreventScroll";
 
 export default function AuthModal() {
   const { toggle, isLoginModalOpen } = useLoginModalStore();

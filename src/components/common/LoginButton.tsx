@@ -1,7 +1,7 @@
 "use client";
 import useLoginModalStore from "@/store/useLoginModal";
 import AuthModal from "@/components/home/AuthModal";
-import { AUTH_LOGIN } from "@/util/common/AuthLogin";
+import { AUTH_LOGIN } from "@/utils/AuthLogin";
 
 import { signOut, useSession } from "next-auth/react";
 
