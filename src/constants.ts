@@ -50,3 +50,5 @@ export const CONVERSION_FACTORS = {
 } as const;
 
 export const PLAY_SPEED = [1, 2, 5, 10, 30];
+
+export const TIMELINE_HEIGHT = 4;

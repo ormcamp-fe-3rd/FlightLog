@@ -1,3 +1,4 @@
+import { TIMELINE_HEIGHT } from "@/constants";
 import { TimelineData } from "@/types/types";
 import { getColorFromId } from "@/utils/getColorFromId";
 
@@ -18,6 +19,7 @@ export default function Timeline({
 
   const timelineData = calculateTimelineData(operationTimestamps);
   const maxLayer = Math.max(...timelineData.map((op) => op.layer));
+  const maxLayerHeight = (maxLayer + 1) * TIMELINE_HEIGHT;
 
   function calculateTimelineData(
     operationTimestamps: Record<string, number[]>,
@@ -57,7 +59,7 @@ export default function Timeline({
   return (
     <div
       className="relative w-full overflow-x-clip"
-      style={{ height: `${maxLayer + 1}px` }}
+      style={{ height: `${maxLayerHeight}px` }}
     >
       {timelineData.map((operation) => {
         const startPercent =
@@ -72,6 +74,7 @@ export default function Timeline({
               left: `${startPercent}%`,
               width: `${endPercent - startPercent}%`,
               top: `${operation.layer}px`,
+              height: `${TIMELINE_HEIGHT}px`,
               backgroundColor: `${getColorFromId(operation.id)}`,
             }}
             onClick={() => onTimelineClick(operation.id, timelineData)}
