@@ -10,7 +10,7 @@ interface DataState {
   fetchRobotData: () => Promise<void>;
 
   telemetryData: { [key: string]: Telemetries[] };
-  fetchTelemetryData: () => Promise<void>;
+  fetchTelemetryData: (operationIds?: string[]) => Promise<void>;
 
   validOperationLabels: Record<string, string>;
   setValidOperationLabel: (labels: Record<string, string>) => void;
@@ -34,30 +34,49 @@ const useData = create<DataState>((set, get) => ({
   },
 
   telemetryData: {},
-  fetchTelemetryData: async () => {
-    const result = await fetchData("telemetries");
+  fetchTelemetryData: async (operationIds?: string[]) => {
+    const selectedOperations = operationIds || get().selectedOperationId;
 
-    const selectedOperations = new Set(get().selectedOperationId);
+    if (selectedOperations.length === 0) {
+      set({ telemetryData: {} });
 
-    const filteredData = result.filter((telemetry) =>
-      selectedOperations.has(telemetry.operation),
-    );
+      return;
+    }
 
-    // msgId별로 데이터를 그룹화
-    const categorizedData = filteredData.reduce(
-      (acc: { [key: string]: Telemetries[] }, data: Telemetries) => {
-        const { msgId } = data;
+    const promises = selectedOperations.map(async (operationId) => {
+      try {
+        const data = await fetchData(`telemetries`, { operation: operationId });
+        return data;
+      } catch (error) {
+        console.error(
+          `오퍼레이션을 불러오는데 실패했습니다. ${operationId}:`,
+          error,
+        );
+        return [];
+      }
+    });
 
-        if (!acc[msgId]) {
-          acc[msgId] = [];
-        }
-        acc[msgId].push(data);
-        return acc;
-      },
-      {},
-    );
+    try {
+      const results = await Promise.all(promises);
+      const allTelemetries = results.flat();
 
-    set({ telemetryData: categorizedData });
+      const categorizedData = allTelemetries.reduce(
+        (acc: { [key: string]: Telemetries[] }, data: Telemetries) => {
+          const { msgId } = data;
+          if (!acc[msgId]) {
+            acc[msgId] = [];
+          }
+          acc[msgId].push(data);
+          return acc;
+        },
+        {},
+      );
+
+      set({ telemetryData: categorizedData });
+    } catch (error) {
+      console.error("텔레메트리를 불러오는데 실패했습니다.", error);
+      set({ telemetryData: {} });
+    }
   },
 
   validOperationLabels: {},
@@ -69,22 +88,26 @@ const useData = create<DataState>((set, get) => ({
   setSelectedOperation: (operations) => {
     const formattedData = Object.keys(operations);
     set({ selectedOperationId: formattedData });
-
-    get().fetchTelemetryData();
+    // 새로 선택된 operation들의 데이터만 불러오기
+    get().fetchTelemetryData(formattedData);
   },
 
   toggleSelectedOperation: (operationId) => {
     set((state) => {
       const selectedOperationsSet = new Set(state.selectedOperationId);
 
-      selectedOperationsSet.has(operationId)
-        ? selectedOperationsSet.delete(operationId)
-        : selectedOperationsSet.add(operationId);
+      if (selectedOperationsSet.has(operationId)) {
+        selectedOperationsSet.delete(operationId);
+      } else {
+        selectedOperationsSet.add(operationId);
+      }
 
-      return { selectedOperationId: [...selectedOperationsSet] };
+      const newSelectedOperations = [...selectedOperationsSet];
+      // 토글된 후의 operation 목록으로 데이터 불러오기
+      get().fetchTelemetryData(newSelectedOperations);
+
+      return { selectedOperationId: newSelectedOperations };
     });
-    // 체크할 때만 텔레메트리 데이터 요청
-    get().fetchTelemetryData();
   },
 }));
 
