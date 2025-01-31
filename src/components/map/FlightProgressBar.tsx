@@ -9,14 +9,17 @@ interface Props {
   progress: number;
   setProgress: (progress: number) => void;
   allTimestamps: number[];
+  isPlaying: boolean;
+  setIsPlaying: (isPlaying: boolean) => void;
 }
 
 export default function FlightProgressBar({
   progress,
   setProgress,
   allTimestamps,
+  isPlaying,
+  setIsPlaying,
 }: Props) {
-  const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1); // 재생 속도 배율 (1x, 2x 등)
   const intervalId = useRef<NodeJS.Timeout | null>(null);
 
@@ -54,7 +57,7 @@ export default function FlightProgressBar({
 
     if (intervalId.current) {
       clearInterval(intervalId.current);
-      setIsPlaying(false);
+      setIsPlaying(true);
     }
 
     setIsPlaying(true);

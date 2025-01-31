@@ -22,6 +22,7 @@ export default function MapPage() {
   const [operationTimestamps, setOperationTimestamps] = useState<
     Record<string, number[]>
   >({});
+  const [isPlaying, setIsPlaying] = useState(false);
   const [allTimestamps, setAllTimestamps] = useState<number[]>([]);
 
   useEffect(() => {
@@ -86,6 +87,7 @@ export default function MapPage() {
               operationTimestamps={operationTimestamps}
               selectedOperationId={selectedOperationId}
               selectedFlight={selectedFlight}
+              isPlaying={isPlaying}
             />
           </div>
         </div>
@@ -94,6 +96,8 @@ export default function MapPage() {
             progress={progress}
             setProgress={setProgress}
             allTimestamps={allTimestamps}
+            isPlaying={isPlaying}
+            setIsPlaying={setIsPlaying}
           />
           <div className="flex justify-center">
             <ControlPanel
