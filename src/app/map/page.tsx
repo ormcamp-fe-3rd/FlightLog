@@ -25,6 +25,7 @@ export default function MapPage() {
   const [operationTimestamps, setOperationTimestamps] = useState<
     Record<string, number[]>
   >({});
+  const [isPlaying, setIsPlaying] = useState(false);
   const [allTimestamps, setAllTimestamps] = useState<number[]>([]);
   const [operationStartPoint, setOperationStartPoint] =
     useState<Record<string, [number, number]>>();
@@ -113,6 +114,7 @@ export default function MapPage() {
               operationTimestamps={operationTimestamps}
               selectedOperationId={selectedOperationId}
               selectedFlight={selectedFlight}
+              isPlaying={isPlaying}
             />
           </div>
         </div>

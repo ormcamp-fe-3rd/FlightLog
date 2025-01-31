@@ -1,9 +1,9 @@
 "use client";
 
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as THREE from "three";
-import { AxesHelper, TextureLoader } from "three";
+import { AxesHelper } from "three";
 import { useEffect, useRef } from "react";
 import { useAttitudeData } from "@/hooks/useAttitudeData";
 import { CameraControls, Html, PerspectiveCamera } from "@react-three/drei";
@@ -14,12 +14,13 @@ interface AttitudePanelProps {
   operationTimestamps: Record<string, number[]>;
   selectedOperationId: string[];
   selectedFlight: string;
+  isPlaying: boolean;
 }
 
 const CANVAS_CONFIG = {
   DIMENSIONS: {
     width: 250,
-    height: 140,
+    height: 170,
   },
   LIGHTING: {
     ambient: 1,
@@ -36,6 +37,7 @@ export default function AttitudePanel({
   operationTimestamps,
   selectedOperationId,
   selectedFlight,
+  isPlaying,
 }: AttitudePanelProps) {
   const currentData = useAttitudeData({
     progress,
@@ -52,50 +54,53 @@ export default function AttitudePanel({
   function Drone({
     roll,
     pitch,
-    yaw,
     heading,
+    isPlaying,
   }: {
     roll?: number;
     pitch?: number;
-    yaw?: number;
     heading?: number;
+    isPlaying: boolean;
   }) {
-    const fbx = useLoader(FBXLoader, "/images/map/drone/drone2.fbx");
-    const texture = useLoader(
-      TextureLoader,
-      "/images/map/drone/FINAL_TEXTURE.png",
-    );
+    const glb = useLoader(GLTFLoader, "/images/map/drone/drone.glb");
 
     const droneRef = useRef<THREE.Group>(null);
+    const fanRefs = useRef<THREE.Mesh[]>([]);
     const arrowRef = useRef<THREE.ArrowHelper | null>(null);
+    const isPlayingRef = useRef(isPlaying);
 
     useEffect(() => {
-      fbx.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
-          child.material = new THREE.MeshStandardMaterial({
-            map: texture, // 텍스처 적용
-            metalness: 0.5, // 금속성 조정
-            roughness: 0.5, // 거칠기 조정
-          });
+      isPlayingRef.current = isPlaying;
+    }, [isPlaying]);
+
+    useEffect(() => {
+      glb.scene.traverse((child) => {
+        if (
+          (child as THREE.Mesh).isMesh &&
+          child.name.includes("Fan") &&
+          !child.name.includes("Fan_top")
+        ) {
+          fanRefs.current.push(child as THREE.Mesh);
         }
       });
-      // 화살표 생성
-      const direction = new THREE.Vector3(0, 0, 1); // Z축 초기 방향
-      const arrow = new THREE.ArrowHelper(
-        direction,
-        new THREE.Vector3(0, 40, 20), // 화살표 위치를 드론의 머리 쪽으로 이동
-        30, // 화살표 길이
-        0xff0000, // 화살표 색상 (빨간색)
-        15, // 화살표 머리 크기
-        10, // 화살표 꼬리 크기
-      );
-      arrowRef.current = arrow;
 
-      if (droneRef.current) {
-        droneRef.current.add(arrow); // 드론에 화살표 추가
-        droneRef.current.rotation.y = Math.PI / 2;
+      // 화살표 생성
+      if (!arrowRef.current) {
+        const direction = new THREE.Vector3(0, 0, 1); // Z축 초기 방향
+        arrowRef.current = new THREE.ArrowHelper(
+          direction,
+          new THREE.Vector3(0, 0.5, 0), // 화살표 위치 조정
+          0.5, // 화살표 길이
+          0xff0000, // 색상 (빨간색)
+          0.2, // 화살표 머리 크기
+        );
+
+        if (droneRef.current) {
+          droneRef.current.add(arrowRef.current); // 드론에 화살표 추가
+          droneRef.current.rotation.y = Math.PI / 2; // 기본 회전 설정
+        }
       }
-    }, [fbx, texture]);
+    }, [glb]);
 
     // degree -> rad 변환 함수
     const degToRad = (deg: number) => (deg * Math.PI) / 180;
@@ -106,13 +111,19 @@ export default function AttitudePanel({
         droneRef.current.rotation.y = degToRad(-(heading ?? 0));
         droneRef.current.rotation.z = degToRad(roll ?? 0);
       }
+      // 날개(Fan) 회전
+      fanRefs.current.forEach((fan) => {
+        if (isPlaying) {
+          fan.rotation.z += 0.8;
+        }
+      });
     });
 
     return (
-      <group ref={droneRef} scale={[-0.05, 0.05, 0.05]}>
+      <group ref={droneRef} scale={[5, 5, 5]}>
         {" "}
         //드론 크기 //크기
-        <primitive object={fbx} />
+        <primitive object={glb.scene} />
       </group>
     );
   }
@@ -126,7 +137,7 @@ export default function AttitudePanel({
       </div>
 
       {/* 3D 모델 */}
-      <div>
+      <div className="top-6">
         <Canvas
           style={{ ...CANVAS_CONFIG.DIMENSIONS }}
           gl={{
@@ -135,7 +146,7 @@ export default function AttitudePanel({
             toneMappingExposure: 1.5,
           }}
         >
-          <PerspectiveCamera makeDefault position={[0, 5, -4]} fov={75} />
+          <PerspectiveCamera makeDefault position={[0, 6, -4]} fov={75} />
           <color attach="background" args={["white"]} />
           <ambientLight
             intensity={CANVAS_CONFIG.LIGHTING.directional.intensity}
@@ -145,13 +156,13 @@ export default function AttitudePanel({
             maxDistance={10} // 카메라가 멀어질 수 있는 최대 거리
             minDistance={5} // 카메라가 가까워질 수 있는 최소 거리
           />
-          <Html position={[7, 0, 0]}>
+          <Html position={[6, 0, 0]}>
             <div style={{ color: "black" }}>W</div>
           </Html>
-          <Html position={[-7, 0, 0]}>
+          <Html position={[-6, 0, 0]}>
             <div style={{ color: "black" }}>E</div>
           </Html>
-          <Html position={[0, 0, 18]}>
+          <Html position={[0, 0, 7]}>
             <div style={{ color: "black" }}>N</div>
           </Html>
           <Html position={[0, 0, -3]}>
@@ -165,8 +176,8 @@ export default function AttitudePanel({
           <Drone
             roll={AttitudeData?.roll ? +AttitudeData.roll : 0}
             pitch={AttitudeData?.pitch ? +AttitudeData.pitch : 0}
-            yaw={AttitudeData?.yaw ? +AttitudeData.yaw : 0}
             heading={AttitudeData?.heading ? +AttitudeData.heading : 0}
+            isPlaying={isPlaying}
           />
         </Canvas>
       </div>
