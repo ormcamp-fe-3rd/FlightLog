@@ -1,6 +1,6 @@
-import { TIMELINE_HEIGHT } from "@/constants";
+import { TIMELINE } from "@/constants";
+import { getTimelineStyles } from "@/utils/getTimelineStyles";
 import { TimelineData } from "@/types/types";
-import { getColorFromId } from "@/utils/getColorFromId";
 
 interface Props {
   allTimestamps: number[];
@@ -19,7 +19,7 @@ export default function Timeline({
 
   const timelineData = calculateTimelineData(operationTimestamps);
   const maxLayer = Math.max(...timelineData.map((op) => op.layer));
-  const maxLayerHeight = (maxLayer + 1) * TIMELINE_HEIGHT;
+  const maxLayerHeight = (maxLayer + 1) * (TIMELINE.HEIGHT + TIMELINE.GAP);
 
   function calculateTimelineData(
     operationTimestamps: Record<string, number[]>,
@@ -62,21 +62,16 @@ export default function Timeline({
       style={{ height: `${maxLayerHeight}px` }}
     >
       {timelineData.map((operation) => {
-        const startPercent =
-          ((operation.start - startTimestamp) / totalDuration) * 100;
-        const endPercent =
-          ((operation.end - startTimestamp) / totalDuration) * 100;
+        const styles = getTimelineStyles(
+          operation,
+          startTimestamp,
+          totalDuration,
+        );
         return (
           <div
             key={operation.id}
             className="absolute h-1 cursor-pointer rounded-full"
-            style={{
-              left: `${startPercent}%`,
-              width: `${endPercent - startPercent}%`,
-              top: `${operation.layer}px`,
-              height: `${TIMELINE_HEIGHT}px`,
-              backgroundColor: `${getColorFromId(operation.id)}`,
-            }}
+            style={styles}
             onClick={() => onTimelineClick(operation.id, timelineData)}
           />
         );
