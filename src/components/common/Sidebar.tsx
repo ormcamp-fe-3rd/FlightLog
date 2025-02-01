@@ -41,6 +41,17 @@ export default function Sidebar() {
     new Set(),
   );
 
+  const [showNoData, setShowNoData] = useState(false);
+
+  // 마운트가 완료된 이후에 데이터가 있는지 없는지 판별
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowNoData(true);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleOperationToggle = (operationId: string) => {
     if (
       !selectedOperationId.includes(operationId) &&
@@ -136,7 +147,14 @@ export default function Sidebar() {
                               </span>
                             </div>
                           ) : (
-                            <span>{validOperationLabels[operation._id]}</span>
+                            <span>
+                              {validOperationLabels[operation._id] ||
+                                (showNoData && (
+                                  <span className="text-gray-500">
+                                    데이터 없음
+                                  </span>
+                                ))}
+                            </span>
                           )}
                         </label>
                       </div>
