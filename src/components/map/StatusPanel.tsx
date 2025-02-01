@@ -39,11 +39,11 @@ export default function StatusPanel({
         <div className="flex">
           <div className="flex-1">
             <div>고도</div>
-            <div>{statusData?.alt}</div>
+            <div>{statusData?.alt ?? "-"}</div>
           </div>
           <div className="flex-1">
             <div>방향</div>
-            <div>{statusData?.heading}</div>
+            <div>{statusData?.heading ?? "-"}</div>
           </div>
         </div>
       </div>
@@ -55,11 +55,11 @@ export default function StatusPanel({
         <div className="flex">
           <div className="flex-1">
             <div>속도</div>
-            <div>{statusData?.groundSpeed}</div>
+            <div>{statusData?.groundSpeed ?? "-"}</div>
           </div>
           <div className="flex-1">
             <div>비행 시간</div>
-            <div>{statusData?.flightTime}</div>
+            <div>{statusData?.flightTime ?? "-"}</div>
           </div>
         </div>
       </div>
@@ -71,11 +71,11 @@ export default function StatusPanel({
         <div className="flex">
           <div className="flex-1">
             <div>온도</div>
-            <div>{statusData?.temperature}</div>
+            <div>{statusData?.temperature ?? "-"}</div>
           </div>
           <div className="flex-1">
             <div>배터리 잔량</div>
-            <div>{statusData?.batteryRemaining}</div>
+            <div>{statusData?.batteryRemaining ?? "-"}</div>
           </div>
         </div>
       </div>
