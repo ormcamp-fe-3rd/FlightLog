@@ -23,6 +23,16 @@ export const mapCalculator = {
     return result;
   },
 
+  // 운행별 시작 위치 반환
+  getOperationStartPoint(operationId: string, positionData: Telemetries[]) {
+    const data = positionData.find((data) => data.operation === operationId);
+    if (!data) return null;
+
+    const lat = data.payload.lat * 1e-7;
+    const lon = data.payload.lon * 1e-7;
+    return [lat, lon] as [number, number];
+  },
+
   // 시간별 위치 데이터 계산
   calculateDronePosition(
     progress: number,

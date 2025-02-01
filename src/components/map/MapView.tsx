@@ -13,33 +13,25 @@ import useData from "@/store/useData";
 import React, { useEffect, useState } from "react";
 import { getColorFromId } from "@/utils/getColorFromId";
 import { mapCalculator } from "@/utils/mapCalculator";
+import useOperationData from "@/hooks/useOperationData";
 
 interface MapViewProps {
   progress: number;
   operationTimestamps: Record<string, number[]>;
-  setOperationTimestamps: (timestamp: Record<string, number[]>) => void;
   allTimestamps: number[];
   onMarkerClick: (id: string) => void;
-  operationStartPoint: Record<string, [number, number]> | undefined;
-  setOperationStartPoint: (
-    startpoints: Record<string, [number, number]>,
-  ) => void;
   mapPosition: [number, number];
-  setMapPosition: (latlng: [number, number]) => void;
 }
 
 export default function MapView({
   progress,
   operationTimestamps,
-  setOperationTimestamps,
   allTimestamps,
   onMarkerClick,
-  operationStartPoint,
-  setOperationStartPoint,
   mapPosition,
-  setMapPosition,
 }: MapViewProps) {
-  const { telemetryData, selectedOperationId } = useData();
+  const { selectedOperationId } = useData();
+  const { updatedLatlngs } = useOperationData();
   const [operationLatlngs, setOperationLatlngs] = useState<
     Record<string, [number, number][]>
   >({});
@@ -48,50 +40,8 @@ export default function MapView({
   >([]);
 
   useEffect(() => {
-    const positionData = telemetryData[33] || [];
-
-    const updatedLatlngs = selectedOperationId.reduce(
-      (acc, id) => {
-        const latlngs = mapCalculator.getOperationlatlings(id, positionData);
-        if (latlngs.length > 0) {
-          acc[id] = latlngs;
-        }
-        return acc;
-      },
-      {} as Record<string, [number, number][]>,
-    );
-
-    const updatedTimestamps = selectedOperationId.reduce(
-      (acc, id) => {
-        const rawTimestamps = mapCalculator.getOperationTimes(id, positionData);
-        const timestamps = rawTimestamps.map((timestamp) =>
-          Date.parse(timestamp),
-        );
-        if (timestamps.length > 0) {
-          acc[id] = timestamps;
-        }
-        return acc;
-      },
-      {} as Record<string, number[]>,
-    );
-
-    const updatedStartPoint = selectedOperationId.reduce(
-      (acc, id) => {
-        const startPoint = updatedLatlngs[id][0];
-        acc[id] = startPoint;
-        return acc;
-      },
-      {} as Record<string, [number, number]>,
-    );
-
-    if (operationStartPoint) {
-      setMapPosition(updatedStartPoint[selectedOperationId[0]]);
-    }
-
     setOperationLatlngs(updatedLatlngs);
-    setOperationTimestamps(updatedTimestamps);
-    setOperationStartPoint(updatedStartPoint);
-  }, [telemetryData, selectedOperationId]);
+  }, [updatedLatlngs]);
 
   useEffect(() => {
     if (!allTimestamps || allTimestamps.length < 2) return;
