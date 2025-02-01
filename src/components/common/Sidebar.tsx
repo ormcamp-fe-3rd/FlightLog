@@ -32,15 +32,17 @@ export default function Sidebar() {
   const isLoading = !(operationData.length > 0 && robotNames);
 
   useEffect(() => {
-    // -> 기본 UI, 체크 박스를 일단 표시, timestamp는 아직 계산하지 않음
-    if (positionData.length === 0) return;
+    if (
+      positionData.length === 0 ||
+      Object.keys(validOperationLabels).length > 0
+    )
+      return;
 
     const validOperations = operationData.filter((operation) => {
       return positionData.some(
         (telemetry) => telemetry.operation === operation._id,
       );
     });
-    // 필터링된 operation의 라벨(운행 시작시간)
     const validOperationLabel = validOperations.reduce<{
       [key: string]: string;
     }>((acc, value) => {
