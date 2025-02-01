@@ -9,13 +9,14 @@ interface AppProviderProps {
 }
 
 export default function AppProvider({ children }: AppProviderProps) {
-  const { fetchOperationData, fetchRobotData, fetchTelemetryData } = useData();
+  const { fetchOperationData, fetchRobotData, fetchInitialTelemetries } =
+    useData();
 
   useEffect(() => {
     const initializeData = async () => {
       await fetchOperationData();
       await fetchRobotData();
-      await fetchTelemetryData();
+      await fetchInitialTelemetries();
     };
 
     initializeData();
