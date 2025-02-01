@@ -52,6 +52,19 @@ export default function Sidebar() {
     return () => clearTimeout(timer);
   }, []);
 
+  // 운행 정보를 최신 순으로 정렬하고 이를 상태로 관리
+  const [sortedOperationData, setSortedOperationData] = useState(operationData);
+
+  // 컴포넌트 마운트, 운행 정보가 변경될 때만 정렬
+  useEffect(() => {
+    const sorted = [...operationData].sort((a, b) => {
+      const timeA = validOperationLabels[a._id] || "";
+      const timeB = validOperationLabels[b._id] || "";
+      return timeA.localeCompare(timeB);
+    });
+    setSortedOperationData(sorted);
+  }, [operationData, validOperationLabels]);
+
   const handleOperationToggle = (operationId: string) => {
     if (
       !selectedOperationId.includes(operationId) &&
@@ -122,8 +135,8 @@ export default function Sidebar() {
             return (
               <div key={robotId} className="flex flex-col gap-5">
                 <div>{robotNames[robotId]}</div>
-                {operationData.map((operation) => {
-                  // 수정: 모든 operation 표시
+
+                {sortedOperationData.map((operation) => {
                   if (operation["robot"] === robotId) {
                     return (
                       <div key={operation._id} className="flex flex-col pl-4">
