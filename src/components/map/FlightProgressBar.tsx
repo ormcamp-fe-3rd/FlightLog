@@ -2,9 +2,8 @@
 
 import { PLAY_SPEED } from "@/constants";
 import calculateTimeByProgress from "@/utils/calculateTimeByProgress";
-import calculateProgressByTimestamp from "@/utils/calculateProgressByTimestamp";
-import { useEffect, useRef, useState } from "react";
 import Timeline from "@/components/map/Timeline";
+import usePlayback from "@/hooks/usePlayback";
 import { TimelineData } from "@/types/types";
 
 interface Props {
@@ -22,98 +21,16 @@ export default function FlightProgressBar({
   operationTimestamps,
   setSelectedFlight,
 }: Props) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1); // 재생 속도 배율 (1x, 2x 등)
-  const intervalId = useRef<NodeJS.Timeout | null>(null);
+  const {
+    isPlaying,
+    togglePlay,
+    handleInputChange,
+    handleTimelineClick,
+    setPlaybackSpeed,
+  } = usePlayback(allTimestamps, progress, setProgress);
 
-  useEffect(() => {
-    if (isPlaying) {
-      handlePlay(allTimestamps, progress);
-    }
-  }, [playbackSpeed]);
-
-  // 수동 이동
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newProgress = Number(event.target.value);
-
-    if (newProgress >= 0 && newProgress <= 100) {
-      if (isPlaying) {
-        setProgress(newProgress);
-        handlePlay(allTimestamps, newProgress);
-      } else {
-        setProgress(newProgress);
-      }
-    }
-  };
-
-  const handleTimelineClick = (id: string, timelineData: TimelineData[]) => {
-    const operation = timelineData.find((operation) => operation.id === id);
-    const startTime = operation?.start ?? 0;
-    const endTime = operation?.end ?? 0;
-    const startPoint = calculateProgressByTimestamp(allTimestamps, startTime);
-    const endPoint = calculateProgressByTimestamp(allTimestamps, endTime);
-
-    // 선택한 operation의 비행시간인 경우, 패널만 변경
-    if (progress >= startPoint && progress <= endPoint) {
-      setSelectedFlight(id);
-      return;
-    }
-
-    // 선택한 operation의 비행시간이 아닌 경우, 재생바 이동 및 패널 변경
-    if (isPlaying) {
-      setSelectedFlight(id);
-      setProgress(startPoint);
-      handlePlay(allTimestamps, startPoint);
-    } else {
-      setSelectedFlight(id);
-      setProgress(startPoint);
-    }
-  };
-
-  // 재생
-  const togglePlay = () => {
-    setIsPlaying(!isPlaying);
-    isPlaying ? handlePause() : handlePlay(allTimestamps);
-  };
-
-  const handlePlay = (
-    timestamps: number[],
-    currentProgress: number = progress,
-  ) => {
-    if (!timestamps || timestamps.length === 0) return null;
-
-    if (intervalId.current) {
-      clearInterval(intervalId.current);
-      setIsPlaying(false);
-    }
-
-    setIsPlaying(true);
-    const startTime =
-      timestamps[0] +
-      ((timestamps[timestamps.length - 1] - timestamps[0]) * currentProgress) /
-        100;
-    let startPlaybackTime = Date.now();
-
-    intervalId.current = setInterval(() => {
-      const elapsedTime = (Date.now() - startPlaybackTime) * playbackSpeed;
-      const newTime = startTime + elapsedTime;
-
-      const newProgress = calculateProgressByTimestamp(timestamps, newTime);
-      setProgress(newProgress);
-
-      if (newProgress >= 100) {
-        clearInterval(intervalId.current!);
-        setIsPlaying(false);
-        setProgress(0);
-      }
-    }, 100); // 업데이트 간격 (100ms)
-  };
-
-  const handlePause = () => {
-    if (intervalId.current) {
-      clearInterval(intervalId.current);
-      setIsPlaying(false);
-    }
+  const handleSelectAndPlay = (id: string, timelineData: TimelineData[]) => {
+    handleTimelineClick(id, timelineData, setSelectedFlight);
   };
 
   const startTime = calculateTimeByProgress(allTimestamps, 0);
@@ -146,7 +63,7 @@ export default function FlightProgressBar({
           <Timeline
             allTimestamps={allTimestamps}
             operationTimestamps={operationTimestamps}
-            onTimelineClick={handleTimelineClick}
+            onTimelineClick={handleSelectAndPlay}
           />
         </div>
         {endTime}
