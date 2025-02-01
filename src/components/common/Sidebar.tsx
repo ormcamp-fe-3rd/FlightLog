@@ -36,20 +36,29 @@ export default function Sidebar() {
     new Set(),
   );
 
+  // 로딩 완료된 상태 저장 추가
+  const [loadedOperations, setLoadedOperations] = useState<Set<string>>(
+    new Set(),
+  );
+
   const handleOperationToggle = (operationId: string) => {
-    if (!selectedOperationId.includes(operationId)) {
+    if (
+      !selectedOperationId.includes(operationId) &&
+      !loadedOperations.has(operationId)
+    ) {
       setLoadingOperations((prev) => new Set([...prev, operationId]));
     }
     toggleSelectedOperation(operationId);
   };
 
-  // telemetryData 업데이트 시 로딩 제거
+  // telemetryData 업데이트 시 로딩 제거하면서 loadedOperations에 로딩 완료 상태를 저장
   useEffect(() => {
     setLoadingOperations((prev) => {
       const newLoading = new Set(prev);
       for (const operation of prev) {
         if (telemetryData[33]?.some((t) => t.operation === operation)) {
           newLoading.delete(operation);
+          setLoadedOperations((loaded) => new Set([...loaded, operation]));
         }
       }
       return newLoading;
