@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { formatTimestamp } from "@/utils/formatTimestamp";
 import useData from "@/store/useData";
 import { PAGES } from "@/constants";
@@ -28,8 +28,33 @@ export default function Sidebar() {
     {} as Record<string, string>,
   );
 
-  // 수정: 텔레메트리 데이터(positionData) 없이도 기본 UI를 로드하도록 변경
+  // 수정: 라벨당 텔레메트리 데이터를 한 개씩 먼저 받아와 라벨링 작업을 하도록 함
   const isLoading = !(operationData.length > 0 && robotNames);
+
+  // 로딩 상태 관리 추가(사이드바에서만 사용돼서 따로 zustand로 분리하지는 않았습니다.)
+  const [loadingOperations, setLoadingOperations] = useState<Set<string>>(
+    new Set(),
+  );
+
+  const handleOperationToggle = (operationId: string) => {
+    if (!selectedOperationId.includes(operationId)) {
+      setLoadingOperations((prev) => new Set([...prev, operationId]));
+    }
+    toggleSelectedOperation(operationId);
+  };
+
+  // telemetryData 업데이트 시 로딩 제거
+  useEffect(() => {
+    setLoadingOperations((prev) => {
+      const newLoading = new Set(prev);
+      for (const operation of prev) {
+        if (telemetryData[33]?.some((t) => t.operation === operation)) {
+          newLoading.delete(operation);
+        }
+      }
+      return newLoading;
+    });
+  }, [telemetryData]);
 
   useEffect(() => {
     if (
@@ -90,23 +115,17 @@ export default function Sidebar() {
                             )}
                             className="checkbox checkbox-sm"
                             onChange={() =>
-                              toggleSelectedOperation(operation._id)
+                              handleOperationToggle(operation._id)
                             }
                           />
-                          {selectedOperationId.includes(operation._id) ? (
-                            !telemetryData[33]?.some(
-                              (telemetryItem) =>
-                                telemetryItem.operation === operation._id,
-                            ) ? (
-                              <div className="flex items-center gap-2">
-                                <span className="loading loading-spinner loading-sm"></span>
-                                <span className="text-gray-600">
-                                  데이터 로딩중...
-                                </span>
-                              </div>
-                            ) : (
-                              <span>{validOperationLabels[operation._id]}</span>
-                            )
+                          {selectedOperationId.includes(operation._id) &&
+                          loadingOperations.has(operation._id) ? (
+                            <div className="flex items-center gap-2">
+                              <span className="loading loading-spinner loading-sm"></span>
+                              <span className="text-gray-600">
+                                데이터 로딩중...
+                              </span>
+                            </div>
                           ) : (
                             <span>{validOperationLabels[operation._id]}</span>
                           )}
