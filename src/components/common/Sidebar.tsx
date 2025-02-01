@@ -82,7 +82,7 @@ export default function Sidebar() {
                   if (operation["robot"] === robotId) {
                     return (
                       <div key={operation._id} className="flex flex-col pl-4">
-                        <label className="flex cursor-pointer items-center gap-3">
+                        <label className="flex h-6 cursor-pointer items-center gap-3">
                           <input
                             type="checkbox"
                             checked={selectedOperationId.includes(
@@ -93,11 +93,23 @@ export default function Sidebar() {
                               toggleSelectedOperation(operation._id)
                             }
                           />
-                          <span>
-                            {validOperationLabels[operation._id]
-                              ? validOperationLabels[operation._id]
-                              : "데이터 로딩 중..."}
-                          </span>
+                          {selectedOperationId.includes(operation._id) ? (
+                            !telemetryData[33]?.some(
+                              (telemetryItem) =>
+                                telemetryItem.operation === operation._id,
+                            ) ? (
+                              <div className="flex items-center gap-2">
+                                <span className="loading loading-spinner loading-sm"></span>
+                                <span className="text-gray-600">
+                                  데이터 로딩중...
+                                </span>
+                              </div>
+                            ) : (
+                              <span>{validOperationLabels[operation._id]}</span>
+                            )
+                          ) : (
+                            <span>{validOperationLabels[operation._id]}</span>
+                          )}
                         </label>
                       </div>
                     );
