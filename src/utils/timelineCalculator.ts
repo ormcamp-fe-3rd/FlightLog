@@ -11,11 +11,13 @@ export const timelineCaculator = {
   },
 
   convertToTimelineOperations(operationTimestamps: Record<string, number[]>) {
-    return Object.entries(operationTimestamps).map(([id, timestamps]) => ({
-      id,
-      start: Math.min(...timestamps),
-      end: Math.max(...timestamps),
-    }));
+    return Object.entries(operationTimestamps)
+      .map(([id, timestamps]) => ({
+        id,
+        start: Math.min(...timestamps),
+        end: Math.max(...timestamps),
+      }))
+      .sort((a, b) => a.start - b.start);
   },
 
   assignLayers(timelineData: timelineData[]) {
