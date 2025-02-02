@@ -1,5 +1,10 @@
 import { Dataset } from "@/types/api";
-import { getStatus, getAltitude, groupDataById } from "@/hooks/useChartsData";
+import {
+  getStatus,
+  getAltitude,
+  groupDataById,
+  getSpeed,
+} from "@/hooks/useChartsData";
 import { useEffect, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
@@ -14,13 +19,9 @@ const useChartXData = (telemetryData: any, selectedOperationId: string[]) => {
   const [xData, setXData] = useState<number[]>([]);
 
   useEffect(() => {
-    const droneAltitude = getAltitude(telemetryData, selectedOperationId);
-    const droneStatus = getStatus(telemetryData, selectedOperationId);
-    const xAxisData = droneStatus
-      .filter((timeStamp) =>
-        droneAltitude.some((pos) => pos[2] === timeStamp[4]),
-      )
-      .map((timeStamp) => timeStamp[2]);
+    const droneStatus = getSpeed(telemetryData, selectedOperationId);
+
+    const xAxisData = droneStatus.map((timeStamp) => timeStamp[3]);
 
     setXData(xAxisData);
   }, [telemetryData, selectedOperationId]);
@@ -40,35 +41,27 @@ const useSynchronisedChartsData = ({
       try {
         setLoading(true);
 
-        const droneAlttitude = getAltitude(telemetryData, selectedOperationId);
-        const droneStatus = getStatus(telemetryData, selectedOperationId);
+        const droneSpeed = getSpeed(telemetryData, selectedOperationId);
 
-        if (!droneAlttitude.length || !droneStatus.length) {
+        if (!droneSpeed.length) {
           return null;
         }
 
-        const formattedRoll: Dataset = {
-          name: "roll",
-          type: "line",
-          unit: droneStatus.map((item) => item[0]),
-          data: droneStatus.map((item) => item[1]),
+        const formattedAlt: Dataset = {
+          name: "고도",
+          type: "area",
+          unit: droneSpeed.map((item) => item[0]),
+          data: droneSpeed.map((item) => item[2]),
         };
 
-        const formattedPitch: Dataset = {
-          name: "pitch",
-          type: "line",
-          unit: droneStatus.map((item) => item[0]),
-          data: droneStatus.map((item) => item[2]),
+        const formattedSpeed: Dataset = {
+          name: "속도",
+          type: "area",
+          unit: droneSpeed.map((item) => item[0]),
+          data: droneSpeed.map((item) => item[1]),
         };
 
-        const formattedYaw: Dataset = {
-          name: "yaw",
-          type: "line",
-          unit: droneStatus.map((item) => item[0]),
-          data: droneStatus.map((item) => item[3]),
-        };
-
-        setChartData([formattedRoll, formattedPitch, formattedYaw]);
+        setChartData([formattedAlt, formattedSpeed]);
       } catch (error) {
         console.error(error);
       } finally {
@@ -86,8 +79,6 @@ const createChartOptions = (
   index: number,
   xData: number[],
 ) => {
-  if (!xData.length) return null;
-
   const data = dataset.data.map((val: number, i: number) => [
     xData[i],
     val,
@@ -115,7 +106,9 @@ const createChartOptions = (
     xAxis: {
       crosshair: true,
       labels: {
-        format: "{value}",
+        formatter: function () {
+          return ((this as any).value / 10).toFixed(0) + " 초";
+        },
       },
       events: {
         afterSetExtremes: function (event: Highcharts.ExtremesObject) {
@@ -145,7 +138,7 @@ const createChartOptions = (
       rules: [
         {
           condition: {
-            maxWidth: 300,
+            maxWidth: 616,
           },
           chartOptions: {
             legend: {

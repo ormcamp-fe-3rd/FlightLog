@@ -6,7 +6,7 @@ import useData from "@/store/useData";
 
 import {
   renderChart,
-  useChartDataTransform,
+  useSynchronisedChartsData,
   useChartXData,
 } from "@/hooks/useSynchronisedChartsData ";
 
@@ -39,7 +39,7 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
 }) => {
   const { telemetryData, selectedOperationId } = useData();
 
-  const chartData = useChartDataTransform({
+  const chartData = useSynchronisedChartsData({
     telemetryData,
     selectedOperationId,
   });
@@ -63,7 +63,7 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
     <div
       // onMouseMove={handleMouseMove}
       // onTouchMove={handleMouseMove}
-      className="grid grid-cols-1"
+      className="grid grid-cols-3 gap-4"
     >
       {chartData.length == 0 ? (
         <p>Loading...</p>
