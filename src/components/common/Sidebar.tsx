@@ -41,17 +41,6 @@ export default function Sidebar() {
     new Set(),
   );
 
-  const [showNoData, setShowNoData] = useState(false);
-
-  // 마운트가 완료된 이후에 데이터가 있는지 없는지 판별
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowNoData(true);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   // 운행 정보를 최신 순으로 정렬하고 이를 상태로 관리
   const [sortedOperationData, setSortedOperationData] = useState(operationData);
 
@@ -186,12 +175,11 @@ export default function Sidebar() {
                               </div>
                             ) : (
                               <span>
-                                {validOperationLabels[operation._id] ||
-                                  (showNoData && (
-                                    <span className="text-gray-500">
-                                      데이터 없음
-                                    </span>
-                                  ))}
+                                {validOperationLabels[operation._id] || (
+                                  <span className="text-gray-500">
+                                    데이터 없음
+                                  </span>
+                                )}
                               </span>
                             )}
                           </label>
