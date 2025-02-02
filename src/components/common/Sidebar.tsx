@@ -114,8 +114,23 @@ export default function Sidebar() {
     setValidOperationLabel(validOperationLabel);
   }, [operationData, telemetryData]);
 
+  //운행정보 토글 매뉴
+  const [toggleLabel, setToggleLabel] = useState<Set<string>>(new Set());
+
+  const toggleRobot = (robotId: string) => {
+    setToggleLabel((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(robotId)) {
+        newSet.delete(robotId);
+      } else {
+        newSet.add(robotId);
+      }
+      return newSet;
+    });
+  };
+
   return (
-    <aside className="flex h-[calc(100vh-56px)] w-60 flex-col gap-5 border-r bg-white p-4 text-lg">
+    <aside className="flex h-[calc(100vh-56px)] w-72 flex-col gap-5 border-r bg-white p-4 text-lg">
       <div className="flex flex-col gap-5">
         <h2 className="font-bold">Pages</h2>
         <nav className="flex flex-col gap-5 pl-4">
@@ -133,47 +148,58 @@ export default function Sidebar() {
           <h2 className="font-bold">Operations</h2>
           {robotIds.map((robotId) => {
             return (
-              <div key={robotId} className="flex flex-col gap-5">
-                <div>{robotNames[robotId]}</div>
-
-                {sortedOperationData.map((operation) => {
-                  if (operation["robot"] === robotId) {
-                    return (
-                      <div key={operation._id} className="flex flex-col pl-4">
-                        <label className="flex h-6 cursor-pointer items-center gap-3">
-                          <input
-                            type="checkbox"
-                            checked={selectedOperationId.includes(
-                              operation._id,
-                            )}
-                            className="checkbox checkbox-sm"
-                            onChange={() =>
-                              handleOperationToggle(operation._id)
-                            }
-                          />
-                          {selectedOperationId.includes(operation._id) &&
-                          loadingOperations.has(operation._id) ? (
-                            <div className="flex items-center gap-2">
-                              <span className="loading loading-spinner loading-sm"></span>
-                              <span className="text-gray-600">
-                                데이터 로딩중...
+              <div
+                key={robotId}
+                className="collapse collapse-arrow bg-base-200"
+              >
+                <input
+                  type="checkbox"
+                  checked={toggleLabel.has(robotId)}
+                  onChange={() => toggleRobot(robotId)}
+                />
+                <div className="collapse-title font-medium">
+                  {robotNames[robotId]}
+                </div>
+                <div className="collapse-content">
+                  {sortedOperationData.map((operation) => {
+                    if (operation["robot"] === robotId) {
+                      return (
+                        <div key={operation._id} className="flex flex-col py-1">
+                          <label className="flex h-6 cursor-pointer items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedOperationId.includes(
+                                operation._id,
+                              )}
+                              className="checkbox checkbox-sm bg-gray-300"
+                              onChange={() =>
+                                handleOperationToggle(operation._id)
+                              }
+                            />
+                            {selectedOperationId.includes(operation._id) &&
+                            loadingOperations.has(operation._id) ? (
+                              <div className="flex items-center gap-2">
+                                <span className="loading loading-spinner loading-sm"></span>
+                                <span className="text-gray-600">
+                                  데이터 로딩중...
+                                </span>
+                              </div>
+                            ) : (
+                              <span>
+                                {validOperationLabels[operation._id] ||
+                                  (showNoData && (
+                                    <span className="text-gray-500">
+                                      데이터 없음
+                                    </span>
+                                  ))}
                               </span>
-                            </div>
-                          ) : (
-                            <span>
-                              {validOperationLabels[operation._id] ||
-                                (showNoData && (
-                                  <span className="text-gray-500">
-                                    데이터 없음
-                                  </span>
-                                ))}
-                            </span>
-                          )}
-                        </label>
-                      </div>
-                    );
-                  }
-                })}
+                            )}
+                          </label>
+                        </div>
+                      );
+                    }
+                  })}
+                </div>
               </div>
             );
           })}
