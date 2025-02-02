@@ -13,7 +13,7 @@ export default function LoginButton() {
       <button
         onClick={() =>
           session.status === AUTH_LOGIN.STATUS.AUTHENTICATED
-            ? signOut()
+            ? signOut({ callbackUrl: "/" })
             : toggle()
         }
       >
