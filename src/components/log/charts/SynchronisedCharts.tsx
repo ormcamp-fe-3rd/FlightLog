@@ -34,8 +34,6 @@ export const DefaultSynchronisedChartsProps = {
 
 const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
   numOfDatasets = DefaultSynchronisedChartsProps.numOfDatasets,
-  chartWidth = DefaultSynchronisedChartsProps.chartWidth,
-  chartHeight = DefaultSynchronisedChartsProps.chartHeight,
 }) => {
   const { telemetryData, selectedOperationId } = useData();
 
@@ -63,16 +61,16 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
     <div
       // onMouseMove={handleMouseMove}
       // onTouchMove={handleMouseMove}
-      className="grid grid-cols-3 gap-4"
+      className="flex items-center justify-center"
     >
       {chartData.length == 0 ? (
         <p>Loading...</p>
       ) : (
-        chartData
-          .slice(0, numOfDatasets)
-          .map((dataset, index) => (
-            <div key={dataset.name}>{renderChart(dataset, index, xData)}</div>
-          ))
+        chartData.slice(0, numOfDatasets).map((dataset, index) => (
+          <div key={dataset.name} className="mb-10">
+            {renderChart(dataset, index, xData)}
+          </div>
+        ))
       )}
     </div>
   );

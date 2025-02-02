@@ -14,13 +14,8 @@ const useChartXData = (telemetryData: any, selectedOperationId: string[]) => {
   const [xData, setXData] = useState<number[]>([]);
 
   useEffect(() => {
-    const droneAltitude = getAltitude(telemetryData, selectedOperationId);
     const droneStatus = getStatus(telemetryData, selectedOperationId);
-    const xAxisData = droneStatus
-      .filter((timeStamp) =>
-        droneAltitude.some((pos) => pos[2] === timeStamp[4]),
-      )
-      .map((timeStamp) => timeStamp[2]);
+    const xAxisData = droneStatus.map((timeStamp) => timeStamp[4]);
 
     setXData(xAxisData);
   }, [telemetryData, selectedOperationId]);
@@ -145,11 +140,42 @@ const createChartOptions = (
       rules: [
         {
           condition: {
-            maxWidth: 300,
+            maxWidth: 1500, // 화면 가로 크기가 768px 이하일 때
           },
           chartOptions: {
+            chart: {
+              width: 470, // 차트 높이 조정
+            },
+            xAxis: {
+              labels: {},
+            },
+            yAxis: {
+              title: {
+                text: "속도",
+              },
+            },
             legend: {
-              enabled: true,
+              enabled: false, // 작은 화면에서는 범례 숨김
+            },
+          },
+        },
+        {
+          condition: {
+            maxWidth: 480, // 화면 가로 크기가 480px 이하일 때
+          },
+          chartOptions: {
+            chart: {
+              height: 250, // 차트 높이 더 작게 설정
+            },
+            xAxis: {
+              labels: {
+                rotation: -90, // 더 작은 화면에서는 x축 라벨 더 많이 회전
+              },
+            },
+            yAxis: {
+              title: {
+                text: " ",
+              },
             },
           },
         },

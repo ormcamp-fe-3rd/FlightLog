@@ -97,8 +97,8 @@ const createChartOptions = (
       zooming: {
         type: "x",
       },
-      width: DefaultSynchronisedChartsProps.chartWidth,
-      height: DefaultSynchronisedChartsProps.chartHeight,
+      width: 700,
+      height: 400,
     },
     title: {
       text: dataset.name,

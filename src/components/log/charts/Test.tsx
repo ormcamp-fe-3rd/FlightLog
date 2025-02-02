@@ -35,12 +35,14 @@ const test: React.FC<SynchronisedChartsProps> = ({}) => {
   const xData = useChartXData(telemetryData, selectedOperationId);
 
   return (
-    <div className="grid grid-cols-2 gap-0">
+    <div className="flex w-full items-center justify-center">
       {chartData.length == 0 ? (
         <p>Loading...</p>
       ) : (
         chartData.map((dataset, index) => (
-          <div key={dataset.name}>{renderChart(dataset, index, xData)}</div>
+          <div key={dataset.name} className="mb-10 mt-10 w-full">
+            {renderChart(dataset, index, xData)}
+          </div>
         ))
       )}
     </div>

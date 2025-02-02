@@ -8,7 +8,9 @@ export default function LogPage() {
     <div className="flex">
       <Sidebar />
       <div className="block">
+        <MultipleAxesCharts />
         <Test></Test>
+        <SynchronisedCharts />
       </div>
     </div>
   );
