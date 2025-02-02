@@ -14,9 +14,11 @@ export async function fetchCollection(
 
   if (getRestQuery.operation) {
     try {
-      getRestQuery.operation = new ObjectId(getRestQuery.operation);
+      if (typeof getRestQuery.operation === "string") {
+        getRestQuery.operation = new ObjectId(getRestQuery.operation);
+      }
     } catch (error) {
-      console.warn("올바르지 않은 ObjectId 형식입니다", getRestQuery.operation);
+      throw new Error("올바르지 않은 ObjectId 형식입니다");
     }
   }
 
@@ -47,7 +49,6 @@ export async function fetchFirstTelemetry(operationId: string) {
     // 체크박스 라벨링을 위해 해당 operation의 첫 번째 telemetry만 반환
     return collection.findOne(query);
   } catch (error) {
-    console.warn("올바르지 않은 ObjectId 형식입니다", operationId);
-    return null;
+    throw new Error("올바르지 않은 ObjectId 형식입니다");
   }
 }

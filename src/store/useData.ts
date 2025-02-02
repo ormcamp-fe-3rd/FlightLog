@@ -92,7 +92,7 @@ const useData = create<DataState>((set, get) => ({
     // 새로 선택된 operation들의 데이터만 불러오기
     get().fetchTelemetryData(formattedData);
   },
-  toggleSelectedOperation: async (operationId) => {
+  toggleSelectedOperation: (operationId) => {
     set((state) => {
       const selectedOperationsSet = new Set(state.selectedOperationId);
 
