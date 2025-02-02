@@ -1,13 +1,18 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import StatusPanel from "@/components/map/StatusPanel";
 import AttitudePanel from "@/components/map/AttitudePanel";
 import FlightProgressBar from "@/components/map/FlightProgressBar";
-import MapView from "@/components/map/MapView";
 import ControlPanel from "@/components/map/ControlPanel";
 import { useState } from "react";
 import useResizePanelControl from "@/hooks/useResizePanelControl";
 import SelectFlightLog from "@/components/map/SelectFlightLog";
+
+const MapView = dynamic(() => import("@/components/map/MapView"), {
+  ssr: false,
+  loading: () => <div>Loading map...</div>,
+}); // 500오류 수정:  "window is not defined" SSR
 
 export default function MapPage() {
   const { isStatusOpen, setIsStatusOpen, isAttitudeOpen, setIsAttitudeOpen } =

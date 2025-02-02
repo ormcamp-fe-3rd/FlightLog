@@ -14,19 +14,32 @@ export default function Sidebar() {
     telemetryData,
     validOperationLabels,
     setValidOperationLabel,
-    setSelectedOperation,
     toggleSelectedOperation,
+    selectedOperationId,
   } = useData();
   const positionData = telemetryData[33] || [];
 
+  const robotIds = [...new Set(operationData.map((value) => value["robot"]))];
+  const robotNames = robotData.reduce(
+    (acc, robot) => {
+      acc[robot._id] = robot.name;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
+  // 수정: 텔레메트리 데이터(positionData) 없이도 기본 UI를 로드하도록 변경
+  const isLoading = !(operationData.length > 0 && robotNames);
+
   useEffect(() => {
-    // telemetryData에 기록이 있는 operation만 필터링
+    // -> 기본 UI, 체크 박스를 일단 표시, timestamp는 아직 계산하지 않음
+    if (positionData.length === 0) return;
+
     const validOperations = operationData.filter((operation) => {
       return positionData.some(
         (telemetry) => telemetry.operation === operation._id,
       );
     });
-
     // 필터링된 operation의 라벨(운행 시작시간)
     const validOperationLabel = validOperations.reduce<{
       [key: string]: string;
@@ -39,23 +52,7 @@ export default function Sidebar() {
     }, {});
 
     setValidOperationLabel(validOperationLabel);
-    setSelectedOperation(validOperationLabel);
   }, [operationData, telemetryData]);
-
-  const robotIds = [...new Set(operationData.map((value) => value["robot"]))];
-  const robotNames = robotData.reduce(
-    (acc, robot) => {
-      acc[robot._id] = robot.name;
-      return acc;
-    },
-    {} as Record<string, string>,
-  );
-
-  const isLoading = !(
-    operationData.length > 0 &&
-    robotNames &&
-    positionData.length > 0
-  );
 
   return (
     <aside className="flex h-[calc(100vh-56px)] w-60 flex-col gap-5 border-r bg-white p-4 text-lg">
@@ -79,22 +76,26 @@ export default function Sidebar() {
               <div key={robotId} className="flex flex-col gap-5">
                 <div>{robotNames[robotId]}</div>
                 {operationData.map((operation) => {
-                  if (
-                    operation["robot"] === robotId &&
-                    validOperationLabels[operation["_id"]]
-                  ) {
+                  // 수정: 모든 operation 표시
+                  if (operation["robot"] === robotId) {
                     return (
                       <div key={operation._id} className="flex flex-col pl-4">
                         <label className="flex cursor-pointer items-center gap-3">
                           <input
                             type="checkbox"
-                            defaultChecked
+                            checked={selectedOperationId.includes(
+                              operation._id,
+                            )}
                             className="checkbox checkbox-sm"
                             onChange={() =>
                               toggleSelectedOperation(operation._id)
                             }
                           />
-                          <span>{validOperationLabels[operation._id]}</span>
+                          <span>
+                            {validOperationLabels[operation._id]
+                              ? validOperationLabels[operation._id]
+                              : "데이터 로딩 중..."}
+                          </span>
                         </label>
                       </div>
                     );
