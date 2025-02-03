@@ -8,7 +8,7 @@ import {
   renderChart,
   useSynchronisedChartsData,
   useChartXData,
-} from "@/hooks/useTest";
+} from "@/hooks/useStatusChartsData";
 
 if (typeof Highcharts === "object") {
   HighchartsExporting(Highcharts);

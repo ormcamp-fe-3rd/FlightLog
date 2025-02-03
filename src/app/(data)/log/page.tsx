@@ -1,14 +1,14 @@
 import Sidebar from "@/components/common/Sidebar";
 import MultipleAxesCharts from "@/components/log/charts/MultipleAxesCharts";
-import SynchronisedCharts from "@/components/log/charts/SynchronisedCharts";
-import Test from "@/components/log/charts/Test";
+import AttitudeCharts from "@/components/log/charts/AttitudeCharts";
+import StatusCharts from "@/components/log/charts/StatusCharts";
 
 export default function LogPage() {
   return (
     <div className="block">
       <MultipleAxesCharts />
-      <Test></Test>
-      <SynchronisedCharts />
+      <StatusCharts></StatusCharts>
+      <AttitudeCharts />
     </div>
   );
 }
