@@ -19,6 +19,7 @@ const BatteryStatusChart = () => {
   React.useEffect(() => {
     const handleResize = () => {
       const containerWidth = window.innerWidth;
+
       setChartWidth(containerWidth);
 
       if (chartComponentRef.current) {
@@ -152,12 +153,23 @@ const BatteryStatusChart = () => {
       Math.max(...batteryData) < 100 ? 100 : Math.max(...batteryData);
     const batteryMin = 0;
 
-    const sidebarWidth = 320;
+    let sidebarWidth = 320;
+    if (window.innerWidth <= 768) {
+      sidebarWidth = 0; // 태블릿 이하는 사이드바 숨겨짐
+    }
+
+    const chartMinWidth = 280;
+    const chartPadding = 40;
+    let totalWidth = chartWidth - sidebarWidth - chartPadding;
+
+    if (totalWidth < chartMinWidth) {
+      totalWidth = chartMinWidth;
+    }
 
     return {
       chart: {
         height: 600,
-        width: chartWidth - sidebarWidth,
+        width: totalWidth,
         zooming: {
           mouseWheel: {
             enabled: true,
