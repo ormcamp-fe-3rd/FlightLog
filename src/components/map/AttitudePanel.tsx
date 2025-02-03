@@ -1,11 +1,7 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-<<<<<<< HEAD
 import { CameraControls, useGLTF, useTexture } from "@react-three/drei";
-=======
-import { OrbitControls, useGLTF, useTexture } from "@react-three/drei";
->>>>>>> 043e38e ([test] react-three-fiber 로 변환중 오류 나는 코드)
 import * as THREE from "three";
 
 function Drone() {
@@ -42,11 +38,7 @@ function Drone() {
 
 export default function AttitudePanel() {
   return (
-<<<<<<< HEAD
     <div className="flex h-full w-full flex-col justify-between rounded-[30px] bg-white p-4">
-=======
-    <div className="flex h-full w-full flex-col justify-between p-4">
->>>>>>> 043e38e ([test] react-three-fiber 로 변환중 오류 나는 코드)
       <div>
         <div>Roll: </div>
         <div>Pitch: </div>
@@ -66,11 +58,7 @@ export default function AttitudePanel() {
           <ambientLight intensity={0.5} /> //조명
           <directionalLight intensity={1.5} position={[5, 10, 5]} /> //조명
           <Drone /> // 3D모델
-<<<<<<< HEAD
           <CameraControls /> //마우스컨트롤
-=======
-          <OrbitControls /> //마우스컨트롤
->>>>>>> 043e38e ([test] react-three-fiber 로 변환중 오류 나는 코드)
         </Canvas>
       </div>
       <div className="flex w-full justify-between">

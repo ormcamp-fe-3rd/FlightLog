@@ -72,7 +72,7 @@ export default function LoginContent() {
 
         <button
           type="submit"
-          className={`btn mt-8 w-full ${isValid ? "btn-primary" : "btn-disabled"}`}
+          className={`btn mt-8 w-full ${isValid ? "btn-neutral" : "btn-disabled"}`}
           disabled={!isValid}
         >
           로그인

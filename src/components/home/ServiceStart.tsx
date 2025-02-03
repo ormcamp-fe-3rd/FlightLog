@@ -17,7 +17,7 @@ export default function ServiceStart() {
           </p>
           <Link
             href="/map"
-            className="btn btn-primary btn-wide transition-all hover:scale-[1.02]"
+            className="btn btn-neutral btn-wide text-white transition-all hover:scale-[1.02]"
           >
             시작하기
           </Link>
