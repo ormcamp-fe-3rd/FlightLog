@@ -27,8 +27,9 @@ export default function MapPage() {
   >({});
   const [isPlaying, setIsPlaying] = useState(false);
   const [allTimestamps, setAllTimestamps] = useState<number[]>([]);
-  const [operationStartPoint, setOperationStartPoint] =
-    useState<Record<string, [number, number]>>();
+  const [dronePositions, setDronePositions] = useState<
+    { flightId: string; position: [number, number]; direction: number }[]
+  >([]);
   const [mapPosition, setMapPosition] = useState<[number, number]>([
     INITIAL_POSITION.LAT,
     INITIAL_POSITION.LNG,
@@ -42,7 +43,6 @@ export default function MapPage() {
     setAllTimestamps(sortedAllTimestamps);
 
     const initialPosition = updatedStartPoint[selectedOperationId[0]];
-    setOperationStartPoint(updatedStartPoint);
     setMapPosition(initialPosition);
   }, [updatedTimestamps, updatedStartPoint]);
 
@@ -59,9 +59,12 @@ export default function MapPage() {
   };
 
   const zoomToDrone = () => {
-    if (operationStartPoint && operationStartPoint[selectedFlight]) {
-      const [lat, lng] = operationStartPoint[selectedFlight];
-      setMapPosition([lat, lng]);
+    const selectedDronePosition = dronePositions.find(
+      (drone) => drone.flightId === selectedFlight,
+    )?.position;
+
+    if (selectedDronePosition) {
+      setMapPosition(selectedDronePosition);
     } else {
       console.warn(`Start point not found for ID: ${selectedFlight}`);
     }
@@ -82,6 +85,8 @@ export default function MapPage() {
             allTimestamps={allTimestamps}
             onMarkerClick={setSelectedFlight}
             mapPosition={mapPosition}
+            dronePositions={dronePositions}
+            setDronePositions={setDronePositions}
           />
         </div>
         <div className="absolute right-8 top-8 z-10 flex max-h-[90%] flex-col gap-4">

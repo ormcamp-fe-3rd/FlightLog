@@ -4,3 +4,9 @@ export interface TimelineData {
   start: number;
   end: number;
 }
+
+export interface DronePosition {
+  flightId: string;
+  position: [number, number];
+  direction: number;
+}

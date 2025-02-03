@@ -15,6 +15,7 @@ import { getColorFromId } from "@/utils/getColorFromId";
 import { mapCalculator } from "@/utils/mapCalculator";
 import useOperationData from "@/hooks/useOperationData";
 import useDronePosition from "@/hooks/useDronePosition";
+import { DronePosition } from "@/types/types";
 
 interface MapViewProps {
   progress: number;
@@ -22,6 +23,8 @@ interface MapViewProps {
   allTimestamps: number[];
   onMarkerClick: (id: string) => void;
   mapPosition: [number, number];
+  dronePositions: DronePosition[];
+  setDronePositions: (position: DronePosition[]) => void;
 }
 
 export default function MapView({
@@ -30,15 +33,14 @@ export default function MapView({
   allTimestamps,
   onMarkerClick,
   mapPosition,
+  dronePositions,
+  setDronePositions,
 }: MapViewProps) {
   const { selectedOperationId } = useData();
   const { updatedLatlngs } = useOperationData();
   const [operationLatlngs, setOperationLatlngs] = useState<
     Record<string, [number, number][]>
   >({});
-  const [dronePositions, setDronePositions] = useState<
-    { flightId: string; position: [number, number]; direction: number }[]
-  >([]);
   const updatedPositions = useDronePosition(
     progress,
     allTimestamps,
