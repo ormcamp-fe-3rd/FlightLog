@@ -1,27 +1,27 @@
-export const getSatellites = (telemetryData: any, operationId: string[]) => {
-  const satelitesData = telemetryData[24] || [];
-  return satelitesData
+export const getStatus = (telemetryData: any, operationId: string[]) => {
+  const attitudesData = telemetryData[30] || [];
+  return attitudesData
     .filter((data: any) => operationId.includes(data.operation))
     .map((data: any) => {
       const id = data.operation;
-      const satelitesCount = data.payload.satellitesVisible;
+      const roll = data.payload.roll;
+      const pitch = data.payload.pitch;
+      const yaw = data.payload.yaw;
       const timestamp = data.timestamp;
-      return [id, satelitesCount, timestamp];
-    }) as [number, number, number][];
+      return [id, roll, pitch, yaw, timestamp];
+    }) as [number, number, number, number, number][];
 };
 
-export const getPosition = (telemetryData: any, operationId: string[]) => {
-  const positionData = telemetryData[33] || [];
-  return positionData
-    .filter((data: any) => operationId.includes(data.operation))
-    .map((data: any) => {
-      const id = data.operation;
-      const lat = data.payload.lat * 1e-7;
-      const lon = data.payload.lon * 1e-7;
-      const alt = data.payload.alt * 1e-7;
-      const timestamp = data.timestamp;
-      return [id, lat, lon, alt, timestamp];
-    }) as [number, number, number, number, number][];
+export const getAltitude = (telemetryData: any, operationId: string[]) => {
+  const Altitude = telemetryData[33] || [];
+  return Altitude.filter((data: any) =>
+    operationId.includes(data.operation),
+  ).map((data: any) => {
+    const id = data.operation;
+    const alt = data.payload.alt * 1e-7; // altitude
+    const timestamp = data.timestamp;
+    return [id, alt, timestamp];
+  }) as [number, number, number][];
 };
 
 export const getBattery = (telemetryData: any, operationId: string[]) => {
