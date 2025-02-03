@@ -7,6 +7,7 @@ export const mapCalculator = {
   getOperationlatlings(operationId: string, positionData: Telemetries[]) {
     const result = positionData
       .filter((data) => data.operation === operationId)
+      .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))
       .map((data) => {
         const lat = data.payload.lat * 1e-7;
         const lon = data.payload.lon * 1e-7;
@@ -19,6 +20,7 @@ export const mapCalculator = {
   getOperationTimes(operationId: string, positionData: Telemetries[]) {
     const result = positionData
       .filter((data) => data.operation === operationId)
+      .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))
       .map((data) => data.timestamp);
     return result;
   },
