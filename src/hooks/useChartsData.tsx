@@ -36,3 +36,30 @@ export const getBattery = (telemetryData: any, operationId: string[]) => {
     return [temperature, voltages, battery_remaining, timestamp];
   }) as [number, number, number, number][];
 };
+
+export const getSpeed = (telemetryData: any, operationId: string[]) => {
+  const SpeedData = telemetryData[74] || [];
+  return SpeedData.filter((data: any) =>
+    operationId.includes(data.operation),
+  ).map((data: any) => {
+    const id = data.operation;
+    const speed = data.payload.groundspeed;
+    const alt = data.payload.alt * 1e-7; // altitude
+    const timestamp = data.timestamp;
+    return [id, speed, alt, timestamp];
+  }) as [number, number, number, number][];
+};
+
+export const groupDataById = (data: any[]) => {
+  const groupData: Record<string, any[]> = {};
+
+  // 데이터를 분류
+  data.forEach((item) => {
+    const id = item[2];
+    if (!groupData[id]) {
+      groupData[id] = [];
+    }
+    groupData[id].push(item);
+  });
+  return groupData;
+};
