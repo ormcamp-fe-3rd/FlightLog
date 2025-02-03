@@ -30,7 +30,7 @@ export default function StatusPanel({
   const statusData = filteredData.length > 0 ? filteredData[0].status : null;
 
   return (
-    <div className="flex max-h-full w-[280px] flex-col gap-6 rounded-[30px] bg-black py-6 pl-10 text-white opacity-80">
+    <div className="text-balck flex max-h-full w-[280px] flex-col gap-6 rounded-[30px] bg-white py-6 pl-10 opacity-100">
       <div className="flex flex-col gap-2">
         <div className="flex gap-4">
           <img src="/images/map/icon-Altitude.svg" alt="Altitude" />

@@ -76,7 +76,7 @@ export default function SelectFlightLog({
   return (
     <div className="w-[280px]">
       <Select
-        className="z-50 w-full cursor-pointer"
+        className="z-50 w-full cursor-pointer rounded-full"
         onChange={handleChange}
         options={options}
         components={{ Option: CustomOption }}

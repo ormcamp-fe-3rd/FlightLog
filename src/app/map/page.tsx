@@ -97,7 +97,7 @@ export default function MapPage() {
             onSelect={setSelectedFlight}
           />
           <div
-            className={`${isStatusOpen ? "block" : "hidden"} overflow-hidden overflow-y-scroll rounded-[30px]`}
+            className={`${isStatusOpen ? "block" : "hidden"} overflow-hidden overflow-y-auto rounded-[30px]`}
           >
             <StatusPanel
               progress={progress}
