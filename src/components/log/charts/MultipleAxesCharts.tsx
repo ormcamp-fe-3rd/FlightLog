@@ -73,7 +73,7 @@ const BatteryStatusChart = () => {
 
       return [
         {
-          name: `배터리 잔량 (${validOperationLabels[operationId]})`,
+          name: `잔량 (${validOperationLabels[operationId]})`,
           type: "areaspline",
           yAxis: 2,
           color: colorSchemes.battery[index % colorSchemes.battery.length],
@@ -81,7 +81,10 @@ const BatteryStatusChart = () => {
             times[batterRemain],
             data.payload.batteryRemaining / 100,
           ]),
-          tooltip: { valueSuffix: " %", xDateFormat: "%Y-%m-%d %H:%M:%S" },
+          tooltip: {
+            valueSuffix: "%",
+            valueDecimals: 2,
+          },
         },
         {
           name: `온도 (${validOperationLabels[operationId]})`,
@@ -94,7 +97,10 @@ const BatteryStatusChart = () => {
             times[temp],
             data.payload.temperature / 100,
           ]),
-          tooltip: { valueSuffix: "°C" },
+          tooltip: {
+            valueSuffix: "°C",
+            valueDecimals: 2,
+          },
         },
         {
           name: `전압 (${validOperationLabels[operationId]})`,
@@ -105,7 +111,10 @@ const BatteryStatusChart = () => {
             times[volt],
             data.payload.voltages[0] / 1000,
           ]),
-          tooltip: { valueSuffix: "V" },
+          tooltip: {
+            valueSuffix: "V",
+            valueDecimals: 2,
+          },
         },
       ];
     });
