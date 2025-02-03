@@ -89,11 +89,9 @@ const createChartOptions = (
   ]);
 
   const groupData = groupDataById(data);
-  // const groupDataKeys = Object.keys(groupData);
-  // console.log(groupDataKeys);
+  const groupDataKeys = Object.keys(groupData);
 
-  const colours = Highcharts.getOptions().colors;
-  const colour = colours && colours.length > index ? colours[index] : undefined;
+  const colours = Highcharts.getOptions().colors || [];
   const maxYValue = Math.max(...dataset.data); // y축 최대값 계산
   const minYValue = Math.min(...dataset.data); // y축 최대값 계산
 
@@ -184,35 +182,14 @@ const createChartOptions = (
     },
 
     // 데이터가 차트로 변환 되는 부분 data: data는 데이터값, 나머지 부분은 수정 불필요
-    series: [
-      // 첫 번째 라인: dataset1
-      {
-        name: `${dataset.name} 1`,
-        type: dataset.type,
-        step: true,
-        data: groupData["677730f8e8f8dd840dd35153"], // 첫 번째 유닛 데이터만 사용
-        color: colour,
-        turboThreshold: 5000,
-      },
-      // 두 번째 라인: dataset2
-      {
-        name: `${dataset.name} 2`,
-        type: dataset.type,
-        step: true,
-        data: groupData["6777325ae8f8dd840dd35163"], // 두 번째 유닛 데이터만 사용
-        color: "red",
-        turboThreshold: 5000,
-      },
-      // 세 번째 라인 : dataset3
-      {
-        name: `${dataset.name} 3`,
-        type: dataset.type,
-        step: true,
-        data: groupData["677745dee8f8dd840dd35186"], // 세 번째 유닛 데이터만 사용
-        color: "green",
-        turboThreshold: 5000,
-      },
-    ],
+    series: groupDataKeys.map((key, idx) => ({
+      name: `${dataset.name} ${idx + 1}`,
+      type: dataset.type,
+      step: true,
+      data: groupData[key], // 동적으로 데이터 할당
+      color: colours[idx % colours.length],
+      turboThreshold: 5000,
+    })),
     tooltip: {
       valueSuffix: ` ${dataset.name}`,
     },
