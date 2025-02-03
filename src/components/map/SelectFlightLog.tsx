@@ -82,6 +82,7 @@ export default function SelectFlightLog({
         components={{ Option: CustomOption }}
         value={selectedOption}
         placeholder="Select Operation"
+        isSearchable={false}
       />
     </div>
   );
