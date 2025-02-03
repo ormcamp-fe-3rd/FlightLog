@@ -45,8 +45,18 @@ const BatteryStatusChart = () => {
     useData();
   const batteryData = telemetryData[147] || [];
 
-  const filteredData = batteryData.filter((data) =>
-    selectedOperationId.includes(data.operation),
+  // 데이터 샘플링
+  const sampleData = (data: any[], sampleSize: number) => {
+    if (data.length <= sampleSize) return data;
+
+    const step = Math.floor(data.length / sampleSize);
+    return data.filter((_, index) => index % step === 0);
+  };
+
+  // 필터링된 데이터에 샘플링 추가 적용
+  const filteredData = sampleData(
+    batteryData.filter((data) => selectedOperationId.includes(data.operation)),
+    300, //데이터 포인트 갯수
   );
 
   const hasData = filteredData.length > 0;
