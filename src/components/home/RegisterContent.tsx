@@ -19,7 +19,8 @@ export default function RegisterContent() {
       alert(data.message);
     } else if (response.status === 200) {
       alert(data.message);
-      toggle();
+      (event.target as HTMLFormElement).reset(); // 가입 완료되면 인풋 비우기
+      window.location.reload(); // 새로고침 실행
     }
   };
 
