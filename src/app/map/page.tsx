@@ -25,6 +25,7 @@ export default function MapPage() {
   const [operationTimestamps, setOperationTimestamps] = useState<
     Record<string, number[]>
   >({});
+  const [isPlaying, setIsPlaying] = useState(false);
   const [allTimestamps, setAllTimestamps] = useState<number[]>([]);
   const [operationStartPoint, setOperationStartPoint] =
     useState<Record<string, [number, number]>>();
@@ -44,6 +45,13 @@ export default function MapPage() {
     setOperationStartPoint(updatedStartPoint);
     setMapPosition(initialPosition);
   }, [updatedTimestamps, updatedStartPoint]);
+
+  const [roll, setRoll] = useState(0);
+  const [pitch, setPitch] = useState(0);
+  const [yaw, setYaw] = useState(0);
+  const [rollSpeed, setRollSpeed] = useState(0);
+  const [pitchSpeed, setPitchSpeed] = useState(0);
+  const [yawSpeed, setYawSpeed] = useState(0);
 
   useEffect(() => {
     setSelectedFlight(selectedOperationId[0]);
@@ -89,7 +97,7 @@ export default function MapPage() {
             onSelect={setSelectedFlight}
           />
           <div
-            className={`${isStatusOpen ? "block" : "hidden"} overflow-hidden overflow-y-scroll rounded-[30px]`}
+            className={`${isStatusOpen ? "block" : "hidden"} overflow-hidden overflow-y-auto rounded-[30px]`}
           >
             <StatusPanel
               progress={progress}
@@ -100,7 +108,14 @@ export default function MapPage() {
             />
           </div>
           <div className={`${isAttitudeOpen ? "block" : "hidden"}`}>
-            <AttitudePanel />
+            <AttitudePanel
+              progress={progress}
+              allTimestamps={allTimestamps}
+              operationTimestamps={operationTimestamps}
+              selectedOperationId={selectedOperationId}
+              selectedFlight={selectedFlight}
+              isPlaying={isPlaying}
+            />
           </div>
         </div>
         <div className="absolute bottom-7 left-1/2 z-10 flex w-2/3 min-w-80 -translate-x-1/2 flex-col gap-1">
