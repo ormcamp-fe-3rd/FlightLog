@@ -12,6 +12,7 @@ interface Props {
   allTimestamps: number[];
   operationTimestamps: Record<string, number[]>;
   setSelectedFlight: (id: string) => void;
+  setIsPlaying: (isPlaying: boolean) => void;
 }
 
 export default function FlightProgressBar({
@@ -20,6 +21,7 @@ export default function FlightProgressBar({
   allTimestamps,
   operationTimestamps,
   setSelectedFlight,
+  setIsPlaying,
 }: Props) {
   const {
     isPlaying,
@@ -28,6 +30,8 @@ export default function FlightProgressBar({
     handleTimelineClick,
     setPlaybackSpeed,
   } = usePlayback(allTimestamps, progress, setProgress);
+
+  setIsPlaying(isPlaying);
 
   const handleSelectAndPlay = (id: string, timelineData: TimelineData[]) => {
     handleTimelineClick(id, timelineData, setSelectedFlight);

@@ -46,13 +46,6 @@ export default function MapPage() {
     setMapPosition(initialPosition);
   }, [updatedTimestamps, updatedStartPoint]);
 
-  const [roll, setRoll] = useState(0);
-  const [pitch, setPitch] = useState(0);
-  const [yaw, setYaw] = useState(0);
-  const [rollSpeed, setRollSpeed] = useState(0);
-  const [pitchSpeed, setPitchSpeed] = useState(0);
-  const [yawSpeed, setYawSpeed] = useState(0);
-
   useEffect(() => {
     setSelectedFlight(selectedOperationId[0]);
   }, [selectedOperationId]);
@@ -125,6 +118,7 @@ export default function MapPage() {
             allTimestamps={allTimestamps}
             operationTimestamps={operationTimestamps}
             setSelectedFlight={setSelectedFlight}
+            setIsPlaying={setIsPlaying}
           />
           <div className="flex justify-center">
             <ControlPanel

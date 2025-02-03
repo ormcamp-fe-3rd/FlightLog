@@ -113,16 +113,16 @@ export default function AttitudePanel({
       }
       // 날개(Fan) 회전
       fanRefs.current.forEach((fan) => {
-        if (isPlaying) {
+        if (isPlayingRef) {
           fan.rotation.z += 0.8;
         }
       });
     });
 
     return (
+      // 드론 크기
       <group ref={droneRef} scale={[5, 5, 5]}>
         {" "}
-        //드론 크기 //크기
         <primitive object={glb.scene} />
       </group>
     );
