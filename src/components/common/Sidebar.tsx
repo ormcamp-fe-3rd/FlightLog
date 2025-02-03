@@ -6,6 +6,7 @@ import { formatTimestamp } from "@/utils/formatTimestamp";
 import useData from "@/store/useData";
 import { PAGES } from "@/constants";
 import findOperationStartTime from "@/utils/findOperationStartTime";
+import { getColorFromId } from "@/utils/getColorFromId";
 
 export default function Sidebar() {
   const {
@@ -18,18 +19,6 @@ export default function Sidebar() {
     selectedOperationId,
   } = useData();
   const positionData = telemetryData[33] || [];
-
-  const robotIds = [...new Set(operationData.map((value) => value["robot"]))];
-  const robotNames = robotData.reduce(
-    (acc, robot) => {
-      acc[robot._id] = robot.name;
-      return acc;
-    },
-    {} as Record<string, string>,
-  );
-
-  // 수정: 라벨당 텔레메트리 데이터를 한 개씩 먼저 받아와 라벨링 작업을 하도록 함
-  const isLoading = !(operationData.length > 0 && robotNames);
 
   // 로딩 상태 관리 추가(사이드바에서만 사용돼서 따로 zustand로 분리하지는 않았습니다.)
   const [loadingOperations, setLoadingOperations] = useState<Set<string>>(
@@ -105,6 +94,23 @@ export default function Sidebar() {
 
   //운행정보 토글 매뉴
   const [toggleLabel, setToggleLabel] = useState<Set<string>>(new Set());
+  const robotIds = [
+    ...new Set(
+      operationData
+        .sort((a, b) => a.robot.localeCompare(b.robot))
+        .map((value) => value["robot"]),
+    ),
+  ];
+  const robotNames = robotData.reduce(
+    (acc, robot) => {
+      acc[robot._id] = robot.name;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
+  // 수정: 라벨당 텔레메트리 데이터를 한 개씩 먼저 받아와 라벨링 작업을 하도록 함
+  const isLoading = !(operationData.length > 0 && robotNames);
 
   const toggleRobot = (robotId: string) => {
     setToggleLabel((prev) => {
@@ -182,6 +188,13 @@ export default function Sidebar() {
                                 )}
                               </span>
                             )}
+                            {/* 컬러 라벨 */}
+                            <span
+                              className="size-2 rounded-full"
+                              style={{
+                                backgroundColor: getColorFromId(operation._id),
+                              }}
+                            />
                           </label>
                         </div>
                       );
