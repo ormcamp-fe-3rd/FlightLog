@@ -12,6 +12,11 @@ export default function usePlayback(
   const intervalId = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    handlePause();
+    setProgress(0);
+  }, [allTimestamps]);
+
+  useEffect(() => {
     if (isPlaying) {
       handlePlay(allTimestamps, progress);
     }

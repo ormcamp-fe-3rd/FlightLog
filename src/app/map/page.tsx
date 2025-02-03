@@ -47,7 +47,6 @@ export default function MapPage() {
 
   useEffect(() => {
     setSelectedFlight(selectedOperationId[0]);
-    setProgress(0);
   }, [selectedOperationId]);
 
   const toggleStatusPanel = () => {
