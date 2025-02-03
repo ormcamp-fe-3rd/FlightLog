@@ -1,14 +1,8 @@
 import { Dataset } from "@/types/api";
-import {
-  getStatus,
-  getAltitude,
-  groupDataById,
-  getSpeed,
-} from "@/hooks/useChartsData";
+import { getAltitude, groupDataById } from "@/hooks/useChartsData";
 import { useEffect, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
-import { DefaultSynchronisedChartsProps } from "@/components/log/charts/AttitudeCharts";
 
 interface useChartDataTransformProps {
   telemetryData: any;
@@ -19,9 +13,9 @@ const useChartXData = (telemetryData: any, selectedOperationId: string[]) => {
   const [xData, setXData] = useState<number[]>([]);
 
   useEffect(() => {
-    const droneStatus = getSpeed(telemetryData, selectedOperationId);
+    const droneAltitude = getAltitude(telemetryData, selectedOperationId); // 드론 속도, 고도값
 
-    const xAxisData = droneStatus.map((timeStamp) => timeStamp[3]);
+    const xAxisData = droneAltitude.map((timeStamp) => timeStamp[3]);
 
     setXData(xAxisData);
   }, [telemetryData, selectedOperationId]);
@@ -41,24 +35,24 @@ const useStatusChartsChartsData = ({
       try {
         setLoading(true);
 
-        const droneSpeed = getSpeed(telemetryData, selectedOperationId);
+        const droneAltitude = getAltitude(telemetryData, selectedOperationId);
 
-        if (!droneSpeed.length) {
+        if (!droneAltitude.length) {
           return null;
         }
 
         const formattedAlt: Dataset = {
           name: "고도",
           type: "area",
-          unit: droneSpeed.map((item) => item[0]),
-          data: droneSpeed.map((item) => item[2]),
+          unit: droneAltitude.map((item) => item[0]),
+          data: droneAltitude.map((item) => item[2]),
         };
 
         const formattedSpeed: Dataset = {
           name: "속도",
           type: "area",
-          unit: droneSpeed.map((item) => item[0]),
-          data: droneSpeed.map((item) => item[1]),
+          unit: droneAltitude.map((item) => item[0]),
+          data: droneAltitude.map((item) => item[1]),
         };
 
         setChartData([formattedAlt, formattedSpeed]);

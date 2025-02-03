@@ -1,5 +1,5 @@
 import { Dataset } from "@/types/api";
-import { getStatus, getAltitude, groupDataById } from "@/hooks/useChartsData";
+import { getStatus, groupDataById } from "@/hooks/useChartsData";
 import { useEffect, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
@@ -14,7 +14,7 @@ const useChartXData = (telemetryData: any, selectedOperationId: string[]) => {
   const [xData, setXData] = useState<number[]>([]);
 
   useEffect(() => {
-    const droneStatus = getStatus(telemetryData, selectedOperationId);
+    const droneStatus = getStatus(telemetryData, selectedOperationId); // 드론 자세값
     const xAxisData = droneStatus.map((timeStamp) => timeStamp[4]);
 
     setXData(xAxisData);
@@ -35,10 +35,9 @@ const useAttitudeChartsData = ({
       try {
         setLoading(true);
 
-        const droneAlttitude = getAltitude(telemetryData, selectedOperationId);
         const droneStatus = getStatus(telemetryData, selectedOperationId);
 
-        if (!droneAlttitude.length || !droneStatus.length) {
+        if (!droneStatus.length) {
           return null;
         }
 
@@ -90,6 +89,8 @@ const createChartOptions = (
   ]);
 
   const groupData = groupDataById(data);
+  // const groupDataKeys = Object.keys(groupData);
+  // console.log(groupDataKeys);
 
   const colours = Highcharts.getOptions().colors;
   const colour = colours && colours.length > index ? colours[index] : undefined;

@@ -12,18 +12,6 @@ export const getStatus = (telemetryData: any, operationId: string[]) => {
     }) as [number, number, number, number, number][];
 };
 
-export const getAltitude = (telemetryData: any, operationId: string[]) => {
-  const Altitude = telemetryData[33] || [];
-  return Altitude.filter((data: any) =>
-    operationId.includes(data.operation),
-  ).map((data: any) => {
-    const id = data.operation;
-    const alt = data.payload.alt * 1e-7; // altitude
-    const timestamp = data.timestamp;
-    return [id, alt, timestamp];
-  }) as [number, number, number][];
-};
-
 export const getBattery = (telemetryData: any, operationId: string[]) => {
   const BatteryData = telemetryData[147] || [];
   return BatteryData.filter((data: any) =>
@@ -37,7 +25,7 @@ export const getBattery = (telemetryData: any, operationId: string[]) => {
   }) as [number, number, number, number][];
 };
 
-export const getSpeed = (telemetryData: any, operationId: string[]) => {
+export const getAltitude = (telemetryData: any, operationId: string[]) => {
   const SpeedData = telemetryData[74] || [];
   return SpeedData.filter((data: any) =>
     operationId.includes(data.operation),
