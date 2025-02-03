@@ -3,10 +3,12 @@ import React from "react";
 import Highcharts, { color } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsStock from "highcharts/modules/stock";
+import HighchartsAccessibility from "highcharts/modules/accessibility";
 import useData from "@/store/useData";
 
 if (typeof Highcharts === "object") {
   HighchartsStock(Highcharts);
+  HighchartsAccessibility(Highcharts);
 }
 
 const BatteryStatusChart = () => {
