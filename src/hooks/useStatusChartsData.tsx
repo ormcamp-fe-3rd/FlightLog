@@ -1,9 +1,8 @@
 import { Dataset } from "@/types/api";
-import { getStatus, getAltitude, groupDataById } from "@/hooks/useChartsData";
+import { getAltitude, groupDataById } from "@/hooks/useChartsData";
 import { useEffect, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
-import { DefaultSynchronisedChartsProps } from "@/components/log/charts/SynchronisedCharts";
 
 interface useChartDataTransformProps {
   telemetryData: any;
@@ -14,8 +13,9 @@ const useChartXData = (telemetryData: any, selectedOperationId: string[]) => {
   const [xData, setXData] = useState<number[]>([]);
 
   useEffect(() => {
-    const droneStatus = getStatus(telemetryData, selectedOperationId);
-    const xAxisData = droneStatus.map((timeStamp) => timeStamp[4]);
+    const droneAltitude = getAltitude(telemetryData, selectedOperationId); // 드론 속도, 고도값
+
+    const xAxisData = droneAltitude.map((timeStamp) => timeStamp[3]);
 
     setXData(xAxisData);
   }, [telemetryData, selectedOperationId]);
@@ -23,7 +23,7 @@ const useChartXData = (telemetryData: any, selectedOperationId: string[]) => {
   return xData;
 };
 
-const useSynchronisedChartsData = ({
+const useStatusChartsChartsData = ({
   telemetryData,
   selectedOperationId,
 }: useChartDataTransformProps) => {
@@ -35,35 +35,27 @@ const useSynchronisedChartsData = ({
       try {
         setLoading(true);
 
-        const droneAlttitude = getAltitude(telemetryData, selectedOperationId);
-        const droneStatus = getStatus(telemetryData, selectedOperationId);
+        const droneAltitude = getAltitude(telemetryData, selectedOperationId);
 
-        if (!droneAlttitude.length || !droneStatus.length) {
+        if (!droneAltitude.length) {
           return null;
         }
 
-        const formattedRoll: Dataset = {
-          name: "roll",
-          type: "line",
-          unit: droneStatus.map((item) => item[0]),
-          data: droneStatus.map((item) => item[1]),
+        const formattedAlt: Dataset = {
+          name: "고도",
+          type: "area",
+          unit: droneAltitude.map((item) => item[0]),
+          data: droneAltitude.map((item) => item[2]),
         };
 
-        const formattedPitch: Dataset = {
-          name: "pitch",
-          type: "line",
-          unit: droneStatus.map((item) => item[0]),
-          data: droneStatus.map((item) => item[2]),
+        const formattedSpeed: Dataset = {
+          name: "속도",
+          type: "area",
+          unit: droneAltitude.map((item) => item[0]),
+          data: droneAltitude.map((item) => item[1]),
         };
 
-        const formattedYaw: Dataset = {
-          name: "yaw",
-          type: "line",
-          unit: droneStatus.map((item) => item[0]),
-          data: droneStatus.map((item) => item[3]),
-        };
-
-        setChartData([formattedRoll, formattedPitch, formattedYaw]);
+        setChartData([formattedAlt, formattedSpeed]);
       } catch (error) {
         console.error(error);
       } finally {
@@ -81,8 +73,6 @@ const createChartOptions = (
   index: number,
   xData: number[],
 ) => {
-  if (!xData.length) return null;
-
   const data = dataset.data.map((val: number, i: number) => [
     xData[i],
     val,
@@ -101,8 +91,8 @@ const createChartOptions = (
       zooming: {
         type: "x",
       },
-      width: DefaultSynchronisedChartsProps.chartWidth,
-      height: DefaultSynchronisedChartsProps.chartHeight,
+      width: 700,
+      height: 400,
     },
     title: {
       text: dataset.name,
@@ -110,7 +100,9 @@ const createChartOptions = (
     xAxis: {
       crosshair: true,
       labels: {
-        format: "{value}",
+        formatter: function () {
+          return ((this as any).value / 10).toFixed(0) + " 초";
+        },
       },
       events: {
         afterSetExtremes: function (event: Highcharts.ExtremesObject) {
@@ -140,42 +132,11 @@ const createChartOptions = (
       rules: [
         {
           condition: {
-            maxWidth: 1500, // 화면 가로 크기가 768px 이하일 때
+            maxWidth: 616,
           },
           chartOptions: {
-            chart: {
-              width: 470, // 차트 높이 조정
-            },
-            xAxis: {
-              labels: {},
-            },
-            yAxis: {
-              title: {
-                text: "속도",
-              },
-            },
             legend: {
-              enabled: false, // 작은 화면에서는 범례 숨김
-            },
-          },
-        },
-        {
-          condition: {
-            maxWidth: 480, // 화면 가로 크기가 480px 이하일 때
-          },
-          chartOptions: {
-            chart: {
-              height: 250, // 차트 높이 더 작게 설정
-            },
-            xAxis: {
-              labels: {
-                rotation: -90, // 더 작은 화면에서는 x축 라벨 더 많이 회전
-              },
-            },
-            yAxis: {
-              title: {
-                text: " ",
-              },
+              enabled: true,
             },
           },
         },
@@ -232,4 +193,8 @@ const renderChart = (dataset: Dataset, index: number, xData: number[]) => {
   );
 };
 
-export { useSynchronisedChartsData, renderChart, useChartXData };
+export {
+  useStatusChartsChartsData as useSynchronisedChartsData,
+  renderChart,
+  useChartXData,
+};
