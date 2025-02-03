@@ -129,11 +129,18 @@ export default function AttitudePanel({
   }
 
   return (
-    <div className="flex h-full w-[280px] flex-col justify-between rounded-[30px] bg-white p-4">
-      <div>
-        <div>Roll: {AttitudeData?.roll}</div>
-        <div>Pitch: {AttitudeData?.pitch}</div>
-        <div>Yaw: {AttitudeData?.yaw}</div>
+    <div className="relative flex h-full w-full flex-col justify-between rounded-[30px] bg-white p-4">
+      {/* 자세 데이터 */}
+      <div className="absolute left-4 top-4 z-10 text-xs">
+        <div>
+          <span>Roll: {AttitudeData?.roll}</span>
+        </div>
+        <div>
+          <span>Pitch: {AttitudeData?.pitch}</span>
+        </div>
+        <div>
+          <span>Yaw: {AttitudeData?.yaw}</span>
+        </div>
       </div>
 
       {/* 3D 모델 */}
