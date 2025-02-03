@@ -29,3 +29,31 @@ export const CONTROL_BUTTONS = [
     iconClassName: "size-7 p-1",
   },
 ] as const;
+
+export const TELEMETRY_MSGID = {
+  POSITION: 33,
+  GPS: 24,
+  SPEED: 74,
+  ATTITUDE: 30,
+  BATTERY: 147,
+  STATUS: 253,
+} as const;
+
+export const CONVERSION_FACTORS = {
+  LAT_LON: 1e-7,
+  ALTITUDE: 1e-3,
+  HEADING: 1e-2,
+  BATTERY_REMAINING: 1e-2,
+  TEMPERATURE: 1e-2,
+  RAD_TO_DEG: 180 / Math.PI,
+  ALT_ELLIPSOID: 1e-2,
+} as const;
+
+export const PLAY_SPEED = [1, 2, 5, 10, 30];
+
+export const TIMELINE = {
+  HEIGHT: 4,
+  GAP: 1,
+} as const;
+
+export const INITIAL_POSITION = { LAT: 37.566381, LNG: 126.977717 } as const;

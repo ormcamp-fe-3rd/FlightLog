@@ -26,6 +26,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.54.2",
     "react-leaflet": "^4.2.1",
+    "react-select": "^5.10.0",
     "three": "^0.159.0",
     "three-mesh-bvh": "0.8.0",
     "zod": "^3.24.1",
