@@ -18,6 +18,7 @@ interface DataState {
   selectedOperationId: string[];
   setSelectedOperation: (operations: Record<string, string>) => void;
   toggleSelectedOperation: (operationId: string) => void;
+  fetchInitialTelemetries: () => Promise<void>;
 }
 
 const useData = create<DataState>((set, get) => ({
@@ -91,7 +92,7 @@ const useData = create<DataState>((set, get) => ({
     // 새로 선택된 operation들의 데이터만 불러오기
     get().fetchTelemetryData(formattedData);
   },
-  toggleSelectedOperation: async (operationId) => {
+  toggleSelectedOperation: (operationId) => {
     set((state) => {
       const selectedOperationsSet = new Set(state.selectedOperationId);
 
@@ -107,6 +108,52 @@ const useData = create<DataState>((set, get) => ({
 
       return { selectedOperationId: newSelectedOperations };
     });
+  },
+
+  fetchInitialTelemetries: async () => {
+    const { operationData } = get();
+    if (operationData.length === 0) return;
+
+    // 각 운행에 대해 가장 최근 데이터 로드
+    const promises = operationData.map(async (operation) => {
+      try {
+        const data = await fetchData(`telemetries`, {
+          operation: operation._id,
+          msgId: "33",
+          //라벨링을 위한 데이터 1개만 로드
+          limit: "1",
+        });
+        return data[0];
+      } catch (error) {
+        console.error(
+          `운행 시간 데이터를 불러오는데 실패했습니다.${operation._id}:`,
+          error,
+        );
+        return null;
+      }
+    });
+
+    try {
+      const results = await Promise.all(promises);
+      const validResults = results.filter((result) => result !== null);
+
+      const categorizedData = validResults.reduce(
+        (acc: { [key: string]: Telemetries[] }, data: Telemetries) => {
+          if (!data) return acc;
+          const { msgId } = data;
+          if (!acc[msgId]) {
+            acc[msgId] = [];
+          }
+          acc[msgId].push(data);
+          return acc;
+        },
+        {},
+      );
+
+      set({ telemetryData: categorizedData });
+    } catch (error) {
+      console.error("운행 시간 데이터를 불러오는데 실패했습니다.", error);
+    }
   },
 }));
 
