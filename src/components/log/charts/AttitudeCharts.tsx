@@ -61,16 +61,20 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
     <div
       // onMouseMove={handleMouseMove}
       // onTouchMove={handleMouseMove}
-      className="flex items-center justify-center"
+      className="rounded-lg bg-white p-4"
     >
       {chartData.length == 0 ? (
-        <p>Loading...</p>
+        <p className="p-10 text-center text-gray-500">
+          선택된 데이터가 없습니다.
+        </p>
       ) : (
-        chartData.slice(0, numOfDatasets).map((dataset, index) => (
-          <div key={dataset.name} className="mb-10">
-            {renderChart(dataset, index, xData)}
-          </div>
-        ))
+        <div className="flex flex-row flex-wrap gap-4">
+          {chartData.slice(0, numOfDatasets).map((dataset, index) => (
+            <div key={dataset.name} className="min-w-[300px] flex-1">
+              {renderChart(dataset, index, xData)}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

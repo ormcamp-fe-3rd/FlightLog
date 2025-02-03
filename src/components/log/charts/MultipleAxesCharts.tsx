@@ -273,7 +273,7 @@ const BatteryStatusChart = () => {
   };
 
   return (
-    <div ref={chartContainerRef}>
+    <div ref={chartContainerRef} className="rounded-lg bg-white p-4">
       {hasData ? (
         <HighchartsReact
           ref={chartComponentRef}
@@ -281,7 +281,9 @@ const BatteryStatusChart = () => {
           options={createChartOptions()}
         />
       ) : (
-        <p className="p-10 text-center text-gray-500">데이터가 없습니다.</p>
+        <p className="p-10 text-center text-gray-500">
+          선택된 데이터가 없습니다.
+        </p>
       )}
     </div>
   );
