@@ -62,7 +62,7 @@ export default function RegisterContent() {
         <button
           type="submit"
           className={`btn mt-8 w-full ${
-            isValid ? "btn-primary" : "btn-disabled"
+            isValid ? "btn-neutral" : "btn-disabled"
           }`}
           disabled={!isValid}
         >

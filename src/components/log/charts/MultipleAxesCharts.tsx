@@ -4,7 +4,6 @@ import Highcharts, { color } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsStock from "highcharts/modules/stock";
 import useData from "@/store/useData";
-import { PositionMesh } from "@react-three/drei";
 
 if (typeof Highcharts === "object") {
   HighchartsStock(Highcharts);
@@ -132,7 +131,7 @@ const BatteryStatusChart = () => {
       Math.max(...batteryData) < 100 ? 100 : Math.max(...batteryData);
     const batteryMin = 0;
 
-    const sidebarWidth = 250;
+    const sidebarWidth = 320;
 
     return {
       chart: {
@@ -147,6 +146,14 @@ const BatteryStatusChart = () => {
         panning: {
           enabled: true,
           type: "x",
+        },
+      },
+      plotOptions: {
+        series: {
+          dataGrouping: {
+            enabled: true,
+          },
+          showInNavigator: true,
         },
       },
       rangeSelector: {
@@ -198,9 +205,7 @@ const BatteryStatusChart = () => {
           },
         ],
         inputEnabled: false,
-        selected: 3,
-        // inputDateFormat: "%Y-%m-%d %H:%M:%S",
-        // inputEditDateFormat: "%Y-%m-%d %H:%M:%S",
+        selected: 8,
       },
       navigator: {
         enabled: true,

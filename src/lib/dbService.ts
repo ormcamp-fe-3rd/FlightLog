@@ -10,19 +10,45 @@ export async function fetchCollection(
   const db = client.db("data");
   const collection = db.collection(collectionName);
 
-  if (query.operation) {
+  const { limit, ...getRestQuery } = query;
+
+  if (getRestQuery.operation) {
     try {
-      query.operation = new ObjectId(query.operation);
+      if (typeof getRestQuery.operation === "string") {
+        getRestQuery.operation = new ObjectId(getRestQuery.operation);
+      }
     } catch (error) {
-      console.warn("Invalid ObjectId format for operation:", query.operation);
+      throw new Error("올바르지 않은 ObjectId 형식입니다");
     }
   }
 
-  Object.keys(query).forEach((key) => {
-    if (!isNaN(Number(query[key]))) {
-      query[key] = Number(query[key]);
+  // 숫자 형식의 문자열을 숫자 타입으로 변환
+  Object.keys(getRestQuery).forEach((key) => {
+    if (!isNaN(Number(getRestQuery[key]))) {
+      getRestQuery[key] = Number(getRestQuery[key]);
     }
   });
 
-  return collection.find(query).toArray();
+  let cursor = collection.find(getRestQuery);
+
+  // limit 파라미터로 받을 데이터 갯수 제한
+  if (limit) {
+    cursor = cursor.limit(Number(limit));
+  }
+
+  return cursor.toArray();
+}
+
+export async function fetchFirstTelemetry(operationId: string) {
+  const client = await connectDB;
+  const db = client.db("data");
+  const collection = db.collection("telemetries");
+
+  try {
+    const query = { operation: new ObjectId(operationId) };
+    // 체크박스 라벨링을 위해 해당 operation의 첫 번째 telemetry만 반환
+    return collection.findOne(query);
+  } catch (error) {
+    throw new Error("올바르지 않은 ObjectId 형식입니다");
+  }
 }
