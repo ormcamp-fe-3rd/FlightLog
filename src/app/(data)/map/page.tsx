@@ -1,17 +1,23 @@
 "use client";
 
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 import StatusPanel from "@/components/map/StatusPanel";
 import AttitudePanel from "@/components/map/AttitudePanel";
 import FlightProgressBar from "@/components/map/FlightProgressBar";
 import SelectFlightLog from "@/components/map/SelectFlightLog";
-import MapView from "@/components/map/MapView";
 import ControlPanel from "@/components/map/ControlPanel";
-import { useEffect, useState } from "react";
 import useData from "@/store/useData";
 import useSidebarStore from "@/store/useSidebar";
 import useResizePanelControl from "@/hooks/useResizePanelControl";
 import useOperationData from "@/hooks/useOperationData";
 import { INITIAL_POSITION } from "@/constants";
+
+// 모든 브라우저 의존성 컴포넌트를 동적 임포트로 변경 (빌드 오류 수정)
+const MapView = dynamic(() => import("@/components/map/MapView"), {
+  ssr: false,
+  loading: () => <div>Loading map...</div>,
+});
 
 export default function MapPage() {
   const { isSidebarOpen } = useSidebarStore();
