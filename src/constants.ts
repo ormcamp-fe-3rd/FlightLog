@@ -57,3 +57,8 @@ export const TIMELINE = {
 } as const;
 
 export const INITIAL_POSITION = { LAT: 37.566381, LNG: 126.977717 } as const;
+
+export const MAX_DURATION = {
+  HOURS: 24,
+  MILLISECONDS: 24 * 60 * 60 * 1000,
+} as const;

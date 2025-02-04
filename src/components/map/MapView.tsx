@@ -19,8 +19,6 @@ import { DronePosition } from "@/types/types";
 
 interface MapViewProps {
   progress: number;
-  operationTimestamps: Record<string, number[]>;
-  allTimestamps: number[];
   onMarkerClick: (id: string) => void;
   mapPosition: [number, number];
   dronePositions: DronePosition[];
@@ -29,14 +27,12 @@ interface MapViewProps {
 
 export default function MapView({
   progress,
-  operationTimestamps,
-  allTimestamps,
   onMarkerClick,
   mapPosition,
   dronePositions,
   setDronePositions,
 }: MapViewProps) {
-  const { selectedOperationId } = useData();
+  const { selectedOperationId, allTimestamps, operationTimestamps } = useData();
   const { updatedLatlngs } = useOperationData();
   const [operationLatlngs, setOperationLatlngs] = useState<
     Record<string, [number, number][]>

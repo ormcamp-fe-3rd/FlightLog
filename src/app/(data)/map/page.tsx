@@ -17,15 +17,12 @@ export default function MapPage() {
   const { isSidebarOpen } = useSidebarStore();
   const { isStatusOpen, setIsStatusOpen, isAttitudeOpen, setIsAttitudeOpen } =
     useResizePanelControl();
-  const { selectedOperationId } = useData();
+  const { selectedOperationId, setAllTimestamps, setOperationTimestamps } =
+    useData();
   const { updatedTimestamps, updatedStartPoint } = useOperationData();
   const [selectedFlight, setSelectedFlight] = useState(selectedOperationId[0]);
   const [progress, setProgress] = useState(0);
-  const [operationTimestamps, setOperationTimestamps] = useState<
-    Record<string, number[]>
-  >({});
   const [isPlaying, setIsPlaying] = useState(false);
-  const [allTimestamps, setAllTimestamps] = useState<number[]>([]);
   const [dronePositions, setDronePositions] = useState<
     { flightId: string; position: [number, number]; direction: number }[]
   >([]);
@@ -78,8 +75,6 @@ export default function MapPage() {
         <div className="h-full w-full">
           <MapView
             progress={progress}
-            operationTimestamps={operationTimestamps}
-            allTimestamps={allTimestamps}
             onMarkerClick={setSelectedFlight}
             mapPosition={mapPosition}
             dronePositions={dronePositions}
@@ -94,20 +89,11 @@ export default function MapPage() {
           <div
             className={`${isStatusOpen ? "block" : "hidden"} overflow-hidden overflow-y-auto rounded-[30px]`}
           >
-            <StatusPanel
-              progress={progress}
-              allTimestamps={allTimestamps}
-              operationTimestamps={operationTimestamps}
-              selectedOperationId={selectedOperationId}
-              selectedFlight={selectedFlight}
-            />
+            <StatusPanel progress={progress} selectedFlight={selectedFlight} />
           </div>
           <div className={`${isAttitudeOpen ? "block" : "hidden"}`}>
             <AttitudePanel
               progress={progress}
-              allTimestamps={allTimestamps}
-              operationTimestamps={operationTimestamps}
-              selectedOperationId={selectedOperationId}
               selectedFlight={selectedFlight}
               isPlaying={isPlaying}
             />
@@ -117,8 +103,6 @@ export default function MapPage() {
           <FlightProgressBar
             progress={progress}
             setProgress={setProgress}
-            allTimestamps={allTimestamps}
-            operationTimestamps={operationTimestamps}
             setSelectedFlight={setSelectedFlight}
             setIsPlaying={setIsPlaying}
           />

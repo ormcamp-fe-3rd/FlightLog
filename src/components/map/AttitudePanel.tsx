@@ -8,12 +8,10 @@ import { useEffect, useRef, useState } from "react";
 import { useAttitudeData } from "@/hooks/useAttitudeData";
 import { CameraControls, Html, PerspectiveCamera } from "@react-three/drei";
 import isFlightActive from "@/utils/isFlightActive";
+import useData from "@/store/useData";
 
 interface AttitudePanelProps {
   progress: number;
-  allTimestamps: number[];
-  operationTimestamps: Record<string, number[]>;
-  selectedOperationId: string[];
   selectedFlight: string;
   isPlaying: boolean;
 }
@@ -34,12 +32,10 @@ const CANVAS_CONFIG = {
 
 export default function AttitudePanel({
   progress,
-  allTimestamps,
-  operationTimestamps,
-  selectedOperationId,
   selectedFlight,
   isPlaying,
 }: AttitudePanelProps) {
+  const { allTimestamps, operationTimestamps, selectedOperationId } = useData();
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
