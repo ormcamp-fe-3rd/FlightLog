@@ -62,6 +62,14 @@ const BatteryStatusChart = () => {
 
   const hasData = filteredData.length > 0;
 
+  // 데이터가 변경될 때마다 전체 범위 선택
+  React.useEffect(() => {
+    if (chartComponentRef.current) {
+      const chart = chartComponentRef.current.chart;
+      chart.xAxis[0].setExtremes(null, null);
+    }
+  }, [telemetryData, selectedOperationId]);
+
   const createChartOptions = () => {
     const colorSchemes = {
       battery: ["#00ff00", "#33cc33", "#269926", "#1a661a"], // green
@@ -285,18 +293,20 @@ const BatteryStatusChart = () => {
   };
 
   return (
-    <div ref={chartContainerRef} className="rounded-lg bg-white p-4">
-      {hasData ? (
-        <HighchartsReact
-          ref={chartComponentRef}
-          highcharts={Highcharts}
-          options={createChartOptions()}
-        />
-      ) : (
-        <p className="p-10 text-center text-gray-500">
-          선택된 데이터가 없습니다.
-        </p>
-      )}
+    <div>
+      <div ref={chartContainerRef} className="rounded-lg bg-white p-4">
+        {hasData ? (
+          <HighchartsReact
+            ref={chartComponentRef}
+            highcharts={Highcharts}
+            options={createChartOptions()}
+          />
+        ) : (
+          <p className="p-10 text-center text-gray-500">
+            선택된 데이터가 없습니다.
+          </p>
+        )}
+      </div>
     </div>
   );
 };
