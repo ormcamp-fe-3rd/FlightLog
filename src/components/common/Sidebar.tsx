@@ -160,7 +160,7 @@ export default function Sidebar() {
                     if (operation["robot"] === robotId) {
                       return (
                         <div key={operation._id} className="flex flex-col py-1">
-                          <label className="flex h-6 cursor-pointer items-center gap-3">
+                          <label className="relative flex h-6 cursor-pointer items-center gap-3">
                             <input
                               type="checkbox"
                               checked={selectedOperationId.includes(
@@ -188,9 +188,8 @@ export default function Sidebar() {
                                 )}
                               </span>
                             )}
-                            {/* 컬러 라벨 */}
                             <span
-                              className="size-2 rounded-full"
+                              className="absolute right-1 size-2 rounded-full"
                               style={{
                                 backgroundColor: getColorFromId(operation._id),
                               }}
