@@ -25,7 +25,7 @@ export default function MapPage() {
     useResizePanelControl();
   const { selectedOperationId, setAllTimestamps, setOperationTimestamps } =
     useData();
-  const { updatedTimestamps, updatedStartPoint } = useOperationData();
+  const { updatedStartPoint } = useOperationData();
   const [selectedFlight, setSelectedFlight] = useState(selectedOperationId[0]);
   const [progress, setProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -38,15 +38,9 @@ export default function MapPage() {
   ]);
 
   useEffect(() => {
-    const sortedAllTimestamps = Object.values(updatedTimestamps)
-      .flat()
-      .sort((a, b) => a - b);
-    setOperationTimestamps(updatedTimestamps);
-    setAllTimestamps(sortedAllTimestamps);
-
     const initialPosition = updatedStartPoint[selectedOperationId[0]];
     setMapPosition(initialPosition);
-  }, [updatedTimestamps, updatedStartPoint]);
+  }, [updatedStartPoint]);
 
   useEffect(() => {
     setSelectedFlight(selectedOperationId[0]);
