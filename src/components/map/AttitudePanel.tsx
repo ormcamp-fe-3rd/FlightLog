@@ -49,12 +49,7 @@ export default function AttitudePanel({
       operationTimestamps,
       selectedFlight,
     );
-
-    if (isTimeInRange) {
-      setIsActive(true);
-    } else {
-      setIsActive(false);
-    }
+    setIsActive(isTimeInRange);
   }, [selectedFlight, progress]);
 
   const currentData = useAttitudeData({
