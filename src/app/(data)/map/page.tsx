@@ -1,6 +1,5 @@
 "use client";
 
-import Sidebar from "@/components/common/Sidebar";
 import StatusPanel from "@/components/map/StatusPanel";
 import AttitudePanel from "@/components/map/AttitudePanel";
 import FlightProgressBar from "@/components/map/FlightProgressBar";
@@ -71,14 +70,12 @@ export default function MapPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-56px)] overflow-hidden">
+    <div className="flex h-[calc(100vh-56px)] w-full overflow-hidden">
       <div
         className={`${isSidebarOpen ? "md:block" : "md:hidden"} z-20 md:absolute`}
-      >
-        <Sidebar />
-      </div>
-      <div className="relative h-full min-w-[344px] flex-1 border-red-600">
-        <div className="h-full">
+      ></div>
+      <div className="relative h-full w-full flex-1">
+        <div className="h-full w-full">
           <MapView
             progress={progress}
             operationTimestamps={operationTimestamps}
