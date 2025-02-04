@@ -58,7 +58,7 @@ export default function MapPage() {
     )?.position;
 
     if (selectedDronePosition) {
-      setMapPosition(selectedDronePosition);
+      setMapPosition([...selectedDronePosition]);
     } else {
       console.warn(`Start point not found for ID: ${selectedFlight}`);
     }
