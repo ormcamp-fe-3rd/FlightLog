@@ -1,5 +1,6 @@
 import useData from "@/store/useData";
 import { getColorFromId } from "@/utils/getColorFromId";
+import { useMemo } from "react";
 import Select from "react-select";
 
 interface SelectFlightLogProps {
@@ -73,8 +74,13 @@ export default function SelectFlightLog({
     }
   };
 
+  const color = useMemo(
+    () => (value ? getColorFromId(value) : "white"),
+    [value],
+  );
+
   return (
-    <div className="w-[280px]">
+    <div className="flex w-[280px] items-center gap-2">
       <Select
         className="z-50 w-full cursor-pointer rounded-full"
         onChange={handleChange}
@@ -82,7 +88,9 @@ export default function SelectFlightLog({
         components={{ Option: CustomOption }}
         value={selectedOption}
         placeholder="Select Operation"
+        isSearchable={false}
       />
+      <div className="badge badge-lg" style={{ backgroundColor: color }}></div>
     </div>
   );
 }

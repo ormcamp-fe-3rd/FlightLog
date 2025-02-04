@@ -4,9 +4,10 @@ import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as THREE from "three";
 import { AxesHelper } from "three";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAttitudeData } from "@/hooks/useAttitudeData";
 import { CameraControls, Html, PerspectiveCamera } from "@react-three/drei";
+import isFlightActive from "@/utils/isFlightActive";
 
 interface AttitudePanelProps {
   progress: number;
@@ -39,6 +40,18 @@ export default function AttitudePanel({
   selectedFlight,
   isPlaying,
 }: AttitudePanelProps) {
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    const isTimeInRange = isFlightActive(
+      progress,
+      allTimestamps,
+      operationTimestamps,
+      selectedFlight,
+    );
+    setIsActive(isTimeInRange);
+  }, [selectedFlight, progress]);
+
   const currentData = useAttitudeData({
     progress,
     allTimestamps,
@@ -67,11 +80,6 @@ export default function AttitudePanel({
     const droneRef = useRef<THREE.Group>(null);
     const fanRefs = useRef<THREE.Mesh[]>([]);
     const arrowRef = useRef<THREE.ArrowHelper | null>(null);
-    const isPlayingRef = useRef(isPlaying);
-
-    useEffect(() => {
-      isPlayingRef.current = isPlaying;
-    }, [isPlaying]);
 
     useEffect(() => {
       glb.scene.traverse((child) => {
@@ -113,7 +121,7 @@ export default function AttitudePanel({
       }
       // 날개(Fan) 회전
       fanRefs.current.forEach((fan) => {
-        if (isPlayingRef) {
+        if (isPlaying && isActive) {
           fan.rotation.z += 0.8;
         }
       });
