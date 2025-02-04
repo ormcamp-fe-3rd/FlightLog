@@ -4,7 +4,11 @@ import useLoginModalStore from "@/store/useLoginModal";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 
-export default function LoginContent() {
+interface LoginContentProps {
+  onClose: () => void;
+}
+
+export default function LoginContent({ onClose }: LoginContentProps) {
   const { toggle } = useLoginModalStore();
 
   const {
@@ -42,7 +46,7 @@ export default function LoginContent() {
     <>
       <div className="flex justify-between">
         <h2 className="mb-4 text-2xl font-bold text-black">로그인</h2>
-        <button className="btn btn-circle btn-ghost" onClick={toggle}>
+        <button className="btn btn-circle btn-ghost" onClick={onClose}>
           ✖️
         </button>
       </div>
