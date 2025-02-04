@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import useLoginModalStore from "@/store/useLoginModal";
 import LoginContent from "@/components/home/LoginContent";
 import RegisterContent from "@/components/home/RegisterContent";
@@ -13,16 +13,26 @@ export default function AuthModal() {
 
   usePreventScroll(isLoginModalOpen);
 
+  const handleClose = () => {
+    const form = document.querySelector("form");
+    if (form) form.reset();
+    setRegister(false);
+    toggle();
+  };
+
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 ${isLoginModalOpen ? null : "hidden"}`}
-      onClick={toggle}
     >
       <div
         className="w-96 rounded-lg bg-white p-12 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        {register === true ? <RegisterContent /> : <LoginContent />}
+        {register === true ? (
+          <RegisterContent onClose={handleClose} />
+        ) : (
+          <LoginContent onClose={handleClose} />
+        )}
 
         <SocialLoginButton />
 
