@@ -1,5 +1,5 @@
 import { Telemetries } from "@/types/api";
-import L from "leaflet";
+const L = typeof window !== "undefined" ? require("leaflet") : null;
 import { formatTimestamp } from "@/utils/formatTimestamp";
 
 export const mapCalculator = {
