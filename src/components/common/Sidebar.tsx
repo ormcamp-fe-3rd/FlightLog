@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatTimestamp } from "@/utils/formatTimestamp";
 import useData from "@/store/useData";
-import { PAGES } from "@/constants";
+import { MAX_DURATION, PAGES } from "@/constants";
 import findOperationStartTime from "@/utils/findOperationStartTime";
 import { getColorFromId } from "@/utils/getColorFromId";
+import calculateTotalTimeGap from "@/utils/calculateTotalTimeGap";
 
 export default function Sidebar() {
   const {
@@ -17,6 +18,7 @@ export default function Sidebar() {
     setValidOperationLabel,
     toggleSelectedOperation,
     selectedOperationId,
+    allTimestamps,
   } = useData();
   const positionData = telemetryData[33] || [];
 
@@ -124,6 +126,15 @@ export default function Sidebar() {
     });
   };
 
+  const totalDuration = calculateTotalTimeGap(allTimestamps);
+  const durationLabel = totalDuration?.formattedTime ?? "00:00:00";
+  const isDurationExceeded =
+    totalDuration && totalDuration.milliseconds > MAX_DURATION.MILLISECONDS;
+  const warningStyle = isDurationExceeded ? "text-red-600" : "";
+  const dataTip = isDurationExceeded
+    ? `총 재생 시간이 ${MAX_DURATION.HOURS}시간을 초과했습니다. 타임라인이나 그래프에서 공백이 길게 보일 수 있습니다.`
+    : "총 재생 시간";
+
   return (
     <aside className="flex h-[calc(100vh-56px)] w-72 flex-col gap-5 border-r bg-white p-4 text-lg">
       <div className="flex flex-col gap-5">
@@ -140,7 +151,14 @@ export default function Sidebar() {
       <hr className="border-[#D9D9D9]" />
       {!isLoading ? (
         <div className="flex flex-col gap-5">
-          <h2 className="font-bold">Operations</h2>
+          <div className="flex items-center gap-4">
+            <h2 className="font-bold">Operations</h2>
+            <div className="tooltip" data-tip={dataTip}>
+              <button className={`btn btn-outline btn-sm ${warningStyle}`}>
+                {durationLabel}
+              </button>
+            </div>
+          </div>
           {robotIds.map((robotId) => {
             return (
               <div
