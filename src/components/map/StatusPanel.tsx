@@ -1,22 +1,18 @@
 "use client";
 
 import { useStatusData } from "@/hooks/useStatusData";
+import useData from "@/store/useData";
 
 interface StatusPanelProps {
   progress: number;
-  allTimestamps: number[];
-  operationTimestamps: Record<string, number[]>;
-  selectedOperationId: string[];
   selectedFlight: string;
 }
 
 export default function StatusPanel({
   progress,
-  allTimestamps,
-  operationTimestamps,
-  selectedOperationId,
   selectedFlight,
 }: StatusPanelProps) {
+  const { allTimestamps, operationTimestamps, selectedOperationId } = useData();
   const currentData = useStatusData({
     progress,
     allTimestamps,

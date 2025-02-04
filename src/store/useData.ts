@@ -19,6 +19,12 @@ interface DataState {
   setSelectedOperation: (operations: Record<string, string>) => void;
   toggleSelectedOperation: (operationId: string) => void;
   fetchInitialTelemetries: () => Promise<void>;
+
+  allTimestamps: number[];
+  setAllTimestamps: (timestamps: number[]) => void;
+
+  operationTimestamps: Record<string, number[]>;
+  setOperationTimestamps: (timestamps: Record<string, number[]>) => void;
 }
 
 const useData = create<DataState>((set, get) => ({
@@ -154,6 +160,16 @@ const useData = create<DataState>((set, get) => ({
     } catch (error) {
       console.error("운행 시간 데이터를 불러오는데 실패했습니다.", error);
     }
+  },
+
+  allTimestamps: [],
+  setAllTimestamps: (timestamps) => {
+    set({ allTimestamps: timestamps });
+  },
+
+  operationTimestamps: {},
+  setOperationTimestamps: (timestamps) => {
+    set({ operationTimestamps: timestamps });
   },
 }));
 
