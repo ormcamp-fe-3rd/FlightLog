@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import StatusPanel from "@/components/map/StatusPanel";
@@ -17,6 +18,8 @@ const MapView = dynamic(() => import("@/components/map/MapView"), {
   ssr: false,
   loading: () => <div>Loading map...</div>,
 });
+
+const MemoizedSelectFlightLog = React.memo(SelectFlightLog);
 
 export default function MapPage() {
   const { isStatusOpen, setIsStatusOpen, isAttitudeOpen, setIsAttitudeOpen } =
@@ -77,7 +80,7 @@ export default function MapPage() {
           />
         </div>
         <div className="absolute right-8 top-8 z-10 flex max-h-[90%] flex-col gap-4">
-          <SelectFlightLog
+          <MemoizedSelectFlightLog
             value={selectedFlight}
             onSelect={setSelectedFlight}
           />
