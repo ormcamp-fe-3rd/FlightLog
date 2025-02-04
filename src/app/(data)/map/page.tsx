@@ -8,7 +8,6 @@ import FlightProgressBar from "@/components/map/FlightProgressBar";
 import SelectFlightLog from "@/components/map/SelectFlightLog";
 import ControlPanel from "@/components/map/ControlPanel";
 import useData from "@/store/useData";
-import useSidebarStore from "@/store/useSidebar";
 import useResizePanelControl from "@/hooks/useResizePanelControl";
 import useOperationData from "@/hooks/useOperationData";
 import { INITIAL_POSITION } from "@/constants";
@@ -20,7 +19,6 @@ const MapView = dynamic(() => import("@/components/map/MapView"), {
 });
 
 export default function MapPage() {
-  const { isSidebarOpen } = useSidebarStore();
   const { isStatusOpen, setIsStatusOpen, isAttitudeOpen, setIsAttitudeOpen } =
     useResizePanelControl();
   const { selectedOperationId, setAllTimestamps, setOperationTimestamps } =
@@ -68,9 +66,6 @@ export default function MapPage() {
 
   return (
     <div className="flex h-[calc(100vh-56px)] w-full overflow-hidden">
-      <div
-        className={`${isSidebarOpen ? "md:block" : "md:hidden"} z-20 md:absolute`}
-      ></div>
       <div className="relative h-full w-full flex-1">
         <div className="h-full w-full">
           <MapView
