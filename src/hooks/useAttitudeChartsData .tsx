@@ -101,6 +101,7 @@ const createChartOptions = (
       zooming: { type: "x" },
       width: null,
       height: 300,
+      id: "attitudeChart",
     },
     title: { text: dataset.name },
     xAxis: {

@@ -102,6 +102,7 @@ const createChartOptions = (
       },
       width: null,
       height: 450,
+      id: "statusChart",
     },
     title: {
       text: dataset.name,

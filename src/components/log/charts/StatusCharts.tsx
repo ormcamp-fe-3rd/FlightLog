@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import Highcharts from "highcharts";
 import HighchartsExporting from "highcharts/modules/exporting";
 import useData from "@/store/useData";
@@ -32,14 +32,19 @@ const StatusCharts: React.FC<SynchronisedChartsProps> = ({}) => {
     telemetryData,
     selectedOperationId,
   });
+  const chartContainerRef = useRef<HTMLDivElement>(null); // ✅ 차트 컨테이너 참조
 
   const xData = useChartXData(telemetryData, selectedOperationId);
 
   const handleMouseMove = (
     e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>,
   ) => {
+    if (!chartContainerRef.current) return;
+
     Highcharts.charts.forEach((chart) => {
-      if (!chart) return;
+      if (!chart || !chart.series.length) return;
+
+      if ((chart.options.chart as any)?.id !== "statusChart") return;
 
       const normalizedEvent = chart.pointer.normalize(e as any);
       const point = chart.series[0].searchPoint(normalizedEvent, true);
@@ -59,6 +64,7 @@ const StatusCharts: React.FC<SynchronisedChartsProps> = ({}) => {
 
   return (
     <div
+      ref={chartContainerRef}
       onMouseMove={handleMouseMove}
       onTouchMove={handleMouseMove}
       className="rounded-lg bg-white p-4"
