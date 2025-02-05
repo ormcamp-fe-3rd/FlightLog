@@ -15,6 +15,7 @@ const BatteryStatusChart = () => {
   const chartComponentRef = React.useRef<HighchartsReact.RefObject>(null);
   const chartContainerRef = React.useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = React.useState(1000);
+  const currentXExtremes = React.useRef<{ min: number | null; max: number | null }>({ min: null, max: null });
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -86,9 +87,24 @@ const BatteryStatusChart = () => {
   React.useEffect(() => {
     if (chartComponentRef.current) {
       const chart = chartComponentRef.current.chart;
-      chart.xAxis[0].setExtremes(null, null);
+      chart.xAxis[0].setExtremes(undefined, undefined);
     }
   }, [telemetryData, selectedOperationId]);
+
+  // 1. 차트 인스턴스 등록 방지
+  React.useEffect(() => {
+    const originalAddChart = (Highcharts.Chart.prototype as any)['addChart'];
+    if (!originalAddChart) return;
+
+    (Highcharts.Chart.prototype as any)['addChart'] = function (chart: Highcharts.Chart) {
+      if ((chart as any).isIndependent) return;
+      originalAddChart.call(this, chart);
+    };
+
+    return () => {
+      (Highcharts.Chart.prototype as any)['addChart'] = originalAddChart;
+    };
+  }, []);
 
   const createChartOptions = () => {
     const colorSchemes = {
@@ -208,7 +224,15 @@ const BatteryStatusChart = () => {
           enabled: true,
           type: "x",
         },
-        animation: false
+        animation: false,
+        events: {
+          load: function (this: Highcharts.Chart) {
+            // 2. 전역 차트 배열에서 제거
+            const idx = Highcharts.charts.indexOf(this);
+            if (idx > -1) Highcharts.charts.splice(idx, 1);
+            (this as any).isIndependent = true;
+          }
+        }
       },
       plotOptions: {
         series: {
@@ -283,6 +307,13 @@ const BatteryStatusChart = () => {
       xAxis: {
         type: "datetime",
         crosshair: true,
+        events: {
+          afterSetExtremes: function (this: Highcharts.Axis, e: Highcharts.ExtremesObject) {
+            // 3. 동기화 이벤트 완전 차단
+            if ((e as any).trigger === 'syncExtremes') return;
+            currentXExtremes.current = { min: e.min, max: e.max };
+          }
+        }
       },
       yAxis: [
         {
@@ -322,6 +353,22 @@ const BatteryStatusChart = () => {
             ref={chartComponentRef}
             highcharts={Highcharts}
             options={createChartOptions()}
+            callback={(chart: Highcharts.Chart) => {
+              // 4. 외부에서의 확대/축소 이벤트 차단
+              chart.xAxis[0].setExtremes = function (
+                newMin?: number,
+                newMax?: number,
+                redraw?: boolean,
+                animation?: boolean,
+                eventArgs?: any
+              ) {
+                if (eventArgs?.trigger === 'syncExtremes') return;
+                return Highcharts.Axis.prototype.setExtremes.call(
+                  this,
+                  ...Array.from(arguments)
+                );
+              };
+            }}
           />
         ) : (
           <p className="p-10 text-center text-gray-500">
