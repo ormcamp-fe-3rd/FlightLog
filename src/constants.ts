@@ -25,7 +25,7 @@ export const CONTROL_BUTTONS = [
   {
     id: "zoom",
     icon: "/images/map/icon-control-zoom.svg",
-    label: "Zoom",
+    label: "move",
     iconClassName: "size-7 p-1",
   },
 ] as const;
