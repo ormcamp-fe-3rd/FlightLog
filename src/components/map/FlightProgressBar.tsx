@@ -5,37 +5,52 @@ import calculateTimeByProgress from "@/utils/calculateTimeByProgress";
 import Timeline from "@/components/map/Timeline";
 import usePlayback from "@/hooks/usePlayback";
 import { TimelineData } from "@/types/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useData from "@/store/useData";
 
 interface Props {
   progress: number;
   setProgress: (progress: number) => void;
+  selectedFlight: string;
   setSelectedFlight: (id: string) => void;
+  isPlaying: boolean;
   setIsPlaying: (isPlaying: boolean) => void;
 }
 
 export default function FlightProgressBar({
   progress,
   setProgress,
+  selectedFlight,
   setSelectedFlight,
+  isPlaying,
   setIsPlaying,
 }: Props) {
   const { allTimestamps, operationTimestamps } = useData();
   const {
-    isPlaying,
     togglePlay,
     handleInputChange,
-    handleTimelineClick,
+    selectFlightAndMoveToStart,
+    updateCurrentFlight,
     setPlaybackSpeed,
-  } = usePlayback(allTimestamps, progress, setProgress);
+  } = usePlayback(
+    allTimestamps,
+    progress,
+    setProgress,
+    isPlaying,
+    setIsPlaying,
+  );
+  const [timelineData, setTimelineData] = useState<TimelineData[]>([]);
 
   useEffect(() => {
-    setIsPlaying(isPlaying);
-  }, [isPlaying]);
+    selectFlightAndMoveToStart(selectedFlight, timelineData, setSelectedFlight);
+  }, [selectedFlight]);
 
-  const handleSelectAndPlay = (id: string, timelineData: TimelineData[]) => {
-    handleTimelineClick(id, timelineData, setSelectedFlight);
+  useEffect(() => {
+    updateCurrentFlight(selectedFlight, timelineData, setSelectedFlight);
+  }, [progress, timelineData]);
+
+  const handleTimelineClick = (id: string) => {
+    selectFlightAndMoveToStart(id, timelineData, setSelectedFlight);
   };
 
   const startTime = calculateTimeByProgress(allTimestamps, 0);
@@ -68,7 +83,8 @@ export default function FlightProgressBar({
           <Timeline
             allTimestamps={allTimestamps}
             operationTimestamps={operationTimestamps}
-            onTimelineClick={handleSelectAndPlay}
+            setTimelineData={setTimelineData}
+            onTimelineClick={handleTimelineClick}
           />
         </div>
         {endTime}
