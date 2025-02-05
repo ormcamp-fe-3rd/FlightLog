@@ -3,6 +3,7 @@ import { getAltitude, groupDataById } from "@/hooks/useChartsData";
 import { useCallback, useEffect, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
+import { getColorFromId } from "@/utils/getColorFromId";
 
 interface useChartDataTransformProps {
   telemetryData: any;
@@ -82,7 +83,6 @@ const createChartOptions = (
   const groupData = groupDataById(sortedData);
   const groupDataKeys = Object.keys(groupData);
 
-  const colours = Highcharts.getOptions().colors || [];
   const maxYValue = Math.max(...dataset.data); // y축 최대값 계산
   const minYValue = Math.min(...dataset.data); // y축 최대값 계산
 
@@ -155,7 +155,7 @@ const createChartOptions = (
       type: dataset.type,
       step: true,
       data: groupData[key], // 동적으로 데이터 할당
-      color: colours[idx % colours.length],
+      color: getColorFromId(groupDataKeys[idx]),
       turboThreshold: 5000,
     })),
     tooltip: {

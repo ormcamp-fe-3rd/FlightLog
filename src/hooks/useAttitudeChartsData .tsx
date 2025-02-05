@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 import { DefaultSynchronisedChartsProps } from "@/components/log/charts/AttitudeCharts";
+import { getColorFromId } from "@/utils/getColorFromId";
 
 interface useChartDataTransformProps {
   telemetryData: any;
@@ -88,7 +89,6 @@ const createChartOptions = (
   const groupData = groupDataById(sortedData);
   const groupDataKeys = Object.keys(groupData);
 
-  const colours = Highcharts.getOptions().colors || [];
   const maxYValue = Math.max(...dataset.data);
   const minYValue = Math.min(...dataset.data);
 
@@ -159,7 +159,7 @@ const createChartOptions = (
       type: dataset.type,
       step: true,
       data: groupData[key],
-      color: colours[idx % colours.length],
+      color: getColorFromId(groupDataKeys[idx]),
       turboThreshold: 5000,
     })),
     tooltip: { valueSuffix: ` ${dataset.name}` },
