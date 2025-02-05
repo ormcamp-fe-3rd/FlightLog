@@ -8,6 +8,7 @@ import { MAX_DURATION, PAGES } from "@/constants";
 import findOperationStartTime from "@/utils/findOperationStartTime";
 import { getColorFromId } from "@/utils/getColorFromId";
 import calculateTotalTimeGap from "@/utils/calculateTotalTimeGap";
+import useOperationData from "@/hooks/useOperationData";
 
 export default function Sidebar() {
   const {
@@ -19,8 +20,10 @@ export default function Sidebar() {
     toggleSelectedOperation,
     selectedOperationId,
     allTimestamps,
+    updateTimestamps,
   } = useData();
   const positionData = telemetryData[33] || [];
+  const { updatedTimestamps } = useOperationData();
 
   // 로딩 상태 관리 추가(사이드바에서만 사용돼서 따로 zustand로 분리하지는 않았습니다.)
   const [loadingOperations, setLoadingOperations] = useState<Set<string>>(
@@ -125,6 +128,10 @@ export default function Sidebar() {
       return newSet;
     });
   };
+
+  useEffect(() => {
+    updateTimestamps(updatedTimestamps);
+  }, [selectedOperationId, updatedTimestamps]);
 
   const totalDuration = calculateTotalTimeGap(allTimestamps);
   const durationLabel = totalDuration?.formattedTime ?? "00:00:00";

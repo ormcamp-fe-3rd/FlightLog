@@ -1,6 +1,6 @@
 import { Dataset } from "@/types/api";
 import { getAltitude, groupDataById } from "@/hooks/useChartsData";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 
@@ -15,8 +15,9 @@ const useChartXData = (telemetryData: any, selectedOperationId: string[]) => {
   useEffect(() => {
     const droneAltitude = getAltitude(telemetryData, selectedOperationId); // 드론 속도, 고도값
 
-    const xAxisData = droneAltitude.map((timeStamp) => timeStamp[3]);
-
+    const xAxisData = droneAltitude.map((timeStamp) =>
+      new Date(timeStamp[3]).getTime(),
+    );
     setXData(xAxisData);
   }, [telemetryData, selectedOperationId]);
 
@@ -30,41 +31,42 @@ const useStatusChartsChartsData = ({
   const [chartData, setChartData] = useState<Dataset[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
 
-        const droneAltitude = getAltitude(telemetryData, selectedOperationId);
+      const droneAltitude = getAltitude(telemetryData, selectedOperationId);
 
-        if (!droneAltitude.length) {
-          return null;
-        }
-
-        const formattedAlt: Dataset = {
-          name: "고도",
-          type: "area",
-          unit: droneAltitude.map((item) => item[0]),
-          data: droneAltitude.map((item) => item[2]),
-        };
-
-        const formattedSpeed: Dataset = {
-          name: "속도",
-          type: "area",
-          unit: droneAltitude.map((item) => item[0]),
-          data: droneAltitude.map((item) => item[1]),
-        };
-
-        setChartData([formattedAlt, formattedSpeed]);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
+      if (!droneAltitude.length) {
+        return null;
       }
-    };
 
-    fetchData();
+      const formattedAlt: Dataset = {
+        name: "고도",
+        type: "area",
+        unit: droneAltitude.map((item) => item[0]),
+        data: droneAltitude.map((item) => item[2]),
+      };
+
+      const formattedSpeed: Dataset = {
+        name: "속도",
+        type: "area",
+        unit: droneAltitude.map((item) => item[0]),
+        data: droneAltitude.map((item) => item[1]),
+      };
+
+      setChartData([formattedAlt, formattedSpeed]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }, [telemetryData, selectedOperationId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   return chartData;
 };
 // TODO: 컴포넌트 내 차트 옵션생성 로직 추출 목적
@@ -73,20 +75,21 @@ const createChartOptions = (
   index: number,
   xData: number[],
 ) => {
-  const data = dataset.data.map((val: number, i: number) => [
-    xData[i],
-    val,
-    dataset.unit[i],
-  ]);
+  if (!xData.length) return null;
 
-  const groupData = groupDataById(data);
+  const data = dataset.data.map((val, i) => [xData[i], val, dataset.unit[i]]);
+  const sortedData = data.sort((a, b) => a[0] - b[0]);
+  const groupData = groupDataById(sortedData);
+  const groupDataKeys = Object.keys(groupData);
 
-  const colours = Highcharts.getOptions().colors;
-  const colour = colours && colours.length > index ? colours[index] : undefined;
+  const colours = Highcharts.getOptions().colors || [];
   const maxYValue = Math.max(...dataset.data); // y축 최대값 계산
   const minYValue = Math.min(...dataset.data); // y축 최대값 계산
 
-  const options = {
+  const minXValue = Math.min(...xData);
+  const maxXValue = Math.max(...xData);
+
+  return {
     chart: {
       zooming: {
         type: "x",
@@ -98,10 +101,16 @@ const createChartOptions = (
       text: dataset.name,
     },
     xAxis: {
+      type: "datetime",
       crosshair: true,
+      min: minXValue,
+      max: maxXValue,
       labels: {
-        formatter: function () {
-          return ((this as any).value / 10).toFixed(0) + " 초";
+        formatter: function (): any {
+          const value = (this as any).value;
+          const dateObj = new Date(value);
+          const formattedDate = `${String(dateObj.getMonth() + 1).padStart(2, "0")}-${String(dateObj.getDate()).padStart(2, "0")} ${String(dateObj.getHours()).padStart(2, "0")}:${String(dateObj.getMinutes()).padStart(2, "0")}:${String(dateObj.getSeconds()).padStart(2, "0")}`;
+          return formattedDate;
         },
       },
       events: {
@@ -115,7 +124,6 @@ const createChartOptions = (
     },
     yAxis: {
       title: {
-        // text: dataset.unit,
         text: " ",
       },
       min: minYValue,
@@ -142,43 +150,18 @@ const createChartOptions = (
         },
       ],
     },
-
-    // 데이터가 차트로 변환 되는 부분 data: data는 데이터값, 나머지 부분은 수정 불필요
-    series: [
-      // 첫 번째 라인: dataset1
-      {
-        name: `${dataset.name} 1`,
-        type: dataset.type,
-        step: true,
-        data: groupData["677730f8e8f8dd840dd35153"], // 첫 번째 유닛 데이터만 사용
-        color: colour,
-        turboThreshold: 5000,
-      },
-      // 두 번째 라인: dataset2
-      {
-        name: `${dataset.name} 2`,
-        type: dataset.type,
-        step: true,
-        data: groupData["6777325ae8f8dd840dd35163"], // 두 번째 유닛 데이터만 사용
-        color: "red",
-        turboThreshold: 5000,
-      },
-      // 세 번째 라인 : dataset3
-      {
-        name: `${dataset.name} 3`,
-        type: dataset.type,
-        step: true,
-        data: groupData["677745dee8f8dd840dd35186"], // 세 번째 유닛 데이터만 사용
-        color: "green",
-        turboThreshold: 5000,
-      },
-    ],
+    series: groupDataKeys.map((key, idx) => ({
+      name: `${dataset.name} ${idx + 1}`,
+      type: dataset.type,
+      step: true,
+      data: groupData[key], // 동적으로 데이터 할당
+      color: colours[idx % colours.length],
+      turboThreshold: 5000,
+    })),
     tooltip: {
       valueSuffix: ` ${dataset.name}`,
     },
   };
-
-  return options;
 };
 
 const renderChart = (dataset: Dataset, index: number, xData: number[]) => {
