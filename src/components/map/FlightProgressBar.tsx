@@ -59,8 +59,11 @@ export default function FlightProgressBar({
 
   return (
     <>
-      <div className="flex w-full justify-around font-bold">
+      <div className="flex w-full items-end justify-around font-bold md:flex-col md:items-start md:pl-14">
         <span>{currentTime ? `현재 시간: ${currentTime}` : ""}</span>
+        <div className="hidden md:flex">
+          {startTime && endTime ? `재생 시간: ${startTime} - ${endTime}` : ""}
+        </div>
       </div>
       <div className="flex w-full items-center gap-4 font-bold">
         <button
@@ -69,7 +72,7 @@ export default function FlightProgressBar({
         >
           {isPlaying ? "❚❚" : "▶"}
         </button>
-        {startTime}
+        <span className="md:hidden">{startTime}</span>
         <div className="w-full">
           <input
             type="range"
@@ -87,7 +90,7 @@ export default function FlightProgressBar({
             onTimelineClick={handleTimelineClick}
           />
         </div>
-        {endTime}
+        <span className="md:hidden">{endTime}</span>
         <select
           className="select select-sm w-20"
           onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
