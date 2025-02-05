@@ -1,6 +1,6 @@
 import { Dataset } from "@/types/api";
 import { getStatus, groupDataById } from "@/hooks/useChartsData";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 import { DefaultSynchronisedChartsProps } from "@/components/log/charts/AttitudeCharts";
@@ -14,9 +14,10 @@ const useChartXData = (telemetryData: any, selectedOperationId: string[]) => {
   const [xData, setXData] = useState<number[]>([]);
 
   useEffect(() => {
-    const droneStatus = getStatus(telemetryData, selectedOperationId); // 드론 자세값
-    const xAxisData = droneStatus.map((timeStamp) => timeStamp[4]);
-
+    const droneStatus = getStatus(telemetryData, selectedOperationId);
+    const xAxisData = droneStatus.map((timeStamp) =>
+      new Date(timeStamp[4]).getTime(),
+    );
     setXData(xAxisData);
   }, [telemetryData, selectedOperationId]);
 
@@ -30,51 +31,51 @@ const useAttitudeChartsData = ({
   const [chartData, setChartData] = useState<Dataset[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const droneStatus = getStatus(telemetryData, selectedOperationId);
 
-        const droneStatus = getStatus(telemetryData, selectedOperationId);
-
-        if (!droneStatus.length) {
-          return null;
-        }
-
-        const formattedRoll: Dataset = {
-          name: "roll",
-          type: "line",
-          unit: droneStatus.map((item) => item[0]),
-          data: droneStatus.map((item) => item[1]),
-        };
-
-        const formattedPitch: Dataset = {
-          name: "pitch",
-          type: "line",
-          unit: droneStatus.map((item) => item[0]),
-          data: droneStatus.map((item) => item[2]),
-        };
-
-        const formattedYaw: Dataset = {
-          name: "yaw",
-          type: "line",
-          unit: droneStatus.map((item) => item[0]),
-          data: droneStatus.map((item) => item[3]),
-        };
-
-        setChartData([formattedRoll, formattedPitch, formattedYaw]);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
+      if (!droneStatus.length) {
+        return;
       }
-    };
 
-    fetchData();
+      const formattedRoll: Dataset = {
+        name: "roll",
+        type: "line",
+        unit: droneStatus.map((item) => item[0]),
+        data: droneStatus.map((item) => item[1]),
+      };
+
+      const formattedPitch: Dataset = {
+        name: "pitch",
+        type: "line",
+        unit: droneStatus.map((item) => item[0]),
+        data: droneStatus.map((item) => item[2]),
+      };
+
+      const formattedYaw: Dataset = {
+        name: "yaw",
+        type: "line",
+        unit: droneStatus.map((item) => item[0]),
+        data: droneStatus.map((item) => item[3]),
+      };
+
+      setChartData([formattedRoll, formattedPitch, formattedYaw]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }, [telemetryData, selectedOperationId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   return chartData;
 };
-// TODO: 컴포넌트 내 차트 옵션생성 로직 추출 목적
+
 const createChartOptions = (
   dataset: Dataset,
   index: number,
@@ -82,143 +83,87 @@ const createChartOptions = (
 ) => {
   if (!xData.length) return null;
 
-  const data = dataset.data.map((val: number, i: number) => [
-    xData[i],
-    val,
-    dataset.unit[i],
-  ]);
+  const data = dataset.data.map((val, i) => [xData[i], val, dataset.unit[i]]);
+  const sortedData = data.sort((a, b) => a[0] - b[0]);
+  const groupData = groupDataById(sortedData);
+  const groupDataKeys = Object.keys(groupData);
 
-  const groupData = groupDataById(data);
-  // const groupDataKeys = Object.keys(groupData);
-  // console.log(groupDataKeys);
+  const colours = Highcharts.getOptions().colors || [];
+  const maxYValue = Math.max(...dataset.data);
+  const minYValue = Math.min(...dataset.data);
 
-  const colours = Highcharts.getOptions().colors;
-  const colour = colours && colours.length > index ? colours[index] : undefined;
-  const maxYValue = Math.max(...dataset.data); // y축 최대값 계산
-  const minYValue = Math.min(...dataset.data); // y축 최대값 계산
+  const minXValue = Math.min(...xData);
+  const maxXValue = Math.max(...xData);
 
-  const options = {
+  return {
     chart: {
-      zooming: {
-        type: "x",
-      },
+      zooming: { type: "x" },
       width: DefaultSynchronisedChartsProps.chartWidth,
       height: DefaultSynchronisedChartsProps.chartHeight,
     },
-    title: {
-      text: dataset.name,
-    },
+    title: { text: dataset.name },
     xAxis: {
+      type: "datetime",
       crosshair: true,
+      min: minXValue,
+      max: maxXValue,
       labels: {
-        format: "{value}",
+        formatter: function (): any {
+          const value = (this as any).value;
+          const dateObj = new Date(value);
+          const formattedDate = `${String(dateObj.getMonth() + 1).padStart(2, "0")}-${String(dateObj.getDate()).padStart(2, "0")} ${String(dateObj.getHours()).padStart(2, "0")}:${String(dateObj.getMinutes()).padStart(2, "0")}:${String(dateObj.getSeconds()).padStart(2, "0")}`;
+          return formattedDate;
+        },
       },
       events: {
         afterSetExtremes: function (event: Highcharts.ExtremesObject) {
           Highcharts.charts.forEach((chart) => {
-            if (!chart) return null;
-            chart.xAxis[0].setExtremes(event.min, event.max);
+            if (chart) chart.xAxis[0].setExtremes(event.min, event.max);
           });
         },
       },
     },
     yAxis: {
-      title: {
-        // text: dataset.unit,
-        text: " ",
-      },
+      title: { text: " " },
       min: minYValue,
       max: maxYValue,
     },
     plotOptions: {
       series: {
-        animation: {
-          duration: 2500,
-        },
+        animation: { duration: 2500 },
       },
     },
     responsive: {
       rules: [
         {
-          condition: {
-            maxWidth: 1500, // 화면 가로 크기가 768px 이하일 때
-          },
+          condition: { maxWidth: 1500 },
           chartOptions: {
-            chart: {
-              width: 470, // 차트 높이 조정
-            },
-            xAxis: {
-              labels: {},
-            },
-            yAxis: {
-              title: {
-                text: "속도",
-              },
-            },
-            legend: {
-              enabled: false, // 작은 화면에서는 범례 숨김
-            },
+            chart: { height: 470 },
+            xAxis: { labels: {} },
+            yAxis: { title: { text: "속도" } },
+            legend: { enabled: false },
           },
         },
         {
-          condition: {
-            maxWidth: 480, // 화면 가로 크기가 480px 이하일 때
-          },
+          condition: { maxWidth: 480 },
           chartOptions: {
-            chart: {
-              height: 250, // 차트 높이 더 작게 설정
-            },
-            xAxis: {
-              labels: {
-                rotation: -90, // 더 작은 화면에서는 x축 라벨 더 많이 회전
-              },
-            },
-            yAxis: {
-              title: {
-                text: " ",
-              },
-            },
+            chart: { height: 250 },
+            xAxis: { labels: {} },
+            yAxis: { title: { text: " " } },
           },
         },
       ],
     },
-
-    // 데이터가 차트로 변환 되는 부분 data: data는 데이터값, 나머지 부분은 수정 불필요
-    series: [
-      // 첫 번째 라인: dataset1
-      {
-        name: `${dataset.name} 1`,
-        type: dataset.type,
-        step: true,
-        data: groupData["677730f8e8f8dd840dd35153"], // 첫 번째 유닛 데이터만 사용
-        color: colour,
-        turboThreshold: 5000,
-      },
-      // 두 번째 라인: dataset2
-      {
-        name: `${dataset.name} 2`,
-        type: dataset.type,
-        step: true,
-        data: groupData["6777325ae8f8dd840dd35163"], // 두 번째 유닛 데이터만 사용
-        color: "red",
-        turboThreshold: 5000,
-      },
-      // 세 번째 라인 : dataset3
-      {
-        name: `${dataset.name} 3`,
-        type: dataset.type,
-        step: true,
-        data: groupData["677745dee8f8dd840dd35186"], // 세 번째 유닛 데이터만 사용
-        color: "green",
-        turboThreshold: 5000,
-      },
-    ],
-    tooltip: {
-      valueSuffix: ` ${dataset.name}`,
-    },
+    series: groupDataKeys.map((key, idx) => ({
+      name: `${dataset.name} ${idx + 1}`,
+      type: dataset.type,
+      step: true,
+      data: groupData[key],
+      color: colours[idx % colours.length],
+      turboThreshold: 5000,
+    })),
+    tooltip: { valueSuffix: ` ${dataset.name}` },
   };
-
-  return options;
 };
 
 const renderChart = (dataset: Dataset, index: number, xData: number[]) => {
