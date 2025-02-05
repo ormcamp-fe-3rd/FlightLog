@@ -15,8 +15,9 @@ const useChartXData = (telemetryData: any, selectedOperationId: string[]) => {
   useEffect(() => {
     const droneAltitude = getAltitude(telemetryData, selectedOperationId); // 드론 속도, 고도값
 
-    const xAxisData = droneAltitude.map((timeStamp) => timeStamp[3]);
-
+    const xAxisData = droneAltitude.map((timeStamp) =>
+      new Date(timeStamp[3]).getTime(),
+    );
     setXData(xAxisData);
   }, [telemetryData, selectedOperationId]);
 
@@ -79,12 +80,17 @@ const createChartOptions = (
     dataset.unit[i],
   ]);
 
-  const groupData = groupDataById(data);
+  const sortedData = data.sort((a, b) => a[0] - b[0]);
+
+  const groupData = groupDataById(sortedData);
   const groupDataKeys = Object.keys(groupData);
 
   const colours = Highcharts.getOptions().colors || [];
   const maxYValue = Math.max(...dataset.data); // y축 최대값 계산
   const minYValue = Math.min(...dataset.data); // y축 최대값 계산
+
+  const minXValue = Math.min(...xData);
+  const maxXValue = Math.max(...xData);
 
   const options = {
     chart: {
@@ -98,10 +104,17 @@ const createChartOptions = (
       text: dataset.name,
     },
     xAxis: {
+      type: "datetime",
       crosshair: true,
+      min: minXValue,
+      max: maxXValue,
+
       labels: {
-        formatter: function () {
-          return ((this as any).value / 10).toFixed(0) + " 초";
+        formatter: function (): any {
+          const value = (this as any).value;
+          const dateObj = new Date(value);
+          const formattedDate = `${String(dateObj.getMonth() + 1).padStart(2, "0")}-${String(dateObj.getDate()).padStart(2, "0")} ${String(dateObj.getHours()).padStart(2, "0")}:${String(dateObj.getMinutes()).padStart(2, "0")}:${String(dateObj.getSeconds()).padStart(2, "0")}`;
+          return formattedDate;
         },
       },
       events: {

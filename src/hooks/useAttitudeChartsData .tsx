@@ -15,7 +15,9 @@ const useChartXData = (telemetryData: any, selectedOperationId: string[]) => {
 
   useEffect(() => {
     const droneStatus = getStatus(telemetryData, selectedOperationId); // 드론 자세값
-    const xAxisData = droneStatus.map((timeStamp) => timeStamp[4]);
+    const xAxisData = droneStatus.map((timeStamp) =>
+      new Date(timeStamp[4]).getTime(),
+    );
 
     setXData(xAxisData);
   }, [telemetryData, selectedOperationId]);
@@ -88,12 +90,17 @@ const createChartOptions = (
     dataset.unit[i],
   ]);
 
-  const groupData = groupDataById(data);
+  const sortedData = data.sort((a, b) => a[0] - b[0]);
+
+  const groupData = groupDataById(sortedData);
   const groupDataKeys = Object.keys(groupData);
 
   const colours = Highcharts.getOptions().colors || [];
   const maxYValue = Math.max(...dataset.data); // y축 최대값 계산
   const minYValue = Math.min(...dataset.data); // y축 최대값 계산
+
+  const minXValue = Math.min(...xData);
+  const maxXValue = Math.max(...xData);
 
   const options = {
     chart: {
@@ -107,12 +114,20 @@ const createChartOptions = (
       text: dataset.name,
     },
     xAxis: {
+      type: "datetime",
       crosshair: true,
+      min: minXValue,
+      max: maxXValue,
+
       labels: {
-        formatter: function () {
-          return ((this as any).value / 10).toFixed(0) + " 초";
+        formatter: function (): any {
+          const value = (this as any).value;
+          const dateObj = new Date(value);
+          const formattedDate = `${String(dateObj.getMonth() + 1).padStart(2, "0")}-${String(dateObj.getDate()).padStart(2, "0")} ${String(dateObj.getHours()).padStart(2, "0")}:${String(dateObj.getMinutes()).padStart(2, "0")}:${String(dateObj.getSeconds()).padStart(2, "0")}`;
+          return formattedDate;
         },
       },
+
       events: {
         afterSetExtremes: function (event: Highcharts.ExtremesObject) {
           Highcharts.charts.forEach((chart) => {
@@ -145,7 +160,7 @@ const createChartOptions = (
           },
           chartOptions: {
             chart: {
-              width: 470, // 차트 높이 조정
+              height: 470, // 차트 높이 조정
             },
             xAxis: {
               labels: {},
@@ -169,9 +184,7 @@ const createChartOptions = (
               height: 250, // 차트 높이 더 작게 설정
             },
             xAxis: {
-              labels: {
-                rotation: -90, // 더 작은 화면에서는 x축 라벨 더 많이 회전
-              },
+              labels: {},
             },
             yAxis: {
               title: {
@@ -188,7 +201,7 @@ const createChartOptions = (
       name: `${dataset.name} ${idx + 1}`,
       type: dataset.type,
       step: true,
-      data: groupData[key], // 동적으로 데이터 할당
+      data: groupData[key],
       color: colours[idx % colours.length],
       turboThreshold: 5000,
     })),
