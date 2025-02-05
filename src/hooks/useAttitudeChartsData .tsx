@@ -109,7 +109,9 @@ const createChartOptions = (
     xAxis: {
       crosshair: true,
       labels: {
-        format: "{value}",
+        formatter: function () {
+          return ((this as any).value / 10).toFixed(0) + " 초";
+        },
       },
       events: {
         afterSetExtremes: function (event: Highcharts.ExtremesObject) {

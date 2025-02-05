@@ -6,7 +6,7 @@ import useData from "@/store/useData";
 
 import {
   renderChart,
-  useSynchronisedChartsData,
+  useSynchronisedChartsData as useAttitudeChartsData,
   useChartXData,
 } from "@/hooks/useAttitudeChartsData ";
 
@@ -37,7 +37,7 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
 }) => {
   const { telemetryData, selectedOperationId } = useData();
 
-  const chartData = useSynchronisedChartsData({
+  const chartData = useAttitudeChartsData({
     telemetryData,
     selectedOperationId,
   });
