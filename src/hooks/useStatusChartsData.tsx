@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 import { getColorFromId } from "@/utils/getColorFromId";
+import { title } from "process";
 
 interface useChartDataTransformProps {
   telemetryData: any;
@@ -129,10 +130,15 @@ const createChartOptions = (
     },
     yAxis: {
       title: {
-        text: " ",
+        text: "",
       },
-      min: minYValue,
+      min: 0,
       max: maxYValue,
+      labels: {
+        formatter: function (): any {
+          return (this as any).value + (dataset.name === "고도" ? "m" : " m/s");
+        },
+      },
     },
     plotOptions: {
       series: {

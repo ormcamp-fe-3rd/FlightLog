@@ -34,7 +34,7 @@ export const getAltitude = (
   ).map((data: any) => {
     const id = data.operation;
     const speed = data.payload.groundspeed;
-    const alt = data.payload.alt * 1e-7; // altitude
+    const alt = data.payload.alt; // altitude
     const timestamp = data.timestamp;
     return [id, speed, alt, timestamp];
   }) as [number, number, number, number][];

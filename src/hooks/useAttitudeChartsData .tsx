@@ -5,6 +5,7 @@ import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 import { DefaultSynchronisedChartsProps } from "@/components/log/charts/AttitudeCharts";
 import { getColorFromId } from "@/utils/getColorFromId";
+import { format } from "path";
 
 interface useChartDataTransformProps {
   telemetryData: any;
@@ -124,9 +125,14 @@ const createChartOptions = (
       },
     },
     yAxis: {
-      title: { text: " " },
+      title: { text: "" },
       min: minYValue,
       max: maxYValue,
+      labels: {
+        formatter: function (): any {
+          return (this as any).value + " rad";
+        },
+      },
     },
     plotOptions: {
       series: {
