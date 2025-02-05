@@ -1,7 +1,11 @@
 import useLoginModalStore from "@/store/useLoginModal";
 import { formFields, useRegisterForm } from "@/utils/RegsiterFormFormat";
 
-export default function RegisterContent() {
+interface RegisterContentProps {
+  onClose: () => void;
+}
+
+export default function RegisterContent({ onClose }: RegisterContentProps) {
   const { toggle } = useLoginModalStore();
   const { register, errors, isValid } = useRegisterForm();
 
@@ -19,7 +23,8 @@ export default function RegisterContent() {
       alert(data.message);
     } else if (response.status === 200) {
       alert(data.message);
-      toggle();
+      (event.target as HTMLFormElement).reset(); // 가입 완료되면 인풋 비우기
+      window.location.reload(); // 새로고침 실행
     }
   };
 
@@ -27,7 +32,7 @@ export default function RegisterContent() {
     <div>
       <div className="flex justify-between">
         <h2 className="mb-4 text-2xl font-bold text-black">회원 가입</h2>
-        <button className="btn btn-circle btn-ghost" onClick={toggle}>
+        <button className="btn btn-circle btn-ghost" onClick={onClose}>
           ✖️
         </button>
       </div>

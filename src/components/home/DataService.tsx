@@ -1,4 +1,4 @@
-import Link from "next/link";
+// import Link from "next/link";
 
 export default function DataService() {
   return (
@@ -17,15 +17,15 @@ export default function DataService() {
           </p>
         </div>
         <div className="flex-1 md:order-last">
-          <Link href="/log">
-            <div className="aspect-video overflow-hidden rounded-lg shadow-md transition-all hover:scale-[1.02]">
-              <img
-                src="https://png.pngtree.com/png-clipart/20221219/original/pngtree-ui-dashboard-chart-diagram-graph-png-image_8777649.png"
-                className="h-full w-full object-cover"
-                alt="데이터 ui 이미지"
-              />
-            </div>
-          </Link>
+          {/* <Link href="/log"> */}
+          <div className="aspect-video overflow-hidden rounded-lg shadow-md">
+            <img
+              src="https://png.pngtree.com/png-clipart/20221219/original/pngtree-ui-dashboard-chart-diagram-graph-png-image_8777649.png"
+              className="h-full w-full object-cover"
+              alt="데이터 ui 이미지"
+            />
+          </div>
+          {/* </Link> */}
         </div>
       </div>
     </section>

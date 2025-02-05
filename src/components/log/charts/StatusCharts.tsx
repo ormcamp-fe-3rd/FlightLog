@@ -35,15 +35,19 @@ const test: React.FC<SynchronisedChartsProps> = ({}) => {
   const xData = useChartXData(telemetryData, selectedOperationId);
 
   return (
-    <div className="flex w-full items-center justify-center">
+    <div className="rounded-lg bg-white p-4">
       {chartData.length == 0 ? (
-        <p>Loading...</p>
+        <p className="p-10 text-center text-gray-500">
+          선택된 데이터가 없습니다.
+        </p>
       ) : (
-        chartData.map((dataset, index) => (
-          <div key={dataset.name} className="mb-10 mt-10 w-full">
-            {renderChart(dataset, index, xData)}
-          </div>
-        ))
+        <div className="flex flex-row flex-wrap">
+          {chartData.map((dataset, index) => (
+            <div key={dataset.name} className="min-w-[300px] flex-1">
+              {renderChart(dataset, index, xData)}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

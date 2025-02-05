@@ -3,10 +3,12 @@ import React from "react";
 import Highcharts, { color } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsStock from "highcharts/modules/stock";
+import HighchartsAccessibility from "highcharts/modules/accessibility";
 import useData from "@/store/useData";
 
 if (typeof Highcharts === "object") {
   HighchartsStock(Highcharts);
+  HighchartsAccessibility(Highcharts);
 }
 
 const BatteryStatusChart = () => {
@@ -17,6 +19,7 @@ const BatteryStatusChart = () => {
   React.useEffect(() => {
     const handleResize = () => {
       const containerWidth = window.innerWidth;
+
       setChartWidth(containerWidth);
 
       if (chartComponentRef.current) {
@@ -43,8 +46,18 @@ const BatteryStatusChart = () => {
     useData();
   const batteryData = telemetryData[147] || [];
 
-  const filteredData = batteryData.filter((data) =>
-    selectedOperationId.includes(data.operation),
+  // 데이터 샘플링
+  const sampleData = (data: any[], sampleSize: number) => {
+    if (data.length <= sampleSize) return data;
+
+    const step = Math.floor(data.length / sampleSize);
+    return data.filter((_, index) => index % step === 0);
+  };
+
+  // 필터링된 데이터에 샘플링 추가 적용
+  const filteredData = sampleData(
+    batteryData.filter((data) => selectedOperationId.includes(data.operation)),
+    300, //데이터 포인트 갯수
   );
 
   const hasData = filteredData.length > 0;
@@ -73,7 +86,7 @@ const BatteryStatusChart = () => {
 
       return [
         {
-          name: `배터리 잔량 (${validOperationLabels[operationId]})`,
+          name: `잔량 (${validOperationLabels[operationId]})`,
           type: "areaspline",
           yAxis: 2,
           color: colorSchemes.battery[index % colorSchemes.battery.length],
@@ -81,7 +94,10 @@ const BatteryStatusChart = () => {
             times[batterRemain],
             data.payload.batteryRemaining / 100,
           ]),
-          tooltip: { valueSuffix: " %", xDateFormat: "%Y-%m-%d %H:%M:%S" },
+          tooltip: {
+            valueSuffix: "%",
+            valueDecimals: 2,
+          },
         },
         {
           name: `온도 (${validOperationLabels[operationId]})`,
@@ -94,7 +110,10 @@ const BatteryStatusChart = () => {
             times[temp],
             data.payload.temperature / 100,
           ]),
-          tooltip: { valueSuffix: "°C" },
+          tooltip: {
+            valueSuffix: "°C",
+            valueDecimals: 2,
+          },
         },
         {
           name: `전압 (${validOperationLabels[operationId]})`,
@@ -105,7 +124,10 @@ const BatteryStatusChart = () => {
             times[volt],
             data.payload.voltages[0] / 1000,
           ]),
-          tooltip: { valueSuffix: "V" },
+          tooltip: {
+            valueSuffix: "V",
+            valueDecimals: 2,
+          },
         },
       ];
     });
@@ -131,12 +153,23 @@ const BatteryStatusChart = () => {
       Math.max(...batteryData) < 100 ? 100 : Math.max(...batteryData);
     const batteryMin = 0;
 
-    const sidebarWidth = 320;
+    let sidebarWidth = 320;
+    if (window.innerWidth <= 768) {
+      sidebarWidth = 0; // 태블릿 이하는 사이드바 숨겨짐
+    }
+
+    const chartMinWidth = 280;
+    const chartPadding = 40;
+    let totalWidth = chartWidth - sidebarWidth - chartPadding;
+
+    if (totalWidth < chartMinWidth) {
+      totalWidth = chartMinWidth;
+    }
 
     return {
       chart: {
         height: 600,
-        width: chartWidth - sidebarWidth,
+        width: totalWidth,
         zooming: {
           mouseWheel: {
             enabled: true,
@@ -154,6 +187,7 @@ const BatteryStatusChart = () => {
             enabled: true,
           },
           showInNavigator: true,
+          turboThreshold: 300, //데이터 포인트를 1000개 이상 처리할 때 렌더링 최적화
         },
       },
       rangeSelector: {
@@ -251,7 +285,7 @@ const BatteryStatusChart = () => {
   };
 
   return (
-    <div ref={chartContainerRef}>
+    <div ref={chartContainerRef} className="rounded-lg bg-white p-4">
       {hasData ? (
         <HighchartsReact
           ref={chartComponentRef}
@@ -259,7 +293,9 @@ const BatteryStatusChart = () => {
           options={createChartOptions()}
         />
       ) : (
-        <p className="p-10 text-center text-gray-500">데이터가 없습니다.</p>
+        <p className="p-10 text-center text-gray-500">
+          선택된 데이터가 없습니다.
+        </p>
       )}
     </div>
   );
