@@ -43,19 +43,19 @@ const AttitudeCharts: React.FC<SynchronisedChartsProps> = ({
   });
   const xData = useChartXData(telemetryData, selectedOperationId);
 
-  // const handleMouseMove = (
-  //   e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>,
-  // ) => {
-  //   Highcharts.charts.forEach((chart) => {
-  //     if (!chart) return;
+  const handleMouseMove = (
+    e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>,
+  ) => {
+    Highcharts.charts.forEach((chart) => {
+      if (!chart) return;
 
-  //     const normalizedEvent = chart.pointer.normalize(e as any);
-  //     const point = chart.series[0].searchPoint(normalizedEvent, true);
-  //     if (point) {
-  //       point.highlight(normalizedEvent);
-  //     }
-  //   });
-  // };
+      const normalizedEvent = chart.pointer.normalize(e as any);
+      const point = chart.series[0].searchPoint(normalizedEvent, true);
+      if (point) {
+        point.highlight(normalizedEvent);
+      }
+    });
+  };
 
   const renderChartData = useMemo(() => {
     return chartData.slice(0, numOfDatasets).map((dataset, index) => (
@@ -67,8 +67,8 @@ const AttitudeCharts: React.FC<SynchronisedChartsProps> = ({
 
   return (
     <div
-      // onMouseMove={handleMouseMove}
-      // onTouchMove={handleMouseMove}
+      onMouseMove={handleMouseMove}
+      onTouchMove={handleMouseMove}
       className="rounded-lg bg-white p-4"
     >
       {chartData.length == 0 ? (

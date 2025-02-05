@@ -35,6 +35,20 @@ const StatusCharts: React.FC<SynchronisedChartsProps> = ({}) => {
 
   const xData = useChartXData(telemetryData, selectedOperationId);
 
+  const handleMouseMove = (
+    e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>,
+  ) => {
+    Highcharts.charts.forEach((chart) => {
+      if (!chart) return;
+
+      const normalizedEvent = chart.pointer.normalize(e as any);
+      const point = chart.series[0].searchPoint(normalizedEvent, true);
+      if (point) {
+        point.highlight(normalizedEvent);
+      }
+    });
+  };
+
   const renderChartData = useMemo(() => {
     return chartData.map((dataset, index) => (
       <div key={dataset.name} className="min-w-[300px] flex-1">
@@ -44,7 +58,11 @@ const StatusCharts: React.FC<SynchronisedChartsProps> = ({}) => {
   }, [chartData, xData]);
 
   return (
-    <div className="rounded-lg bg-white p-4">
+    <div
+      onMouseMove={handleMouseMove}
+      onTouchMove={handleMouseMove}
+      className="rounded-lg bg-white p-4"
+    >
       {chartData.length === 0 ? (
         <p className="p-10 text-center text-gray-500">
           {/* 선택된 데이터가 없습니다. */}
