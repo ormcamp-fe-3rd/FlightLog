@@ -69,8 +69,6 @@ export default function MapPage() {
 
     if (selectedDronePosition) {
       setMapPosition([...selectedDronePosition]);
-    } else {
-      console.warn(`Start point not found for ID: ${selectedFlight}`);
     }
   };
 
@@ -90,13 +88,11 @@ export default function MapPage() {
             setDronePositions={setDronePositions}
           />
         </div>
-        <div className="absolute left-20 top-4">
+        <div className="absolute right-8 top-8 z-10 flex max-h-[90%] flex-col gap-2">
           <TrackingToggle
             isTracking={isTracking}
             toggleTracking={toggleTracking}
           />
-        </div>
-        <div className="absolute right-8 top-8 z-10 flex max-h-[90%] flex-col gap-4">
           <MemoizedSelectFlightLog
             value={selectedFlight}
             onSelect={setSelectedFlight}

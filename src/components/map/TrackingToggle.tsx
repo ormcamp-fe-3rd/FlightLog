@@ -9,7 +9,7 @@ export default function TrackingToggle({
 }: TrackingToggleProps) {
   return (
     <div className="form-control">
-      <label className="label flex cursor-pointer gap-2">
+      <label className="flex w-fit cursor-pointer justify-start gap-2">
         <input
           type="checkbox"
           className="toggle toggle-primary"
