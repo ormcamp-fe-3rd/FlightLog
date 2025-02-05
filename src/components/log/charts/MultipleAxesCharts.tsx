@@ -188,14 +188,16 @@ const BatteryStatusChart = () => {
           enabled: true,
           type: "x",
         },
+        animation: false
       },
       plotOptions: {
         series: {
+          animation: false,
           dataGrouping: {
             enabled: true,
           },
           showInNavigator: true,
-          turboThreshold: 300, //데이터 포인트를 1000개 이상 처리할 때 렌더링 최적화
+          turboThreshold: 300,
         },
       },
       rangeSelector: {
