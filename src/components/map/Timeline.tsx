@@ -2,7 +2,7 @@ import { TIMELINE } from "@/constants";
 import { getTimelineStyles } from "@/utils/getTimelineStyles";
 import { TimelineData } from "@/types/types";
 import { timelineCaculator } from "@/utils/timelineCalculator";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 interface Props {
   allTimestamps: number[];
@@ -21,7 +21,10 @@ export default function Timeline({
   const endTimestamp = allTimestamps[allTimestamps.length - 1];
   const totalDuration = endTimestamp - startTimestamp;
 
-  const timelineData = timelineCaculator.calculateData(operationTimestamps);
+  const timelineData = useMemo(
+    () => timelineCaculator.calculateData(operationTimestamps),
+    [operationTimestamps],
+  );
   const maxLayer = Math.max(...timelineData.map((op) => op.layer));
   const maxLayerHeight = (maxLayer + 1) * (TIMELINE.HEIGHT + TIMELINE.GAP);
 
