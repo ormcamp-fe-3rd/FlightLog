@@ -73,7 +73,7 @@ const AttitudeCharts: React.FC<SynchronisedChartsProps> = ({
     >
       {chartData.length == 0 ? (
         <p className="p-10 text-center text-gray-500">
-          선택된 데이터가 없습니다.
+          {/* 선택된 데이터가 없습니다. */}
         </p>
       ) : (
         <div className="flex flex-row flex-wrap gap-4">{renderChartData}</div>
