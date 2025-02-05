@@ -100,8 +100,8 @@ const createChartOptions = (
       zooming: {
         type: "x",
       },
-      width: 700,
-      height: 400,
+      width: null,
+      height: 450,
     },
     title: {
       text: dataset.name,

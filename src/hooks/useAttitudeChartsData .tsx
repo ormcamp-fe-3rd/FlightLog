@@ -99,8 +99,8 @@ const createChartOptions = (
   return {
     chart: {
       zooming: { type: "x" },
-      width: DefaultSynchronisedChartsProps.chartWidth,
-      height: DefaultSynchronisedChartsProps.chartHeight,
+      width: null,
+      height: 300,
     },
     title: { text: dataset.name },
     xAxis: {
@@ -139,27 +139,7 @@ const createChartOptions = (
         animation: { duration: 2500 },
       },
     },
-    responsive: {
-      rules: [
-        {
-          condition: { maxWidth: 1500 },
-          chartOptions: {
-            chart: { height: 470 },
-            xAxis: { labels: {} },
-            yAxis: { title: { text: "속도" } },
-            legend: { enabled: false },
-          },
-        },
-        {
-          condition: { maxWidth: 480 },
-          chartOptions: {
-            chart: { height: 250 },
-            xAxis: { labels: {} },
-            yAxis: { title: { text: " " } },
-          },
-        },
-      ],
-    },
+    responsive: {},
     series: groupDataKeys.map((key, idx) => ({
       name: `${dataset.name} ${idx + 1}`,
       type: dataset.type,
