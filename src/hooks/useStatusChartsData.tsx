@@ -1,6 +1,6 @@
 import { Dataset } from "@/types/api";
 import { getAltitude, groupDataById } from "@/hooks/useChartsData";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 
@@ -31,41 +31,42 @@ const useStatusChartsChartsData = ({
   const [chartData, setChartData] = useState<Dataset[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
 
-        const droneAltitude = getAltitude(telemetryData, selectedOperationId);
+      const droneAltitude = getAltitude(telemetryData, selectedOperationId);
 
-        if (!droneAltitude.length) {
-          return null;
-        }
-
-        const formattedAlt: Dataset = {
-          name: "고도",
-          type: "area",
-          unit: droneAltitude.map((item) => item[0]),
-          data: droneAltitude.map((item) => item[2]),
-        };
-
-        const formattedSpeed: Dataset = {
-          name: "속도",
-          type: "area",
-          unit: droneAltitude.map((item) => item[0]),
-          data: droneAltitude.map((item) => item[1]),
-        };
-
-        setChartData([formattedAlt, formattedSpeed]);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
+      if (!droneAltitude.length) {
+        return null;
       }
-    };
 
-    fetchData();
+      const formattedAlt: Dataset = {
+        name: "고도",
+        type: "area",
+        unit: droneAltitude.map((item) => item[0]),
+        data: droneAltitude.map((item) => item[2]),
+      };
+
+      const formattedSpeed: Dataset = {
+        name: "속도",
+        type: "area",
+        unit: droneAltitude.map((item) => item[0]),
+        data: droneAltitude.map((item) => item[1]),
+      };
+
+      setChartData([formattedAlt, formattedSpeed]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }, [telemetryData, selectedOperationId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   return chartData;
 };
 // TODO: 컴포넌트 내 차트 옵션생성 로직 추출 목적
@@ -74,14 +75,10 @@ const createChartOptions = (
   index: number,
   xData: number[],
 ) => {
-  const data = dataset.data.map((val: number, i: number) => [
-    xData[i],
-    val,
-    dataset.unit[i],
-  ]);
+  if (!xData.length) return null;
 
+  const data = dataset.data.map((val, i) => [xData[i], val, dataset.unit[i]]);
   const sortedData = data.sort((a, b) => a[0] - b[0]);
-
   const groupData = groupDataById(sortedData);
   const groupDataKeys = Object.keys(groupData);
 
@@ -92,7 +89,7 @@ const createChartOptions = (
   const minXValue = Math.min(...xData);
   const maxXValue = Math.max(...xData);
 
-  const options = {
+  return {
     chart: {
       zooming: {
         type: "x",
@@ -108,7 +105,6 @@ const createChartOptions = (
       crosshair: true,
       min: minXValue,
       max: maxXValue,
-
       labels: {
         formatter: function (): any {
           const value = (this as any).value;
@@ -128,7 +124,6 @@ const createChartOptions = (
     },
     yAxis: {
       title: {
-        // text: dataset.unit,
         text: " ",
       },
       min: minYValue,
@@ -167,8 +162,6 @@ const createChartOptions = (
       valueSuffix: ` ${dataset.name}`,
     },
   };
-
-  return options;
 };
 
 const renderChart = (dataset: Dataset, index: number, xData: number[]) => {

@@ -1,8 +1,16 @@
-export const getStatus = (telemetryData: any, operationId: string[]) => {
+export const getStatus = (
+  telemetryData: any,
+  operationId: string[],
+  sampleInterval: number = 10,
+) => {
   const attitudesData = telemetryData?.[30];
   if (!attitudesData) return [];
+
   return attitudesData
-    .filter((data: any) => operationId.includes(data.operation))
+    .filter(
+      (data: any, index: number) =>
+        operationId.includes(data.operation) && index % sampleInterval === 0,
+    )
     .map((data: any) => {
       const id = data.operation;
       const roll = data.payload.roll;
@@ -13,25 +21,16 @@ export const getStatus = (telemetryData: any, operationId: string[]) => {
     }) as [number, number, number, number, number][];
 };
 
-export const getBattery = (telemetryData: any, operationId: string[]) => {
-  const BatteryData = telemetryData?.[147];
-  if (!BatteryData) return [];
-  return BatteryData.filter((data: any) =>
-    operationId.includes(data.operation),
-  ).map((data: any) => {
-    const temperature = data.payload.temperature;
-    const voltages = data.payload.voltages;
-    const battery_remaining = data.payload.batteryRemaining;
-    const timestamp = data.timestamp;
-    return [temperature, voltages, battery_remaining, timestamp];
-  }) as [number, number, number, number][];
-};
-
-export const getAltitude = (telemetryData: any, operationId: string[]) => {
+export const getAltitude = (
+  telemetryData: any,
+  operationId: string[],
+  sampleInterval: number = 10,
+) => {
   const AltitudeData = telemetryData?.[74];
   if (!AltitudeData) return [];
-  return AltitudeData.filter((data: any) =>
-    operationId.includes(data.operation),
+  return AltitudeData.filter(
+    (data: any, index: number) =>
+      operationId.includes(data.operation) && index % sampleInterval === 0,
   ).map((data: any) => {
     const id = data.operation;
     const speed = data.payload.groundspeed;
@@ -54,3 +53,17 @@ export const groupDataById = (data: any[]) => {
   });
   return groupData;
 };
+
+// export const getBattery = (telemetryData: any, operationId: string[]) => {
+//   const BatteryData = telemetryData?.[147];
+//   if (!BatteryData) return [];
+//   return BatteryData.filter((data: any) =>
+//     operationId.includes(data.operation),
+//   ).map((data: any) => {
+//     const temperature = data.payload.temperature;
+//     const voltages = data.payload.voltages;
+//     const battery_remaining = data.payload.batteryRemaining;
+//     const timestamp = data.timestamp;
+//     return [temperature, voltages, battery_remaining, timestamp];
+//   }) as [number, number, number, number][];
+// };

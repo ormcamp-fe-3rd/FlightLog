@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import Highcharts, { chart } from "highcharts";
 import HighchartsExporting from "highcharts/modules/exporting";
 import useData from "@/store/useData";
@@ -32,7 +32,7 @@ export const DefaultSynchronisedChartsProps = {
   chartHeight: 200,
 };
 
-const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
+const AttitudeCharts: React.FC<SynchronisedChartsProps> = ({
   numOfDatasets = DefaultSynchronisedChartsProps.numOfDatasets,
 }) => {
   const { telemetryData, selectedOperationId } = useData();
@@ -57,6 +57,14 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
   //   });
   // };
 
+  const renderChartData = useMemo(() => {
+    return chartData.slice(0, numOfDatasets).map((dataset, index) => (
+      <div key={dataset.name} className="min-w-[300px] flex-1">
+        {renderChart(dataset, index, xData)}
+      </div>
+    ));
+  }, [chartData, numOfDatasets, xData]);
+
   return (
     <div
       // onMouseMove={handleMouseMove}
@@ -68,16 +76,10 @@ const SynchronisedCharts: React.FC<SynchronisedChartsProps> = ({
           선택된 데이터가 없습니다.
         </p>
       ) : (
-        <div className="flex flex-row flex-wrap gap-4">
-          {chartData.slice(0, numOfDatasets).map((dataset, index) => (
-            <div key={dataset.name} className="min-w-[300px] flex-1">
-              {renderChart(dataset, index, xData)}
-            </div>
-          ))}
-        </div>
+        <div className="flex flex-row flex-wrap gap-4">{renderChartData}</div>
       )}
     </div>
   );
 };
 
-export default SynchronisedCharts;
+export default AttitudeCharts;
