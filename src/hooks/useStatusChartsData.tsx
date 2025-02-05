@@ -57,6 +57,10 @@ const useStatusChartsChartsData = ({
       };
 
       setChartData([formattedAlt, formattedSpeed]);
+
+      Highcharts.charts.forEach((chart) => {
+        if (chart) chart.zoomOut();
+      });
     } catch (error) {
       console.error(error);
     } finally {
