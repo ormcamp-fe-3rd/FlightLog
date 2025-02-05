@@ -2,16 +2,19 @@ import { TIMELINE } from "@/constants";
 import { getTimelineStyles } from "@/utils/getTimelineStyles";
 import { TimelineData } from "@/types/types";
 import { timelineCaculator } from "@/utils/timelineCalculator";
+import { useEffect } from "react";
 
 interface Props {
   allTimestamps: number[];
   operationTimestamps: Record<string, number[]>;
-  onTimelineClick: (id: string, timelineData: TimelineData[]) => void;
+  setTimelineData: (data: TimelineData[]) => void;
+  onTimelineClick: (id: string) => void;
 }
 
 export default function Timeline({
   allTimestamps,
   operationTimestamps,
+  setTimelineData,
   onTimelineClick,
 }: Props) {
   const startTimestamp = allTimestamps[0];
@@ -21,6 +24,10 @@ export default function Timeline({
   const timelineData = timelineCaculator.calculateData(operationTimestamps);
   const maxLayer = Math.max(...timelineData.map((op) => op.layer));
   const maxLayerHeight = (maxLayer + 1) * (TIMELINE.HEIGHT + TIMELINE.GAP);
+
+  useEffect(() => {
+    setTimelineData(timelineData);
+  }, [timelineData]);
 
   return (
     <div
@@ -38,7 +45,7 @@ export default function Timeline({
             key={operation.id}
             className="absolute h-1 cursor-pointer rounded-full"
             style={styles}
-            onClick={() => onTimelineClick(operation.id, timelineData)}
+            onClick={() => onTimelineClick(operation.id)}
           />
         );
       })}

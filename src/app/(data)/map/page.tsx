@@ -101,6 +101,7 @@ export default function MapPage() {
           <FlightProgressBar
             progress={progress}
             setProgress={setProgress}
+            selectedFlight={selectedFlight}
             setSelectedFlight={setSelectedFlight}
             setIsPlaying={setIsPlaying}
           />

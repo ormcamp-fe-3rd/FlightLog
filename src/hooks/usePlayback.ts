@@ -107,6 +107,31 @@ export default function usePlayback(
     }
   };
 
+  const updateCurrentFlight = (
+    selectedFlight: string,
+    timelineData: TimelineData[],
+    setSelectedFlight: (id: string) => void,
+  ) => {
+    const currentOperations = timelineData.filter((operation) => {
+      const startPoint = calculateProgressByTimestamp(
+        allTimestamps,
+        operation.start,
+      );
+      const endPoint = calculateProgressByTimestamp(
+        allTimestamps,
+        operation.end,
+      );
+      return progress >= startPoint && progress <= endPoint;
+    });
+
+    if (
+      currentOperations.length > 0 &&
+      !currentOperations.some((op) => op.id === selectedFlight)
+    ) {
+      setSelectedFlight(currentOperations[0].id);
+    }
+  };
+
   return {
     progress,
     setProgress,
@@ -115,5 +140,6 @@ export default function usePlayback(
     togglePlay,
     handleInputChange,
     handleTimelineClick,
+    updateCurrentFlight,
   };
 }
