@@ -1,5 +1,6 @@
 export const getStatus = (telemetryData: any, operationId: string[]) => {
-  const attitudesData = telemetryData[30] || [];
+  const attitudesData = telemetryData?.[30];
+  if (!attitudesData) return [];
   return attitudesData
     .filter((data: any) => operationId.includes(data.operation))
     .map((data: any) => {
@@ -13,7 +14,8 @@ export const getStatus = (telemetryData: any, operationId: string[]) => {
 };
 
 export const getBattery = (telemetryData: any, operationId: string[]) => {
-  const BatteryData = telemetryData[147] || [];
+  const BatteryData = telemetryData?.[147];
+  if (!BatteryData) return [];
   return BatteryData.filter((data: any) =>
     operationId.includes(data.operation),
   ).map((data: any) => {
@@ -26,8 +28,9 @@ export const getBattery = (telemetryData: any, operationId: string[]) => {
 };
 
 export const getAltitude = (telemetryData: any, operationId: string[]) => {
-  const SpeedData = telemetryData[74] || [];
-  return SpeedData.filter((data: any) =>
+  const AltitudeData = telemetryData?.[74];
+  if (!AltitudeData) return [];
+  return AltitudeData.filter((data: any) =>
     operationId.includes(data.operation),
   ).map((data: any) => {
     const id = data.operation;
