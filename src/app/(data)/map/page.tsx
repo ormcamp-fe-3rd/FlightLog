@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import StatusPanel from "@/components/map/StatusPanel";
@@ -8,7 +9,6 @@ import FlightProgressBar from "@/components/map/FlightProgressBar";
 import SelectFlightLog from "@/components/map/SelectFlightLog";
 import ControlPanel from "@/components/map/ControlPanel";
 import useData from "@/store/useData";
-import useSidebarStore from "@/store/useSidebar";
 import useResizePanelControl from "@/hooks/useResizePanelControl";
 import useOperationData from "@/hooks/useOperationData";
 import { INITIAL_POSITION } from "@/constants";
@@ -19,13 +19,14 @@ const MapView = dynamic(() => import("@/components/map/MapView"), {
   loading: () => <div>Loading map...</div>,
 });
 
+const MemoizedSelectFlightLog = React.memo(SelectFlightLog);
+
 export default function MapPage() {
-  const { isSidebarOpen } = useSidebarStore();
   const { isStatusOpen, setIsStatusOpen, isAttitudeOpen, setIsAttitudeOpen } =
     useResizePanelControl();
   const { selectedOperationId, setAllTimestamps, setOperationTimestamps } =
     useData();
-  const { updatedTimestamps, updatedStartPoint } = useOperationData();
+  const { updatedStartPoint } = useOperationData();
   const [selectedFlight, setSelectedFlight] = useState(selectedOperationId[0]);
   const [progress, setProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -38,15 +39,9 @@ export default function MapPage() {
   ]);
 
   useEffect(() => {
-    const sortedAllTimestamps = Object.values(updatedTimestamps)
-      .flat()
-      .sort((a, b) => a - b);
-    setOperationTimestamps(updatedTimestamps);
-    setAllTimestamps(sortedAllTimestamps);
-
     const initialPosition = updatedStartPoint[selectedOperationId[0]];
     setMapPosition(initialPosition);
-  }, [updatedTimestamps, updatedStartPoint]);
+  }, [updatedStartPoint]);
 
   useEffect(() => {
     setSelectedFlight(selectedOperationId[0]);
@@ -66,7 +61,7 @@ export default function MapPage() {
     )?.position;
 
     if (selectedDronePosition) {
-      setMapPosition(selectedDronePosition);
+      setMapPosition([...selectedDronePosition]);
     } else {
       console.warn(`Start point not found for ID: ${selectedFlight}`);
     }
@@ -74,9 +69,6 @@ export default function MapPage() {
 
   return (
     <div className="flex h-[calc(100vh-56px)] w-full overflow-hidden">
-      <div
-        className={`${isSidebarOpen ? "md:block" : "md:hidden"} z-20 md:absolute`}
-      ></div>
       <div className="relative h-full w-full flex-1">
         <div className="h-full w-full">
           <MapView
@@ -88,7 +80,7 @@ export default function MapPage() {
           />
         </div>
         <div className="absolute right-8 top-8 z-10 flex max-h-[90%] flex-col gap-4">
-          <SelectFlightLog
+          <MemoizedSelectFlightLog
             value={selectedFlight}
             onSelect={setSelectedFlight}
           />
