@@ -31,13 +31,33 @@ const BatteryStatusChart = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 마우스가 그래프 바깥에 있을 때에만 window 스크롤이 가능하도록 함
+  // 마우스가 그래프 플롯 영역에 있을 때만 스크롤 막기
   React.useEffect(() => {
     const handleWheel = (event: WheelEvent) => {
-      if (chartContainerRef.current?.contains(event.target as Node)) {
+      const chart = chartComponentRef.current?.chart;
+      if (!chart) return;
+
+      const containerRect = chartContainerRef.current?.getBoundingClientRect();
+      if (!containerRect) return;
+
+      // 플롯 영역 좌표 계산
+      const plotLeft = containerRect.left + chart.plotLeft;
+      const plotTop = containerRect.top + chart.plotTop;
+      const plotRight = plotLeft + chart.plotWidth;
+      const plotBottom = plotTop + chart.plotHeight;
+
+      // 마우스 위치가 플롯 영역 내부인지 확인
+      const inPlotArea = 
+        event.clientX >= plotLeft &&
+        event.clientX <= plotRight &&
+        event.clientY >= plotTop &&
+        event.clientY <= plotBottom;
+
+      if (inPlotArea) {
         event.preventDefault();
       }
     };
+    
     document.addEventListener("wheel", handleWheel, { passive: false });
     return () => document.removeEventListener("wheel", handleWheel);
   }, []);
