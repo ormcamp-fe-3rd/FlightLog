@@ -82,6 +82,7 @@ const createChartOptions = (
   const sortedData = data.sort((a, b) => a[0] - b[0]);
   const groupData = groupDataById(sortedData);
   const groupDataKeys = Object.keys(groupData);
+  console.log(groupData);
 
   const maxYValue = Math.max(...dataset.data); // y축 최대값 계산
   const minYValue = Math.min(...dataset.data); // y축 최대값 계산
@@ -151,7 +152,7 @@ const createChartOptions = (
       ],
     },
     series: groupDataKeys.map((key, idx) => ({
-      name: `${dataset.name} ${idx + 1}`,
+      name: new Date(groupData[key][0][0]).toLocaleString(),
       type: dataset.type,
       step: true,
       data: groupData[key], // 동적으로 데이터 할당
