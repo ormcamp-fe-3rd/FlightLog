@@ -6,8 +6,9 @@ export default function usePlayback(
   allTimestamps: number[],
   progress: number,
   setProgress: (progress: number) => void,
+  isPlaying: boolean,
+  setIsPlaying: (isPlaying: boolean) => void,
 ) {
-  const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const intervalId = useRef<NodeJS.Timeout | null>(null);
 
@@ -79,7 +80,7 @@ export default function usePlayback(
     }
   };
 
-  const handleTimelineClick = (
+  const selectFlightAndMoveToStart = (
     id: string,
     timelineData: TimelineData[],
     setSelectedFlight: (id: string) => void,
@@ -135,11 +136,10 @@ export default function usePlayback(
   return {
     progress,
     setProgress,
-    isPlaying,
     setPlaybackSpeed,
     togglePlay,
     handleInputChange,
-    handleTimelineClick,
+    selectFlightAndMoveToStart,
     updateCurrentFlight,
   };
 }

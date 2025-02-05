@@ -13,6 +13,7 @@ interface Props {
   setProgress: (progress: number) => void;
   selectedFlight: string;
   setSelectedFlight: (id: string) => void;
+  isPlaying: boolean;
   setIsPlaying: (isPlaying: boolean) => void;
 }
 
@@ -21,29 +22,35 @@ export default function FlightProgressBar({
   setProgress,
   selectedFlight,
   setSelectedFlight,
+  isPlaying,
   setIsPlaying,
 }: Props) {
   const { allTimestamps, operationTimestamps } = useData();
   const {
-    isPlaying,
     togglePlay,
     handleInputChange,
-    handleTimelineClick,
+    selectFlightAndMoveToStart,
     updateCurrentFlight,
     setPlaybackSpeed,
-  } = usePlayback(allTimestamps, progress, setProgress);
+  } = usePlayback(
+    allTimestamps,
+    progress,
+    setProgress,
+    isPlaying,
+    setIsPlaying,
+  );
   const [timelineData, setTimelineData] = useState<TimelineData[]>([]);
 
   useEffect(() => {
-    setIsPlaying(isPlaying);
-  }, [isPlaying]);
+    selectFlightAndMoveToStart(selectedFlight, timelineData, setSelectedFlight);
+  }, [selectedFlight]);
 
   useEffect(() => {
     updateCurrentFlight(selectedFlight, timelineData, setSelectedFlight);
   }, [progress, timelineData]);
 
-  const handleSelectAndPlay = (id: string) => {
-    handleTimelineClick(id, timelineData, setSelectedFlight);
+  const handleTimelineClick = (id: string) => {
+    selectFlightAndMoveToStart(id, timelineData, setSelectedFlight);
   };
 
   const startTime = calculateTimeByProgress(allTimestamps, 0);
@@ -77,7 +84,7 @@ export default function FlightProgressBar({
             allTimestamps={allTimestamps}
             operationTimestamps={operationTimestamps}
             setTimelineData={setTimelineData}
-            onTimelineClick={handleSelectAndPlay}
+            onTimelineClick={handleTimelineClick}
           />
         </div>
         {endTime}

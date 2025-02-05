@@ -116,6 +116,7 @@ export default function MapPage() {
             setProgress={setProgress}
             selectedFlight={selectedFlight}
             setSelectedFlight={setSelectedFlight}
+            isPlaying={isPlaying}
             setIsPlaying={setIsPlaying}
           />
           <div className="flex justify-center">
