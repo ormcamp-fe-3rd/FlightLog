@@ -19,6 +19,7 @@ interface DataState {
   setSelectedOperation: (operations: Record<string, string>) => void;
   toggleSelectedOperation: (operationId: string) => void;
   fetchInitialTelemetries: () => Promise<void>;
+  updateTimestamps: (timestamps: Record<string, number[]>) => void;
 
   allTimestamps: number[];
   setAllTimestamps: (timestamps: number[]) => void;
@@ -160,6 +161,16 @@ const useData = create<DataState>((set, get) => ({
     } catch (error) {
       console.error("운행 시간 데이터를 불러오는데 실패했습니다.", error);
     }
+  },
+  updateTimestamps: (updatedTimestamps: Record<string, number[]>) => {
+    const sortedAllTimestamps = Object.values(updatedTimestamps)
+      .flat()
+      .sort((a, b) => a - b);
+
+    set({
+      operationTimestamps: updatedTimestamps,
+      allTimestamps: sortedAllTimestamps,
+    });
   },
 
   allTimestamps: [],
