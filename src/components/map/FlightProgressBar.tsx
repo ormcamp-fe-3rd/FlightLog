@@ -6,12 +6,11 @@ import Timeline from "@/components/map/Timeline";
 import usePlayback from "@/hooks/usePlayback";
 import { TimelineData } from "@/types/types";
 import { useEffect } from "react";
+import useData from "@/store/useData";
 
 interface Props {
   progress: number;
   setProgress: (progress: number) => void;
-  allTimestamps: number[];
-  operationTimestamps: Record<string, number[]>;
   setSelectedFlight: (id: string) => void;
   setIsPlaying: (isPlaying: boolean) => void;
 }
@@ -19,11 +18,10 @@ interface Props {
 export default function FlightProgressBar({
   progress,
   setProgress,
-  allTimestamps,
-  operationTimestamps,
   setSelectedFlight,
   setIsPlaying,
 }: Props) {
+  const { allTimestamps, operationTimestamps } = useData();
   const {
     isPlaying,
     togglePlay,
