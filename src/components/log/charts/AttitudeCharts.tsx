@@ -72,9 +72,9 @@ const AttitudeCharts: React.FC<SynchronisedChartsProps> = ({
 
   return (
     <div
-      ref={chartContainerRef}
-      onMouseMove={handleMouseMove}
-      onTouchMove={handleMouseMove}
+      // ref={chartContainerRef}
+      // onMouseMove={handleMouseMove}
+      // onTouchMove={handleMouseMove}
       className="rounded-lg bg-white p-4"
     >
       {chartData.length === 0 ? (
