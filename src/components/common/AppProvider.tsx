@@ -24,7 +24,6 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     if (isProtectedRoute && status === AUTH_LOGIN.STATUS.UNAUTHENTICATED) {
       router.push("/");
       alert("로그인한 유저만 이용할 수 있는 기능입니다.");
-      open();
     }
   }, [status, pathname]);
 
