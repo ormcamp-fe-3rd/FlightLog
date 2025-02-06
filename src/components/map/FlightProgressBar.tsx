@@ -5,37 +5,52 @@ import calculateTimeByProgress from "@/utils/calculateTimeByProgress";
 import Timeline from "@/components/map/Timeline";
 import usePlayback from "@/hooks/usePlayback";
 import { TimelineData } from "@/types/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useData from "@/store/useData";
 
 interface Props {
   progress: number;
   setProgress: (progress: number) => void;
+  selectedFlight: string;
   setSelectedFlight: (id: string) => void;
+  isPlaying: boolean;
   setIsPlaying: (isPlaying: boolean) => void;
 }
 
 export default function FlightProgressBar({
   progress,
   setProgress,
+  selectedFlight,
   setSelectedFlight,
+  isPlaying,
   setIsPlaying,
 }: Props) {
   const { allTimestamps, operationTimestamps } = useData();
   const {
-    isPlaying,
     togglePlay,
     handleInputChange,
-    handleTimelineClick,
+    selectFlightAndMoveToStart,
+    updateCurrentFlight,
     setPlaybackSpeed,
-  } = usePlayback(allTimestamps, progress, setProgress);
+  } = usePlayback(
+    allTimestamps,
+    progress,
+    setProgress,
+    isPlaying,
+    setIsPlaying,
+  );
+  const [timelineData, setTimelineData] = useState<TimelineData[]>([]);
 
   useEffect(() => {
-    setIsPlaying(isPlaying);
-  }, [isPlaying]);
+    selectFlightAndMoveToStart(selectedFlight, timelineData, setSelectedFlight);
+  }, [selectedFlight]);
 
-  const handleSelectAndPlay = (id: string, timelineData: TimelineData[]) => {
-    handleTimelineClick(id, timelineData, setSelectedFlight);
+  useEffect(() => {
+    updateCurrentFlight(selectedFlight, timelineData, setSelectedFlight);
+  }, [progress, timelineData]);
+
+  const handleTimelineClick = (id: string) => {
+    selectFlightAndMoveToStart(id, timelineData, setSelectedFlight);
   };
 
   const startTime = calculateTimeByProgress(allTimestamps, 0);
@@ -44,8 +59,11 @@ export default function FlightProgressBar({
 
   return (
     <>
-      <div className="flex w-full justify-around font-bold">
+      <div className="flex w-full items-end justify-around font-bold md:flex-col md:items-start md:pl-14">
         <span>{currentTime ? `현재 시간: ${currentTime}` : ""}</span>
+        <div className="hidden md:flex">
+          {startTime && endTime ? `재생 시간: ${startTime} - ${endTime}` : ""}
+        </div>
       </div>
       <div className="flex w-full items-center gap-4 font-bold">
         <button
@@ -54,7 +72,7 @@ export default function FlightProgressBar({
         >
           {isPlaying ? "❚❚" : "▶"}
         </button>
-        {startTime}
+        <span className="md:hidden">{startTime}</span>
         <div className="w-full">
           <input
             type="range"
@@ -68,10 +86,11 @@ export default function FlightProgressBar({
           <Timeline
             allTimestamps={allTimestamps}
             operationTimestamps={operationTimestamps}
-            onTimelineClick={handleSelectAndPlay}
+            setTimelineData={setTimelineData}
+            onTimelineClick={handleTimelineClick}
           />
         </div>
-        {endTime}
+        <span className="md:hidden">{endTime}</span>
         <select
           className="select select-sm w-20"
           onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}

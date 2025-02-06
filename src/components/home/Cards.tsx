@@ -15,7 +15,7 @@ export default function Cards() {
           </div>
           {/* </Link> */}
           <div>
-            <h3 className="card-title">실시간 데이터 시각화</h3>
+            <h3 className="card-title">드론 경로 시각화</h3>
             <p>
             지도 위에 여러 드론의 경로를 동시에 띄워 전반적인 모니터링 및 분석이 가능합니다. 
             </p>

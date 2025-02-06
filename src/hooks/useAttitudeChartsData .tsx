@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 import { DefaultSynchronisedChartsProps } from "@/components/log/charts/AttitudeCharts";
+import { getColorFromId } from "@/utils/getColorFromId";
+import { format } from "path";
 
 interface useChartDataTransformProps {
   telemetryData: any;
@@ -88,7 +90,6 @@ const createChartOptions = (
   const groupData = groupDataById(sortedData);
   const groupDataKeys = Object.keys(groupData);
 
-  const colours = Highcharts.getOptions().colors || [];
   const maxYValue = Math.max(...dataset.data);
   const minYValue = Math.min(...dataset.data);
 
@@ -98,8 +99,9 @@ const createChartOptions = (
   return {
     chart: {
       zooming: { type: "x" },
-      width: DefaultSynchronisedChartsProps.chartWidth,
-      height: DefaultSynchronisedChartsProps.chartHeight,
+      width: null,
+      height: 300,
+      id: "attitudeChart",
     },
     title: { text: dataset.name },
     xAxis: {
@@ -111,7 +113,7 @@ const createChartOptions = (
         formatter: function (): any {
           const value = (this as any).value;
           const dateObj = new Date(value);
-          const formattedDate = `${String(dateObj.getMonth() + 1).padStart(2, "0")}-${String(dateObj.getDate()).padStart(2, "0")} ${String(dateObj.getHours()).padStart(2, "0")}:${String(dateObj.getMinutes()).padStart(2, "0")}:${String(dateObj.getSeconds()).padStart(2, "0")}`;
+          const formattedDate = `${String(dateObj.getHours()).padStart(2, "0")}:${String(dateObj.getMinutes()).padStart(2, "0")}:${String(dateObj.getSeconds()).padStart(2, "0")}`;
           return formattedDate;
         },
       },
@@ -124,42 +126,27 @@ const createChartOptions = (
       },
     },
     yAxis: {
-      title: { text: " " },
+      title: { text: "" },
       min: minYValue,
       max: maxYValue,
+      labels: {
+        formatter: function (): any {
+          return (this as any).value + " rad";
+        },
+      },
     },
     plotOptions: {
       series: {
         animation: { duration: 2500 },
       },
     },
-    responsive: {
-      rules: [
-        {
-          condition: { maxWidth: 1500 },
-          chartOptions: {
-            chart: { height: 470 },
-            xAxis: { labels: {} },
-            yAxis: { title: { text: "속도" } },
-            legend: { enabled: false },
-          },
-        },
-        {
-          condition: { maxWidth: 480 },
-          chartOptions: {
-            chart: { height: 250 },
-            xAxis: { labels: {} },
-            yAxis: { title: { text: " " } },
-          },
-        },
-      ],
-    },
+    responsive: {},
     series: groupDataKeys.map((key, idx) => ({
-      name: `${dataset.name} ${idx + 1}`,
+      name: new Date(groupData[key][0][0]).toLocaleString(),
       type: dataset.type,
       step: true,
       data: groupData[key],
-      color: colours[idx % colours.length],
+      color: getColorFromId(groupDataKeys[idx]),
       turboThreshold: 5000,
     })),
     tooltip: { valueSuffix: ` ${dataset.name}` },
