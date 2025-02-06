@@ -1,6 +1,6 @@
 "use client";
-import React, { useMemo } from "react";
-import Highcharts, { chart } from "highcharts";
+import React, { useMemo, useRef } from "react";
+import Highcharts from "highcharts";
 import HighchartsExporting from "highcharts/modules/exporting";
 import useData from "@/store/useData";
 
@@ -36,6 +36,7 @@ const AttitudeCharts: React.FC<SynchronisedChartsProps> = ({
   numOfDatasets = DefaultSynchronisedChartsProps.numOfDatasets,
 }) => {
   const { telemetryData, selectedOperationId } = useData();
+  const chartContainerRef = useRef<HTMLDivElement>(null); // ✅ 차트 컨테이너 참조
 
   const chartData = useAttitudeChartsData({
     telemetryData,
@@ -43,19 +44,23 @@ const AttitudeCharts: React.FC<SynchronisedChartsProps> = ({
   });
   const xData = useChartXData(telemetryData, selectedOperationId);
 
-  // const handleMouseMove = (
-  //   e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>,
-  // ) => {
-  //   Highcharts.charts.forEach((chart) => {
-  //     if (!chart) return;
+  const handleMouseMove = (
+    e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>,
+  ) => {
+    if (!chartContainerRef.current) return;
 
-  //     const normalizedEvent = chart.pointer.normalize(e as any);
-  //     const point = chart.series[0].searchPoint(normalizedEvent, true);
-  //     if (point) {
-  //       point.highlight(normalizedEvent);
-  //     }
-  //   });
-  // };
+    Highcharts.charts.forEach((chart) => {
+      if (!chart || !chart.series.length) return;
+
+      if ((chart.options.chart as any)?.id !== "attitudeChart") return;
+
+      const normalizedEvent = chart.pointer.normalize(e as any);
+      const point = chart.series[0].searchPoint(normalizedEvent, true);
+      if (point) {
+        point.highlight(normalizedEvent);
+      }
+    });
+  };
 
   const renderChartData = useMemo(() => {
     return chartData.slice(0, numOfDatasets).map((dataset, index) => (
@@ -67,16 +72,17 @@ const AttitudeCharts: React.FC<SynchronisedChartsProps> = ({
 
   return (
     <div
+      // ref={chartContainerRef}
       // onMouseMove={handleMouseMove}
       // onTouchMove={handleMouseMove}
       className="rounded-lg bg-white p-4"
     >
-      {chartData.length == 0 ? (
+      {chartData.length === 0 ? (
         <p className="p-10 text-center text-gray-500">
-          선택된 데이터가 없습니다.
+          {/* 선택된 데이터가 없습니다. */}{" "}
         </p>
       ) : (
-        <div className="flex flex-row flex-wrap gap-4">{renderChartData}</div>
+        <div className="grid-cols-1">{renderChartData}</div>
       )}
     </div>
   );
