@@ -3,21 +3,20 @@ import useSidebarStore from "@/store/useSidebar";
 import { useEffect, useState } from "react";
 
 export default function useResizePanelControl() {
-  const { close, open } = useSidebarStore();
+  const { open } = useSidebarStore();
   const [isStatusOpen, setIsStatusOpen] = useState(true);
   const [isAttitudeOpen, setIsAttitudeOpen] = useState(true);
 
   const handleResize = () => {
-    const isDesktop = window.innerWidth > BREAKPOINTS.TABLET;
+    const isDesktop = window.innerWidth > BREAKPOINTS.DESKTOP;
     if (!isDesktop) {
-      close();
       setIsStatusOpen(false);
       setIsAttitudeOpen(false);
     } else {
-      open();
       setIsStatusOpen(true);
       setIsAttitudeOpen(true);
     }
+    open();
   };
 
   useEffect(() => {
@@ -27,7 +26,7 @@ export default function useResizePanelControl() {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [close, open]);
+  }, [open]);
 
   return {
     isStatusOpen,
