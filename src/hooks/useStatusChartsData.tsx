@@ -3,6 +3,8 @@ import { getAltitude, groupDataById } from "@/hooks/useChartsData";
 import { useCallback, useEffect, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
+import { getColorFromId } from "@/utils/getColorFromId";
+import { title } from "process";
 
 interface useChartDataTransformProps {
   telemetryData: any;
@@ -56,6 +58,10 @@ const useStatusChartsChartsData = ({
       };
 
       setChartData([formattedAlt, formattedSpeed]);
+
+      Highcharts.charts.forEach((chart) => {
+        if (chart) chart.zoomOut();
+      });
     } catch (error) {
       console.error(error);
     } finally {
@@ -81,8 +87,8 @@ const createChartOptions = (
   const sortedData = data.sort((a, b) => a[0] - b[0]);
   const groupData = groupDataById(sortedData);
   const groupDataKeys = Object.keys(groupData);
+  console.log(groupData);
 
-  const colours = Highcharts.getOptions().colors || [];
   const maxYValue = Math.max(...dataset.data); // y축 최대값 계산
   const minYValue = Math.min(...dataset.data); // y축 최대값 계산
 
@@ -94,8 +100,9 @@ const createChartOptions = (
       zooming: {
         type: "x",
       },
-      width: 700,
-      height: 400,
+      width: null,
+      height: 450,
+      id: "statusChart",
     },
     title: {
       text: dataset.name,
@@ -109,7 +116,7 @@ const createChartOptions = (
         formatter: function (): any {
           const value = (this as any).value;
           const dateObj = new Date(value);
-          const formattedDate = `${String(dateObj.getMonth() + 1).padStart(2, "0")}-${String(dateObj.getDate()).padStart(2, "0")} ${String(dateObj.getHours()).padStart(2, "0")}:${String(dateObj.getMinutes()).padStart(2, "0")}:${String(dateObj.getSeconds()).padStart(2, "0")}`;
+          const formattedDate = `${String(dateObj.getHours()).padStart(2, "0")}:${String(dateObj.getMinutes()).padStart(2, "0")}:${String(dateObj.getSeconds()).padStart(2, "0")}`;
           return formattedDate;
         },
       },
@@ -124,10 +131,15 @@ const createChartOptions = (
     },
     yAxis: {
       title: {
-        text: " ",
+        text: "",
       },
-      min: minYValue,
+      min: 0,
       max: maxYValue,
+      labels: {
+        formatter: function (): any {
+          return (this as any).value + (dataset.name === "고도" ? "m" : " m/s");
+        },
+      },
     },
     plotOptions: {
       series: {
@@ -151,11 +163,11 @@ const createChartOptions = (
       ],
     },
     series: groupDataKeys.map((key, idx) => ({
-      name: `${dataset.name} ${idx + 1}`,
+      name: new Date(groupData[key][0][0]).toLocaleString(),
       type: dataset.type,
       step: true,
       data: groupData[key], // 동적으로 데이터 할당
-      color: colours[idx % colours.length],
+      color: getColorFromId(groupDataKeys[idx]),
       turboThreshold: 5000,
     })),
     tooltip: {
